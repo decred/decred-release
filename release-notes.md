@@ -1,3 +1,28 @@
+# v0.0.4
+
+## 2016-02-24
+
+This release contains updated binary files (dcrd, dcrctl, dcrwallet)
+for various platforms.
+
+See manifest-20160224-01.txt for sha256sums of the packages and
+manifest-20160224-01.txt.asc to confirm those shas.
+
+See https://wiki.decred.org/Verifying_Binaries for more info on
+verifying the files.
+
+This release includes a number of fixes for both wallet and daemon as
+well as several new rpc calls.
+
+This includes (but is not limited to):
+* Added getcoinsupply, get/setticketvotebits, existslivetickets, getstakeinfo
+* First checkpoint added
+* Several fee related issues
+* Disable unsafe RPC calls on mainnet
+* Corrected fee estimation for general transactions
+* Allow wallet to accept hex or words as seed
+* Other bug fixes and cleanups
+
 # v0.0.3
 
 ## 2016-02-09
