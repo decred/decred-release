@@ -1,3 +1,15 @@
+# v0.0.5_cgminer
+
+## 2016-02-10
+
+This is a build of cgminer for 32bit windows (with no TLS support).
+
+The attached manifest file can be used to confirm the sha of the
+download.
+
+See https://wiki.decred.org/Verifying_Binaries for more info on
+verifying the files.
+
 # v0.0.4_cgminer
 
 ## 2016-02-08
