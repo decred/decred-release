@@ -1,3 +1,19 @@
+# v0.0.2
+
+## 2016-02-08
+
+This release is an unencrypted version of the current mainnet enabled
+code.
+
+The packages below contain platform specific copies of drcd,
+dcrwallet, and dcrctl.
+
+See manifest-20160208-01.txt for sha256sums of the packages and
+manifest-20160208-01.txt.asc to confirm those shas.
+
+See https://wiki.decred.org/Verifying_Binaries for more info on
+verifying the files.
+
 # v0.0.1
 
 ## 2016-02-07
