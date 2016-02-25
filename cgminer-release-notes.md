@@ -1,3 +1,15 @@
+# v0.0.4_cgminer
+
+## 2016-02-08
+
+Bugfix for incorrectly displaying difficulty.
+
+See manifest-cgminer-20160208.txt for sha256sums of the packages and
+manifest-cgminer-20160208.txt.asc to confirm those shas.
+
+See https://wiki.decred.org/Verifying_Binaries for more info on
+verifying the files.
+
 # v0.0.3_cgminer
 
 ## 2016-02-04
