@@ -1,6 +1,8 @@
-v0.0
+---
 
-2016-01-27
+# v0.0
+
+## 2016-01-27
 
 This is the testnet pre-release of Decred.
 
