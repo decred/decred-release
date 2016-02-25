@@ -1,5 +1,3 @@
----
-
 # v0.0.1
 
 ## 2016-02-07
@@ -25,8 +23,6 @@ To unencrypt on the command line you can do:
 then provide the password when asked.
 
 Mainnet binary decryption key (password): yqJgFJUmQODUOWP2jJez5gt1
-
----
 
 # v0.0
 
