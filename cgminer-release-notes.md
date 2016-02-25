@@ -1,3 +1,18 @@
+# v0.0.3_cgminer
+
+## 2016-02-04
+
+This is the testnet pre-release of cgminer for Decred.
+
+This is an update to the Windows build ONLY to address missing
+libraries in the previous release. There are no code changes.
+
+See manifest-cgminer-20160204-2.txt for sha256sums of the packages and
+manifest-cgminer-20160204-2.txt.asc to confirm those shas.
+
+See https://wiki.decred.org/Verifying_Binaries for more info on
+verifying the files.
+
 # v0.0.2_cgminer
 
 ## 2016-02-04

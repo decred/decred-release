@@ -1,0 +1,1 @@
+33cffab14c661f1ebc732eb4553124ab8b6c0db59c63c77fab016c45a59aa5eb  cgminer-decred-w64-20160204-2.zip
