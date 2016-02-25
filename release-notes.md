@@ -18,7 +18,9 @@ will be made available when mainnet is launched.
 
 To unencrypt on the command line you can do:
 
+```bash
 7za e FILENAME
+```
 
 then provide the password when asked.
 
