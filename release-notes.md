@@ -1,3 +1,37 @@
+# v0.0.5
+
+## 2016-02-26
+
+This release contains updated binary files (dcrd, dcrctl, dcrwallet)
+for various platforms.
+
+See manifest-20160226-01.txt for sha256sums of the packages and
+manifest-20160226-01.txt.asc to confirm those shas.
+
+See https://wiki.decred.org/Verifying_Binaries for more info on
+verifying the files.
+
+This release is primarily to add the ability for wallet to
+automatically remove old tickets and expired transactions.
+
+Other changes include:
+* Add getstakeinfo to rpcAskWallet list to return proper error
+* Correct version numbers
+* Fix coin supply counter to reduce work and tax subsidy based on voters
+* Fix a bug that caused votes and revocations not being stored
+* Add listscripts RPC command handling
+
+## Commits
+
+This release was built from:
+
+| Repository | Commit Hash |
+| --- | ---- |
+| decred/dcrd | fbede4978022f7121f80a1ec02a217b7498c4f5b |
+| decred/dcrwallet | ee2a72abe35f690fcc54c3c6234e617c79a88d19 |
+| decred/dcrrpcclient | 680d8ff9cd81c017c28fd867494e20deea08e48c |
+| decred/dcrutil | 025b0fb50cfb446491a6988fab4cef333830e35c |
+
 # v0.0.4
 
 ## 2016-02-24
