@@ -1,3 +1,9 @@
+# v0.0.7
+
+## 2016-03-09
+
+Patched release to allow multisig votes to be properly accepted by daemons with IsStandard
+
 # v0.0.6
 
 ## 2016-03-04
