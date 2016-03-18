@@ -1,8 +1,86 @@
+# v0.0.8
+
+## 2016-03-18
+
+This release contains updated binary files (dcrd, dcrctl, dcrwallet)
+for various platforms.
+
+See manifest-20160318-01.txt for sha256sums of the packages and
+manifest-20160318-01.txt.asc to confirm those shas.
+
+See https://wiki.decred.org/Verifying_Binaries for more info on
+verifying the files.
+
+This release contains various fixes and improvements.
+
+Changes include:
+
+| Description | Pull Request |
+| --- | ---- |
+| Update configuring_tor.md | [decred/dcrd#88](https://github.com/decred/dcrd/pull/88) |
+| Add and implement the getticketpoolvalue JSON RPC command | [decred/dcrd#90](https://github.com/decred/dcrd/pull/90) |
+| Add lookup of ticket commitments to addrindex | [decred/dcrd#92](https://github.com/decred/dcrd/pull/92) |
+| Fix minor goclean issues. | [decred/dcrd#94](https://github.com/decred/dcrd/pull/94) |
+| Add balancetomaintain rpc json parts | [decred/dcrd#93](https://github.com/decred/dcrd/pull/93) |
+| Bump for 0.0.8 | [decred/dcrd#95](https://github.com/decred/dcrd/pull/95) |
+| Fix a bug relating to relevantTx handling and uncaught error | [decred/dcrwallet#103](https://github.com/decred/dcrwallet/pull/103) |
+| Overhaul accounts to function correctly | [decred/dcrwallet#104](https://github.com/decred/dcrwallet/pull/104) |
+| Use a random address for 0-value outputs | [decred/dcrwallet#115](https://github.com/decred/dcrwallet/pull/115) |
+| Fix all rpclisten references in documentation | [decred/dcrwallet#118](https://github.com/decred/dcrwallet/pull/118) |
+| Fix wallet resyncing from seed and address index positioning | [decred/dcrwallet#121](https://github.com/decred/dcrwallet/pull/121) |
+| Add err check for unchecked | [decred/dcrwallet#123](https://github.com/decred/dcrwallet/pull/123) |
+| Catch vootingpool up with current apis | [decred/dcrwallet#122](https://github.com/decred/dcrwallet/pull/122) |
+| Add new balancetomaintain rpc command | [decred/dcrwallet#120](https://github.com/decred/dcrwallet/pull/120) |
+| Bump for 0.0.8 | [decred/dcrwallet#124](https://github.com/decred/dcrwallet/pull/124) |
+| Set Tree field when converting wire.OutPoints. | [decred/dcrrpcclient#8](https://github.com/decred/dcrrpcclient/pull/10) |
+
+## Commits
+
+This release was built from:
+
+| Repository | Commit Hash |
+| --- | ---- |
+| decred/dcrd | 967952c7cbf23a622cf5ada5101658037f827a2f |
+| decred/dcrwallet | a981017f624e27816c6aba21b00c2086b1b5d852 |
+| decred/dcrrpcclient | b3f48780a0d68e24ef6e915e930a1c1e58b69810 |
+| decred/dcrutil | ae0e66b98e49e836618c01cfa4d1b3d6077e5ae7 |
+
 # v0.0.7
 
 ## 2016-03-09
 
 Patched release to allow multisig votes to be properly accepted by daemons with IsStandard
+
+Changes include:
+
+| Description | Pull Request |
+| --- | ---- |
+| Fix storing the ticket database to disk on close | [decred/dcrd#80](https://github.com/decred/dcrd/pull/80) |
+| Reduce likelihood of vote spam | [decred/dcrd#82](https://github.com/decred/dcrd/pull/82) |
+| Optimize mining checks for various stake transactions | [decred/dcrd#83](https://github.com/decred/dcrd/pull/83) |
+| Sync to upstream 0280fa0 | [decred/dcrd#78](https://github.com/decred/dcrd/pull/78) |
+| Revert sync merge | [decred/dcrd#85](https://github.com/decred/dcrd/pull/85) |
+| Correct the expected number of inputs for stake P2SH outputs | [decred/dcrd#86](https://github.com/decred/dcrd/pull/86) |
+| Bump version for release | [decred/dcrd#87](https://github.com/decred/dcrd/pull/87) |
+| Only access isClosed inside the mutex in wtxmgr. | [decred/dcrwallet#94](https://github.com/decred/dcrwallet/pull/94) |
+| Fixes to work with dcrd sync to 08/11/15 | [decred/dcrwallet#91](https://github.com/decred/dcrwallet/pull/91) |
+| Switch from log.Debug to log.Debugf. | [decred/dcrwallet#96](https://github.com/decred/dcrwallet/pull/96) |
+| Revert "Fixes to work with dcrd sync" | [decred/dcrwallet#100](https://github.com/decred/dcrwallet/pull/100) |
+| Bump version for patch release | [decred/dcrwallet#101](https://github.com/decred/dcrwallet/pull/101) |
+| Fix "Established connection" log message. | [decred/dcrrpcclient#8](https://github.com/decred/dcrrpcclient/pull/9) |
+| Ayp sync 1c7f05 | [decred/dcrutil#1](https://github.com/decred/dcrutil/pull/1) |
+| Revert sync commit | [decred/dcrutil#2](https://github.com/decred/dcrutil/pull/2) |
+
+## Commits
+
+This release was built from:
+
+| Repository | Commit Hash |
+| --- | ---- |
+| decred/dcrd | f2cc01cef2e58d788212dc28633c2d7b3cdf68e0 |
+| decred/dcrwallet | d776d972f2f0c7b440dfbea5a10ba7ac4627cfbe |
+| decred/dcrrpcclient | 4691756e416483e497d41f8883e5f432167983a2 |
+| decred/dcrutil | ae0e66b98e49e836618c01cfa4d1b3d6077e5ae7 |
 
 # v0.0.6
 
