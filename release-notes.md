@@ -1,3 +1,40 @@
+# v0.0.10
+
+## 2016-04-05
+
+This release contains updated binary files (dcrd, dcrctl, dcrwallet)
+for various platforms and is primarily a bugfix for dcrwallet.
+
+See manifest-20160405-01.txt for sha256sums of the packages and
+manifest-201600405-01.txt.asc to confirm those shas.
+
+See https://wiki.decred.org/Verifying_Binaries for more info on
+verifying the files.
+
+This release contains various fixes and improvements.
+
+Changes include:
+
+| Description | Pull Request |
+| --- | ---- |
+| Introduce a new utility to show dev premine taint. | [decred/dcrd#100](https://github.com/decred/dcrd/pull/100) |
+| Bump for v0.0.10 | [decred/dcrd#101](https://github.com/decred/dcrd/pull/101) |
+| Add stake txscript types in ListUnspent to be spendable | [decred/dcrwallet#151](https://github.com/decred/dcrwallet/pull/151) |
+| Make dcrwallet pass all goclean.sh tests. | [decred/dcrwallet#155](https://github.com/decred/dcrwallet/pull/155) |
+| Change initilialize to use proper index (extIdx) | [decred/dcrwallet#158](https://github.com/decred/dcrwallet/pull/158) |
+| Bump for v0.0.10 | [decred/dcrwallet#159](https://github.com/decred/dcrwallet/pull/159) |
+
+## Commits
+
+This release was built from:
+
+| Repository | Commit Hash |
+| --- | ---- |
+| decred/dcrd | 1517aaad07b37b6d340f63aa93f068368cbe7120 |
+| decred/dcrwallet | 113d1f442ac30f8e3207f59c22bd0079d7eba3b5 |
+| decred/dcrrpcclient | b3f48780a0d68e24ef6e915e930a1c1e58b69810 |
+| decred/dcrutil | 9bb7f64962cee52bb46ce588aa91ef0e6e7bb1a9 |
+
 # v0.0.9
 
 ## 2016-04-01
