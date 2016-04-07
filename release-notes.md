@@ -1,12 +1,12 @@
 # v0.0.10
 
-## 2016-04-05
+## 2016-04-06
 
 This release contains updated binary files (dcrd, dcrctl, dcrwallet)
 for various platforms and is primarily a bugfix for dcrwallet.
 
-See manifest-20160405-01.txt for sha256sums of the packages and
-manifest-201600405-01.txt.asc to confirm those shas.
+See manifest-20160406-01.txt for sha256sums of the packages and
+manifest-201600406-01.txt.asc to confirm those shas.
 
 See https://wiki.decred.org/Verifying_Binaries for more info on
 verifying the files.
@@ -19,10 +19,15 @@ Changes include:
 | --- | ---- |
 | Introduce a new utility to show dev premine taint. | [decred/dcrd#100](https://github.com/decred/dcrd/pull/100) |
 | Bump for v0.0.10 | [decred/dcrd#101](https://github.com/decred/dcrd/pull/101) |
+| Add new JSON handling for RPC commands and livetickets command | [decred/dcrd#102](https://github.com/decred/dcrd/pull/102) |
 | Add stake txscript types in ListUnspent to be spendable | [decred/dcrwallet#151](https://github.com/decred/dcrwallet/pull/151) |
 | Make dcrwallet pass all goclean.sh tests. | [decred/dcrwallet#155](https://github.com/decred/dcrwallet/pull/155) |
 | Change initilialize to use proper index (extIdx) | [decred/dcrwallet#158](https://github.com/decred/dcrwallet/pull/158) |
 | Bump for v0.0.10 | [decred/dcrwallet#159](https://github.com/decred/dcrwallet/pull/159) |
+| Fix address pool syncing and add new RPC commands for the address pools | [decred/dcrwallet#161](https://github.com/decred/dcrwallet/pull/161) |
+| Rollback namespace transactions when bucket is not found. | [decred/dcrwallet#163](https://github.com/decred/dcrwallet/pull/163) |
+| Fix watching only wallets | [decred/dcrwallet#164](https://github.com/decred/dcrwallet/pull/164) |
+| Fix case on comments | [decred/dcrwallet#165](https://github.com/decred/dcrwallet/pull/165) |
 
 ## Commits
 
@@ -30,8 +35,8 @@ This release was built from:
 
 | Repository | Commit Hash |
 | --- | ---- |
-| decred/dcrd | 1517aaad07b37b6d340f63aa93f068368cbe7120 |
-| decred/dcrwallet | 113d1f442ac30f8e3207f59c22bd0079d7eba3b5 |
+| decred/dcrd | 5658c503c3ad9e8b6e7eaec5183f9fe4a2e32241 |
+| decred/dcrwallet | f1d9bd630188da91f7e817c49830c29d365c615d |
 | decred/dcrrpcclient | b3f48780a0d68e24ef6e915e930a1c1e58b69810 |
 | decred/dcrutil | 9bb7f64962cee52bb46ce588aa91ef0e6e7bb1a9 |
 
