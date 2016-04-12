@@ -1,4 +1,4 @@
-# v0.0.10
+# [v0.0.10](https://github.com/decred/decred-release/releases/tag/v0.0.10)
 
 ## 2016-04-06
 
@@ -40,7 +40,7 @@ This release was built from:
 | decred/dcrrpcclient | b3f48780a0d68e24ef6e915e930a1c1e58b69810 |
 | decred/dcrutil | 9bb7f64962cee52bb46ce588aa91ef0e6e7bb1a9 |
 
-# v0.0.9
+# [v0.0.9](https://github.com/decred/decred-release/releases/tag/v0.0.9)
 
 ## 2016-04-01
 
@@ -92,7 +92,7 @@ This release was built from:
 | decred/dcrrpcclient | b3f48780a0d68e24ef6e915e930a1c1e58b69810 |
 | decred/dcrutil | 9bb7f64962cee52bb46ce588aa91ef0e6e7bb1a9 |
 
-# v0.0.8
+# [v0.0.8](https://github.com/decred/decred-release/releases/tag/v0.0.8)
 
 ## 2016-03-18
 
@@ -139,7 +139,7 @@ This release was built from:
 | decred/dcrrpcclient | b3f48780a0d68e24ef6e915e930a1c1e58b69810 |
 | decred/dcrutil | ae0e66b98e49e836618c01cfa4d1b3d6077e5ae7 |
 
-# v0.0.7
+# [v0.0.7](https://github.com/decred/decred-release/releases/tag/v0.0.7)
 
 ## 2016-03-09
 
@@ -176,7 +176,7 @@ This release was built from:
 | decred/dcrrpcclient | 4691756e416483e497d41f8883e5f432167983a2 |
 | decred/dcrutil | ae0e66b98e49e836618c01cfa4d1b3d6077e5ae7 |
 
-# v0.0.6
+# [v0.0.6](https://github.com/decred/decred-release/releases/tag/v0.0.6)
 
 ## 2016-03-04
 
@@ -236,7 +236,7 @@ This release was built from:
 | decred/dcrrpcclient | 7181e59ba727f8e6cb2f3919bc490549f81e4d54 |
 | decred/dcrutil | 025b0fb50cfb446491a6988fab4cef333830e35c |
 
-# v0.0.5
+# [v0.0.5](https://github.com/decred/decred-release/releases/tag/v0.0.5)
 
 ## 2016-02-26
 
@@ -270,7 +270,7 @@ This release was built from:
 | decred/dcrrpcclient | 680d8ff9cd81c017c28fd867494e20deea08e48c |
 | decred/dcrutil | 025b0fb50cfb446491a6988fab4cef333830e35c |
 
-# v0.0.4
+# [v0.0.4](https://github.com/decred/decred-release/releases/tag/v0.0.4)
 
 ## 2016-02-24
 
@@ -295,7 +295,7 @@ This includes (but is not limited to):
 * Allow wallet to accept hex or words as seed
 * Other bug fixes and cleanups
 
-# v0.0.3
+# [v0.0.3](https://github.com/decred/decred-release/releases/tag/v0.0.3)
 
 ## 2016-02-09
 
@@ -310,7 +310,7 @@ manifest-20160209-01.txt.asc to confirm those shas.
 See https://wiki.decred.org/Verifying_Binaries for more info on
 verifying the files.
 
-# v0.0.2
+# [v0.0.2](https://github.com/decred/decred-release/releases/tag/v0.0.2)
 
 ## 2016-02-08
 
@@ -326,7 +326,7 @@ manifest-20160208-01.txt.asc to confirm those shas.
 See https://wiki.decred.org/Verifying_Binaries for more info on
 verifying the files.
 
-# v0.0.1
+# [v0.0.1](https://github.com/decred/decred-release/releases/tag/v0.0.1)
 
 ## 2016-02-07
 
@@ -354,7 +354,7 @@ then provide the password when asked.
 
 Mainnet binary decryption key (password): yqJgFJUmQODUOWP2jJez5gt1
 
-# v0.0
+# [v0.0](https://github.com/decred/decred-release/releases/tag/v0.0)
 
 ## 2016-01-27
 

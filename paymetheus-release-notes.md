@@ -1,4 +1,4 @@
-# v0.0.8_paymetheus
+# [v0.0.8_paymetheus](https://github.com/decred/decred-release/releases/tag/v0.0.8_paymetheus)
 
 ## 2016-03-25
 

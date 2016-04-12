@@ -1,4 +1,4 @@
-# v0.0.5_cgminer
+# [v0.0.5_cgminer](https://github.com/decred/decred-release/releases/tag/v0.0.5_cgminer)
 
 ## 2016-02-10
 
@@ -10,7 +10,7 @@ download.
 See https://wiki.decred.org/Verifying_Binaries for more info on
 verifying the files.
 
-# v0.0.4_cgminer
+# [v0.0.4_cgminer](https://github.com/decred/decred-release/releases/tag/v0.0.4_cgminer)
 
 ## 2016-02-08
 
@@ -22,7 +22,7 @@ manifest-cgminer-20160208.txt.asc to confirm those shas.
 See https://wiki.decred.org/Verifying_Binaries for more info on
 verifying the files.
 
-# v0.0.3_cgminer
+# [v0.0.3_cgminer](https://github.com/decred/decred-release/releases/tag/v0.0.3_cgminer)
 
 ## 2016-02-04
 
@@ -37,7 +37,7 @@ manifest-cgminer-20160204-2.txt.asc to confirm those shas.
 See https://wiki.decred.org/Verifying_Binaries for more info on
 verifying the files.
 
-# v0.0.2_cgminer
+# [v0.0.2_cgminer](https://github.com/decred/decred-release/releases/tag/v0.0.2_cgminer)
 
 ## 2016-02-04
 
@@ -54,7 +54,7 @@ manifest-cgminer-20160204.txt.asc to confirm those shas.
 See https://wiki.decred.org/Verifying_Binaries for more info on
 verifying the files.
 
-# v0.0.1_cgminer
+# [v0.0.1_cgminer](https://github.com/decred/decred-release/releases/tag/v0.0.1_cgminer)
 
 ## 2016-01-28
 
@@ -71,7 +71,7 @@ manifest-cgminer-20160128.txt.asc to confirm those shas.
 See https://wiki.decred.org/Verifying_Binaries for more info on
 verifying the files.
 
-# v0.0_cgminer
+# [v0.0_cgminer](https://github.com/decred/decred-release/releases/tag/v0.0.0_cgminer)
 
 ## 2016-01-27
 
