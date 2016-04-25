@@ -1,3 +1,54 @@
+# [v0.1.1](https://github.com/decred/decred-release/releases/tag/v0.1.1)
+
+## 2016-04-25
+
+This release contains updated binary files (dcrd, dcrctl, dcrwallet)
+for various platforms and is primarily a bugfix for dcrwallet.
+
+See manifest-20160425-01.txt for sha256sums of the packages and
+manifest-201600425-01.txt.asc to confirm those shas.
+
+See https://wiki.decred.org/Verifying_Binaries for more info on
+verifying the files.
+
+This release contains various fixes and improvements.
+
+Changes include:
+
+| Description | Pull Request |
+| --- | ---- |
+| Catch missed error check | [decred/dcrd#127](https://github.com/decred/dcrd/pull/127) |
+| fix typo | [decred/dcrd#128](https://github.com/decred/dcrd/pull/128) |
+| Replace float64 and use int64 for feePerKB calculcation | [decred/dcrd#125](https://github.com/decred/dcrd/pull/125) |
+| Use AllowHighFees in SendRawTransaction cmd to actually check tx fees | [decred/dcrd#124](https://github.com/decred/dcrd/pull/124) |
+| Add ticketfeeinfo command | [decred/dcrd#132](https://github.com/decred/dcrd/pull/132) |
+| Bump for v0.1.1 | [decred/dcrd#136](https://github.com/decred/dcrd/pull/136) |
+| Regenerate walletrpc package. | [decred/dcrwallet#185=9](https://github.com/decred/dcrwallet/pull/189) |
+| Isolate address pool to prevent excessive address creation | [decred/dcrwallet#191](https://github.com/decred/dcrwallet/pull/191) |
+| Reinsert scan length variable | [decred/dcrwallet#196](https://github.com/decred/dcrwallet/pull/196) |
+| Do not include zero value change outputs. | [decred/dcrwallet#193](https://github.com/decred/dcrwallet/pull/193) |
+| Update help comments to show fee per kb instead of increment | [decred/dcrwallet#195](https://github.com/decred/dcrwallet/pull/195) |
+| Add TicketFeeIncrementTestnet | [decred/dcrwallet#194](https://github.com/decred/dcrwallet/pull/194) |
+| Allow passing an empty string for purchaseticket addresses | [decred/dcrwallet#198](https://github.com/decred/dcrwallet/pull/198) |
+| Add ability to change autopurchase frequency | [decred/dcrwallet#201](https://github.com/decred/dcrwallet/pull/201) |
+| Open and return wallet from CreateNewWallet. | [decred/dcrwallet#203](https://github.com/decred/dcrwallet/pull/203) |
+| Avoid stdin passphrase prompt with --noinitialload. | [decred/dcrwallet#202](https://github.com/decred/dcrwallet/pull/202) |
+| Regenerate JSON-RPC help descriptions. | [decred/dcrwallet#208](https://github.com/decred/dcrwallet/pull/208) |
+| Bump for v0.1.1 | [decred/dcrwallet#209](https://github.com/decred/dcrwallet/pull/209) |
+| use decred mainnet ports in examples | [decred/dcrrpcclient#15](https://github.com/decred/dcrrpcclient/pull/15) |
+
+## Commits
+
+This release was built from:
+
+| Repository | Commit Hash |
+| --- | ---- |
+| decred/dcrd | 4f8ad739a231a6ecf58ae899c595fba446ffe631 |
+| decred/dcrwallet | c5e47fba1608854b0c43c367b14ced6df91a6d9e |
+| decred/dcrrpcclient | c69fe513f9d6beeef0cad10412e3aa804ba3fe28 |
+| decred/dcrutil | 74563ea520b1215b9c10f96507b7a9984894c0b5 |
+| google.golang.org/grpc | 262ed2bd6d1c8cbaa14b43c3815d2e01e4f65ca8 |
+
 # [v0.1.0](https://github.com/decred/decred-release/releases/tag/v0.1.0)
 
 ## 2016-04-18
@@ -56,7 +107,6 @@ This release was built from:
 | decred/dcrrpcclient | f005c4a9466229520d7198ce1904065248f6cdd3 |
 | decred/dcrutil | 74563ea520b1215b9c10f96507b7a9984894c0b5 |
 | google.golang.org/grpc | 326d66361a4e305b03da4497d2c52d470f7fb584 |
-
 
 # [v0.0.10](https://github.com/decred/decred-release/releases/tag/v0.0.10)
 
