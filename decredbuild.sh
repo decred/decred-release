@@ -7,9 +7,15 @@
 # Use of this source code is governed by the ISC
 # license.
 
+if [[ $1x = x ]]; then
+    TAG=""
+else
+    TAG=-$1
+fi
+
 VERSION="01"
 DATE=`date +%Y%m%d`
-MAINDIR=decred-$DATE-$VERSION
+MAINDIR=decred$TAG-$DATE-$VERSION
 mkdir -p $MAINDIR
 cd $MAINDIR
 
@@ -33,9 +39,9 @@ for i in $SYS; do
     cp $GPATH/src/github.com/decred/dcrwallet/sample-dcrwallet.conf .
     cd ..
     if [[ $OS = "windows" ]]; then
-	zip -r $i-$DATE-$VERSION.zip $i
+	zip -r decred$TAG-$i-$DATE-$VERSION.zip $i
     else
-	tar -cvzf $i-$DATE-$VERSION.tar.gz $i
+	tar -cvzf decred$TAG-$i-$DATE-$VERSION.tar.gz $i
     fi
     rm -r $i
 done
