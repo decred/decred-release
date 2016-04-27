@@ -23,7 +23,7 @@ Changes include:
 | Use AllowHighFees in SendRawTransaction cmd to actually check tx fees | [decred/dcrd#124](https://github.com/decred/dcrd/pull/124) |
 | Add ticketfeeinfo command | [decred/dcrd#132](https://github.com/decred/dcrd/pull/132) |
 | Bump for v0.1.1 | [decred/dcrd#136](https://github.com/decred/dcrd/pull/136) |
-| Regenerate walletrpc package. | [decred/dcrwallet#185=9](https://github.com/decred/dcrwallet/pull/189) |
+| Regenerate walletrpc package. | [decred/dcrwallet#189](https://github.com/decred/dcrwallet/pull/189) |
 | Isolate address pool to prevent excessive address creation | [decred/dcrwallet#191](https://github.com/decred/dcrwallet/pull/191) |
 | Reinsert scan length variable | [decred/dcrwallet#196](https://github.com/decred/dcrwallet/pull/196) |
 | Do not include zero value change outputs. | [decred/dcrwallet#193](https://github.com/decred/dcrwallet/pull/193) |

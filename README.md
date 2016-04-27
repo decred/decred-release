@@ -10,7 +10,7 @@ This repository contains releases for the following software:
 
 * [dcrd/dcrwallet](./release-notes.md)
 * [Paymetheus](./paymetheus-release-notes.md)
-* [cgminer](./cgminer-release-notes.md)
+* [miners](./miners-release-notes.md)
 
 ## Verifying Binaries
 
