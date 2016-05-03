@@ -1,3 +1,215 @@
+# [v0.1.2](https://github.com/decred/decred-release/releases/tag/v0.1.2)
+
+## 2016-05-03
+
+This release contains updated binary files (dcrd, dcrctl, dcrwallet)
+for various platforms and is primarily a bugfix for dcrwallet.
+
+See manifest-20160503-01.txt for sha256sums of the packages and
+manifest-201600503-01.txt.asc to confirm those shas.
+
+See https://wiki.decred.org/Verifying_Binaries for more info on
+verifying the files.
+
+This release contains various fixes and improvements.
+
+Changes include:
+
+| Description | Pull Request |
+| --- | ---- |
+| Fix mempool fees variables | [decred/dcrd#141](https://github.com/decred/dcrd/pull/141) |
+| Add GetStakeDifficultyResult to dcrjson so getstakedifficulty command can return more | [decred/dcrd#137](https://github.com/decred/dcrd/pull/137) |
+| Remove magic number and add const maxRelayFeeMultiplier | [decred/dcrd#139](https://github.com/decred/dcrd/pull/139) |
+| Add estimatestakediff RPC command | [decred/dcrd#143](https://github.com/decred/dcrd/pull/143) |
+| Add ticketvwap and txfeeinfo RPC server commands | [decred/dcrd#145](https://github.com/decred/dcrd/pull/145) |
+| fix sample config per issue 116 | [decred/dcrd#147](https://github.com/decred/dcrd/pull/147) |
+| Add stakepooluserinfo and addticket RPC handling | [decred/dcrd#144](https://github.com/decred/dcrd/pull/144) |
+| Cherry pick btcd commit that moves some functions to policy.go | [decred/dcrd#140](https://github.com/decred/dcrd/pull/140) |
+| Add the constructor for AddTicketCmd | [decred/dcrd#148](https://github.com/decred/dcrd/pull/148) |
+| Bump for v0.1.2 | [decred/dcrd#150](https://github.com/decred/dcrd/pull/150) |
+| Fix lockup relating to channel blocking | [decred/dcrwallet#219](https://github.com/decred/dcrwallet/pull/219) |
+| Add stake pool mode to the wallet | [decred/dcrwallet#192](https://github.com/decred/dcrwallet/pull/192) |
+| Make purchaseticket return the correct error | [decred/dcrwallet#224](https://github.com/decred/dcrwallet/pull/224) |
+| Add wallet flag for allowhighfees | [decred/dcrwallet#214](https://github.com/decred/dcrwallet/pull/214) |
+| Bump for v0.1.2 | [decred/dcrwallet#225](https://github.com/decred/dcrwallet/pull/225) |
+| Add RPC client pass throughs for new daemon and wallet commands | [decred/dcrrpcclient#16](https://github.com/decred/dcrrpcclient/pull/16) |
+
+## Notes
+
+### Added stake pool fee functionality:
+
+We have added new config flags for dcrwallet.  Let's go over each
+option to make crystal clear its usage:
+
+#### stakepoolcoldextkey
+
+When this option is set it turns on stake pool functionality for
+wallet.  When stake pool is enabled for wallet, there are a series of
+transaction checks to verify whether this wallet will vote for a
+ticket that has used this stake pool's address as the ticketaddress.
+
+This option requires the extended public key of the stake pool's cold
+wallet that will receive the pool's fees.  So on simnet for instance
+this option looks like this:
+
+```
+--stakepoolcoldextkey=spubVWAdividNTiSM9SdLRA5JX6LYNwt58cd51TFnpnULGQ8oqNMNskfkQwU7rjWMCY7phBguVr4XTmAWyDVRKpo2dFyjFb6QG4ihB8w64UPNuu:1000
+```
+
+The first portion (spub..., or dpub... on mainnet) is the extended
+public key and the second (1000) is the number of addresses to
+derive. Every user of the pool gets their own cold fee wallet address
+derived, so we recommend using at least 1000 in anticipation of the
+relative number of users in the stake pool.
+
+When a vote is created by the stake pool to vote on a ticket that has
+been given voting rights, it pays the pool fee to the address derived
+for the cold wallet from this extended public key.
+
+#### pooladdress
+
+This is for use by the stake pool user.  It will be an address
+provided to the user by the stake pool.  If set, this address is used
+during ticket purchase and will commit to a small output in the ticket
+that gives the stake pool its required fees.
+
+
+#### ticketaddress
+
+Same as the old option. This is the address that the stake pool user
+is giving the ticket's voting rights to.
+
+
+#### poolfees
+
+This is the required ticket fee as requested by the stake pool.  The
+value set by the user needs to be greater than or equal to that of the
+pool.  The fee is a percentage based fee, based on the stake subsidy.
+Here is a concrete example from simnet:
+
+The ticket price of this ticket was 46.0551008, and the ticket relay
+fees were 0.00000100 per kB. The pool fees were set to 1.00%.  The
+subsidy on simnet at this block height is approximately 29.40888 Coins
+per vote.  This is the ticket as purchased by the user:
+
+```javascript
+"vin": [
+	... ,
+],
+"vout": [
+	{
+		"value": 46.0551008,
+		"n": 0,
+		"version": 0,
+		"scriptPubKey": {
+			... ,
+			"reqSigs": 1,
+			"type": "stakesubmission",
+			"addresses": [
+				"SsYZMHeeixdNRTkk6afzHBPL4unYDsFNd4r"
+			]
+		}
+	},
+	{
+		"value": 0,
+		"n": 1,
+		"version": 0,
+		"scriptPubKey": {
+			... ,
+			"type": "sstxcommitment",
+			"addresses": [
+				"Ssghjx8PvQVV3FM3w5FcGi9kWGvDpDkQDTV"
+			],
+			"commitamt": 0.17948021
+		}
+	},
+	{
+		... ,
+	},
+	{
+		"value": 0,
+		"n": 3,
+		"version": 0,
+		"scriptPubKey": {
+			... ,
+			"type": "sstxcommitment",
+			"addresses": [
+				"SsYUi5tbXfqHnTPgvHcajNW4yiGeSP6n7Xq"
+			],
+			"commitamt": 45.87562609
+		}
+	},
+	{
+		... ,
+	}
+],
+```
+
+And here's the vote that the stake pool created for that user's
+ticket:
+
+```javascript
+"vin": [
+	{
+		... ,
+	},
+	{
+		... ,
+	}
+],
+"vout": [
+	{
+		... ,
+	},
+	{
+		... ,
+	},
+	{
+	"value": 0.2940888,
+	"n": 2,
+	"version": 0,
+		"scriptPubKey": {
+			... ,
+			"type": "stakegen",
+			"addresses": [
+				"Ssghjx8PvQVV3FM3w5FcGi9kWGvDpDkQDTV"
+			]
+		}
+	},
+	{
+		"value": 75.16989347,
+		"n": 3,
+		"version": 0,
+		"scriptPubKey": {
+			... ,
+			"type": "stakegen",
+			"addresses": [
+				"SsYUi5tbXfqHnTPgvHcajNW4yiGeSP6n7Xq"
+			]
+		}
+	}
+]
+```
+
+As you can see '"n": 2,', the third output, is the stake pool fee
+of 0.2940888.  This is 1% of the vote reward at that point
+(0.2940888/29.40888). The remaining subsidy and the original coins are
+returned to the take pool user in output '"n": 3,'. For more
+information about stake fees, please refer to
+dcrwallet/wallet/txrules/doc.go.
+
+## Commits
+
+This release was built from:
+
+| Repository | Commit Hash |
+| --- | ---- |
+| decred/dcrd | f93cb9fd9fd7b471481e4cfb122186514f84e879 |
+| decred/dcrwallet | e545bec0a3a1a3b8380224d12c9ede85bff58595 |
+| decred/dcrrpcclient | a5a51f5ca4f0038e475239cfe3c635a21fd28111 |
+| decred/dcrutil | 74563ea520b1215b9c10f96507b7a9984894c0b5 |
+| google.golang.org/grpc | b062a3c003c22bfef58fa99d689e6a892b408f9d |
+
 # [v0.1.1](https://github.com/decred/decred-release/releases/tag/v0.1.1)
 
 ## 2016-04-25
