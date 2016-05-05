@@ -28,8 +28,8 @@ GPATH=$(echo $GOPATH | cut -f1 -d:)
 for i in $SYS; do
     OS=$(echo $i | cut -f1 -d-)
     ARCH=$(echo $i | cut -f2 -d-)
-    mkdir $i
-    cd $i
+    mkdir decred-$i
+    cd decred-$i
     echo "Building:" $OS $ARCH
     env GOOS=$OS GOARCH=$ARCH go build github.com/decred/dcrd
     env GOOS=$OS GOARCH=$ARCH go build github.com/decred/dcrd/cmd/dcrctl
@@ -39,11 +39,11 @@ for i in $SYS; do
     cp $GPATH/src/github.com/decred/dcrwallet/sample-dcrwallet.conf .
     cd ..
     if [[ $OS = "windows" ]]; then
-	zip -r decred$TAG-$i-$DATE-$VERSION.zip $i
+	zip -r decred$TAG-$i-$DATE-$VERSION.zip decred-$i
     else
-	tar -cvzf decred$TAG-$i-$DATE-$VERSION.tar.gz $i
+	tar -cvzf decred$TAG-$i-$DATE-$VERSION.tar.gz decred-$i
     fi
-    rm -r $i
+    rm -r decred-$i
 done
 
 sha256sum * > manifest-$DATE-$VERSION.txt
