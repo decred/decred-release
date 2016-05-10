@@ -1,3 +1,56 @@
+# [v0.1.3](https://github.com/decred/decred-release/releases/tag/v0.1.3)
+
+## 2016-05-10
+
+This release contains updated binary files (dcrd, dcrctl, dcrwallet)
+for various platforms and is primarily a bugfix for dcrwallet.
+
+See manifest-20160510-01.txt for sha256sums of the packages and
+manifest-201600510-01.txt.asc to confirm those shas.
+
+See https://wiki.decred.org/Verifying_Binaries for more info on
+verifying the files.
+
+This release contains various fixes and improvements.
+
+Changes include:
+
+| Description | Pull Request |
+| --- | ---- |
+| mempool: reduce lock contention | [decred/dcrd#152](https://github.com/decred/dcrd/pull/152) |
+| Reject too low stake difficulty transactions and cache difficulty | [decred/dcrd#154](https://github.com/decred/dcrd/pull/154) |
+| mempool: Synchronize btcd commits fixing orphan hang | [decred/dcrd#155](https://github.com/decred/dcrd/pull/155) |
+| dcrd: handle signal SIGTERM (#688) | [decred/dcrd#156](https://github.com/decred/dcrd/pull/156) |
+| Fix resyncing the ticket database after unexpected shutdown | [decred/dcrd#157](https://github.com/decred/dcrd/pull/157) |
+| Add transaction type to listtransactions result | [decred/dcrd#158](https://github.com/decred/dcrd/pull/158) |
+| Fix createrawssrtx command and logic | [decred/dcrd#159](https://github.com/decred/dcrd/pull/159) |
+| Bump for v0.1.3 | [decred/dcrd#162](https://github.com/decred/dcrd/pull/162) |
+| Remove btcd/wire dependency. | [decred/dcrwallet#229](https://github.com/decred/dcrwallet/pull/229) |
+| Sync with upstream | [decred/dcrwallet#227](https://github.com/decred/dcrwallet/pull/227) |
+| Fix glide.yaml hash in glide.lock. | [decred/dcrwallet#234](https://github.com/decred/dcrwallet/pull/234) |
+| Add transaction type to listtransactions result | [decred/dcrwallet#231](https://github.com/decred/dcrwallet/pull/231) |
+| Update glide repos | [decred/dcrwallet#6b2fbf8](https://github.com/decred/dcrwallet/commit/6b2fbf80a33fc52f20231fdd6e462419c2a27ff6) |
+| Call the more reliable GetStakeDifficulty for ticket prices | [decred/dcrwallet#232](https://github.com/decred/dcrwallet/pull/232) |
+| Fix bugs relating to reorganizations | [decred/dcrwallet#236](https://github.com/decred/dcrwallet/pull/236) |
+| Update glide locks | [decred/dcrwallet#239](https://github.com/decred/dcrwallet/pull/239) |
+| Bump for v0.1.3 | [decred/dcrwallet#238](https://github.com/decred/dcrwallet/pull/238) |
+| Update for new createrawssrtx option | [decred/dcrrpcclient#17](https://github.com/decred/dcrrpcclient/pull/17) |
+| Correct the return type for estimatestakediff | [decred/dcrrpcclient#18](https://github.com/decred/dcrrpcclient/pull/18) |
+| Fix functionality of purchaseticket API | [decred/dcrrpcclient#19](https://github.com/decred/dcrrpcclient/pull/19) |
+
+## Notes
+
+## Commits
+
+This release was built from:
+
+| Repository | Commit Hash |
+| --- | ---- |
+| decred/dcrd | 2aec09354a7263a31f6b5d3fe5906bc534613058 |
+| decred/dcrwallet | 4215ccccceee037a7835721ca59a8c6327556f62 |
+| decred/dcrrpcclient | e625cc131dc06129f56e0d472061c3e378ada396 |
+| decred/dcrutil | 74563ea520b1215b9c10f96507b7a9984894c0b5 |
+
 # [v0.1.2](https://github.com/decred/decred-release/releases/tag/v0.1.2)
 
 ## 2016-05-03
