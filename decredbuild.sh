@@ -15,7 +15,8 @@ fi
 
 VERSION="01"
 DATE=`date +%Y%m%d`
-MAINDIR=decred$TAG-$DATE-$VERSION
+PACKAGE=decred
+MAINDIR=$PACKAGE$TAG-$DATE-$VERSION
 mkdir -p $MAINDIR
 cd $MAINDIR
 
@@ -28,8 +29,8 @@ GPATH=$(echo $GOPATH | cut -f1 -d:)
 for i in $SYS; do
     OS=$(echo $i | cut -f1 -d-)
     ARCH=$(echo $i | cut -f2 -d-)
-    mkdir decred-$i
-    cd decred-$i
+    mkdir $PACKAGE-$i
+    cd $PACKAGE-$i
     echo "Building:" $OS $ARCH
     env GOOS=$OS GOARCH=$ARCH go build github.com/decred/dcrd
     env GOOS=$OS GOARCH=$ARCH go build github.com/decred/dcrd/cmd/dcrctl
@@ -37,13 +38,17 @@ for i in $SYS; do
     cp $GPATH/src/github.com/decred/dcrd/sample-dcrd.conf .
     cp $GPATH/src/github.com/decred/dcrd/cmd/dcrctl/sample-dcrctl.conf .
     cp $GPATH/src/github.com/decred/dcrwallet/sample-dcrwallet.conf .
+    # dcrticketbuyer stuff
+    env GOOS=$OS GOARCH=$ARCH go build github.com/decred/dcrticketbuyer
+    cp $GPATH/src/github.com/decred/dcrticketbuyer/ticketbuyer-example.conf .
+    cp -rp $GPATH/src/github.com/decred/dcrticketbuyer/webui .
     cd ..
     if [[ $OS = "windows" ]]; then
-	zip -r decred$TAG-$i-$DATE-$VERSION.zip decred-$i
+	zip -r $PACKAGE$TAG-$i-$DATE-$VERSION.zip $PACKAGE-$i
     else
-	tar -cvzf decred$TAG-$i-$DATE-$VERSION.tar.gz decred-$i
+	tar -cvzf $PACKAGE$TAG-$i-$DATE-$VERSION.tar.gz $PACKAGE-$i
     fi
-    rm -r decred-$i
+    rm -r $PACKAGE-$i
 done
 
 sha256sum * > manifest-$DATE-$VERSION.txt
