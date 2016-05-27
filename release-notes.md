@@ -84,7 +84,10 @@ Changes include:
 
 ## Notes
 
-This release contains the initial version of dcrticketbuyer.
+This release contains the initial version of
+[dcrticketbuyer](https://github.com/decred/dcrticketbuyer).    Please
+follow the link to get more information about how to run our automated
+ticket buying software.
 
 ## Commits
 
