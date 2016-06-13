@@ -7,16 +7,17 @@
 # Use of this source code is governed by the ISC
 # license.
 
+# If no tag specified, use date + version otherwise use tag.
 if [[ $1x = x ]]; then
-    TAG=""
+    DATE=`date +%Y%m%d`
+    VERSION="01"
+    TAG=$DATE-$VERSION
 else
-    TAG=-$1
+    TAG=$1
 fi
 
-VERSION="01"
-DATE=`date +%Y%m%d`
 PACKAGE=decred
-MAINDIR=$PACKAGE$TAG-$DATE-$VERSION
+MAINDIR=$PACKAGE-$TAG
 mkdir -p $MAINDIR
 cd $MAINDIR
 
@@ -44,13 +45,14 @@ for i in $SYS; do
     cp -rp $GPATH/src/github.com/decred/dcrticketbuyer/webui .
     cd ..
     if [[ $OS = "windows" ]]; then
-	zip -r $PACKAGE$TAG-$i-$DATE-$VERSION.zip $PACKAGE-$i
+	zip -r $PACKAGE-$i-$TAG.zip $PACKAGE-$i
+	tar -cvzf $PACKAGE-$i-$TAG.tar.gz $PACKAGE-$i
     else
-	tar -cvzf $PACKAGE$TAG-$i-$DATE-$VERSION.tar.gz $PACKAGE-$i
+	tar -cvzf $PACKAGE-$i-$TAG.tar.gz $PACKAGE-$i
     fi
     rm -r $PACKAGE-$i
 done
 
-sha256sum * > manifest-$DATE-$VERSION.txt
+sha256sum * > manifest-$TAG.txt
 cd ..
 tar -cvzf $MAINDIR.tar.gz $MAINDIR
