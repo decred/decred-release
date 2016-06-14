@@ -45,8 +45,6 @@ type binary struct {
 }
 
 var (
-	github = "https://github.com/decred/decred-release/releases/download"
-
 	binaries = []binary{
 		{
 			Name:    "dcrctl",
@@ -179,6 +177,11 @@ func findOS(which, manifest string) (string, string, error) {
 			continue
 		}
 
+		// XXX quirk skip if .zip XXX
+		if filepath.Ext(a[1]) == ".zip" {
+			continue
+		}
+
 		if !(digest == "" && filename == "") {
 			return "", "",
 				fmt.Errorf("os-arch tuple not unique: %v", which)
@@ -202,29 +205,37 @@ func (c *ctx) download() (string, error) {
 	}
 
 	// download manifest
-	manifestURI := github + "/" + c.s.Version + "/" + c.s.Manifest
+	manifestURI := c.s.URI + "/" + c.s.Manifest
 	if c.s.Verbose {
 		fmt.Printf("temporary directory: %v\n", td)
 		fmt.Printf("downloading manifest: %v\n", manifestURI)
 	}
 
 	manifest := filepath.Join(td, filepath.Base(manifestURI))
-	err = downloadToFile(manifestURI, manifest)
+	err = downloadToFile(manifestURI, manifest, c.s.SkipVerify)
 	if err != nil {
 		return "", err
 	}
 
 	// download manifest signature
-	manifestAscURI := github + "/" + c.s.Version + "/" + c.s.Manifest + ".asc"
-	if c.s.Verbose {
-		fmt.Printf("downloading manifest signatures: %v\n",
-			manifestAscURI)
-	}
+	manifestAscURI := c.s.URI + "/" + c.s.Manifest + ".asc"
+	if c.s.SkipVerify {
+		if c.s.Verbose {
+			fmt.Printf("SKIPPING downloading manifest "+
+				"signatures: %v\n", manifestAscURI)
+		}
+	} else {
+		if c.s.Verbose {
+			fmt.Printf("downloading manifest signatures: %v\n",
+				manifestAscURI)
+		}
 
-	manifestAsc := filepath.Join(td, filepath.Base(manifestAscURI))
-	err = downloadToFile(manifestAscURI, manifestAsc)
-	if err != nil {
-		return "", err
+		manifestAsc := filepath.Join(td, filepath.Base(manifestAscURI))
+		err = downloadToFile(manifestAscURI, manifestAsc,
+			c.s.SkipVerify)
+		if err != nil {
+			return "", err
+		}
 	}
 
 	// determine if os-arch is supported
@@ -234,13 +245,13 @@ func (c *ctx) download() (string, error) {
 	}
 
 	// download requested package
-	packageURI := github + "/" + c.s.Version + "/" + filename
+	packageURI := c.s.URI + "/" + filename
 	if c.s.Verbose {
 		fmt.Printf("downloading package: %v\n", packageURI)
 	}
 
 	pkg := filepath.Join(td, filepath.Base(packageURI))
-	err = downloadToFile(packageURI, pkg)
+	err = downloadToFile(packageURI, pkg, c.s.SkipVerify)
 	if err != nil {
 		return "", err
 	}
@@ -257,21 +268,28 @@ func (c *ctx) verify() error {
 		return err
 	}
 
-	// verify manifest
-	if c.s.Verbose {
-		fmt.Printf("verifying manifest: %v ", c.s.Manifest)
-	}
-
-	err = pgpVerify(manifest+".asc", manifest)
-	if err != nil {
+	if c.s.SkipVerify {
 		if c.s.Verbose {
-			fmt.Printf("fail\n")
+			fmt.Printf("SKIPPING verifying manifest: %v\n",
+				c.s.Manifest)
 		}
-		return fmt.Errorf("manifest PGP signature incorrect: %v", err)
-	}
+	} else {
+		// verify manifest
+		if c.s.Verbose {
+			fmt.Printf("verifying manifest: %v ", c.s.Manifest)
+		}
 
-	if c.s.Verbose {
-		fmt.Printf("ok\n")
+		err = pgpVerify(manifest+".asc", manifest)
+		if err != nil {
+			if c.s.Verbose {
+				fmt.Printf("fail\n")
+			}
+			return fmt.Errorf("manifest PGP signature incorrect: %v", err)
+		}
+
+		if c.s.Verbose {
+			fmt.Printf("ok\n")
+		}
 	}
 
 	// verify digest

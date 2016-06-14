@@ -10,8 +10,8 @@ import (
 
 // latestVersion and latestManifest must be updated every release.
 var (
-	latestVersion  = "v0.1.4"
-	latestManifest = "manifest-20160526-01.txt"
+	latestManifest = "manifest-20160607-01.txt"
+	defaultURI     = "https://github.com/decred/decred-release/releases/download/v0.1.5"
 )
 
 type Settings struct {
@@ -20,8 +20,9 @@ type Settings struct {
 	Manifest     string // manifest name
 	Path         string // target path for downloads
 	Tuple        string // os-arch tuple
-	Version      string // version used in download path
+	URI          string // URI to manifest and sets
 	SkipDownload bool   // requires path to files
+	SkipVerify   bool   // skip TLS and signature checks, internal use only
 	Verbose      bool   // loudnes
 }
 
@@ -33,7 +34,7 @@ func parseSettings() (*Settings, error) {
 	path := flag.String("path", "", "download path")
 	tuple := flag.String("tuple", runtime.GOOS+"-"+runtime.GOARCH,
 		"OS-Arch tuple, e.g. windows-amd64")
-	version := flag.String("version", latestVersion, "decred version to download")
+	uri := flag.String("uri", defaultURI, "URI to manifest and sets")
 	skip := flag.Bool("skip", false, "skip download, requires path")
 	verbose := flag.Bool("verbose", false, "verbose")
 	flag.Parse()
@@ -43,6 +44,9 @@ func parseSettings() (*Settings, error) {
 	}
 	if *skip && *path == "" {
 		return nil, fmt.Errorf("must provide download path")
+	}
+	if *uri != defaultURI {
+		s.SkipVerify = true
 	}
 
 	var err error
@@ -54,7 +58,7 @@ func parseSettings() (*Settings, error) {
 	s.Manifest = *manifest
 	s.Path = *path
 	s.Tuple = *tuple
-	s.Version = *version
+	s.URI = *uri
 	s.SkipDownload = *skip
 	s.Verbose = *verbose
 
