@@ -7,7 +7,10 @@ import (
 	"fmt"
 	"io"
 	"os"
+	"path/filepath"
 	"strings"
+
+	"github.com/docker/docker/pkg/archive"
 
 	"golang.org/x/crypto/openpgp"
 )
@@ -91,4 +94,25 @@ func sha256File(filename string) ([]byte, error) {
 	}
 
 	return hasher.Sum(nil), nil
+}
+
+// extract downloaded package.
+func (c *ctx) extract() error {
+	manifest := filepath.Join(c.s.Path, c.s.Manifest)
+	_, filename, err := findOS(c.s.Tuple, manifest)
+	if err != nil {
+		return err
+	}
+
+	if c.s.Verbose {
+		fmt.Printf("extracting: %v -> %v\n", filename, c.s.Destination)
+	}
+
+	err = archive.UntarPath(filepath.Join(c.s.Path, filename),
+		c.s.Destination)
+	if err != nil {
+		return err
+	}
+
+	return nil
 }
