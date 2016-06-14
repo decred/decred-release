@@ -1,0 +1,112 @@
+hash: 8c0703f7dcaad7d3998dd5143bd548b0570f8667e3d0eb47b4564a3de9d53101
+updated: 2016-06-14T11:49:38.0908073-05:00
+imports:
+- name: github.com/boltdb/bolt
+  version: 831b652a7f8dbefaf94da0eb66abd46c0c4bcf23
+- name: github.com/btcsuite/btclog
+  version: f96df2375f37300305f329b8e5258764b4f19a7f
+- name: github.com/btcsuite/fastsha256
+  version: 302ad4db268b46f9ebda3078f6f7397f96047735
+- name: github.com/btcsuite/go-socks
+  version: cfe8b59e565c1a5bd4e2005d77cd9aa8b2e14524
+  subpackages:
+  - socks
+- name: github.com/btcsuite/golangcrypto
+  version: 53f62d9b43e87a6c56975cf862af7edf33a8d0df
+  subpackages:
+  - ripemd160
+  - ssh/terminal
+  - nacl/secretbox
+  - scrypt
+  - poly1305
+  - salsa20/salsa
+  - pbkdf2
+- name: github.com/btcsuite/seelog
+  version: 313961b101eb55f65ae0f03ddd4e322731763b6c
+- name: github.com/btcsuite/websocket
+  version: 31079b6807923eb23992c421b114992b95131b55
+- name: github.com/decred/bitset
+  version: 484b833245d5f9046e2893a6bd2e54b1df3a53a4
+- name: github.com/decred/blake256
+  version: a840e32d7c31fe2e0218607334cb120a683951a4
+- name: github.com/decred/dcrd
+  version: 927932170b20a637945dfc19b40dd2a0b55c8117
+  subpackages:
+  - chaincfg
+  - chaincfg/chainhash
+  - wire
+  - chaincfg/chainec
+  - blockchain
+  - blockchain/stake
+  - dcrjson
+  - txscript
+  - dcrec/edwards
+  - dcrec/secp256k1
+  - dcrec/secp256k1/schnorr
+  - database
+- name: github.com/decred/dcrrpcclient
+  version: f3c620d63cb02aec0c1152a72d3c8669b92a2fb5
+- name: github.com/decred/dcrutil
+  version: 4a3bdb1cb08b49811674750998363b8b8ccfd66e
+  subpackages:
+  - base58
+  - hdkeychain
+- name: github.com/decred/dcrwallet
+  version: dfb6bcd9c988137ae37d6b2dd947f18d9b088d7d
+  subpackages:
+  - prompt
+  - wallet
+  - walletdb/bdb
+  - internal/prompt
+  - chain
+  - waddrmgr
+  - wallet/txauthor
+  - wallet/txrules
+  - walletdb
+  - wstakemgr
+  - wtxmgr
+  - pgpwordlist
+  - internal/zero
+  - snacl
+  - internal/helpers
+  - wallet/internal/txsizes
+- name: github.com/decred/ed25519
+  version: b0909d3f798b97a03c9e77023f97a5301a2a7900
+  subpackages:
+  - edwards25519
+- name: github.com/docker/docker
+  version: c913dd5f575c877b93a812c8f57dcc212d566b87
+  subpackages:
+  - pkg/archive
+  - pkg/fileutils
+  - pkg/idtools
+  - pkg/ioutils
+  - pkg/pools
+  - pkg/promise
+  - pkg/system
+  - pkg/longpath
+- name: github.com/docker/go-units
+  version: f2d77a61e3c169b43402a0a1e84f06daf29b8190
+- name: github.com/mitchellh/go-homedir
+  version: 1111e456ffea841564ac0fa5f69c26ef44dafec9
+- name: github.com/Sirupsen/logrus
+  version: f3cfb454f4c209e6668c95216c4744b8fddb2356
+- name: golang.org/x/crypto
+  version: f3241ce8505855877cc8a9717bd61a0f7c4ea83c
+  subpackages:
+  - openpgp
+  - openpgp/armor
+  - openpgp/errors
+  - openpgp/packet
+  - openpgp/s2k
+  - cast5
+  - openpgp/elgamal
+- name: golang.org/x/net
+  version: 3f122ce3dbbe488b7e6a8bdb26f41edec852a40b
+  subpackages:
+  - context
+- name: golang.org/x/sys
+  version: 5a8c7f28c1853e998847117cf1f3fe96ce88a59f
+  subpackages:
+  - unix
+devImports: []
