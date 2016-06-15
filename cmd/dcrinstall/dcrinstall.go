@@ -357,6 +357,7 @@ func (c *ctx) exists() error {
 		// check actual config file
 		dir := dcrutil.AppDataDir(v.Name, false)
 		conf := filepath.Join(dir, v.Config)
+
 		if !exist(conf) {
 			continue
 		}
@@ -405,7 +406,7 @@ func (c *ctx) createConfigNormal(b binary, f *os.File) (string, error) {
 	return rv, nil
 }
 
-func (c *ctx) createConfigTicketbuyer(b binary, f *os.File) (string, error) {
+func (c *ctx) createConfigTicketbuyer(b binary, f *os.File, version string) (string, error) {
 	rv := ""
 	br := bufio.NewReader(f)
 	for {
@@ -432,7 +433,7 @@ func (c *ctx) createConfigTicketbuyer(b binary, f *os.File) (string, error) {
 
 		case strings.HasPrefix(line, "httpuipath"):
 			dir := filepath.Join(c.s.Destination,
-				"decred-"+c.s.Tuple, "webui")
+				"decred-"+c.s.Tuple+"-"+version, "webui")
 			line = fmt.Sprintf("httpuipath=%v\n", dir)
 
 		case strings.HasPrefix(line, "testnet"):
@@ -452,9 +453,11 @@ func (c *ctx) createConfigTicketbuyer(b binary, f *os.File) (string, error) {
 	return rv, nil
 }
 
-func (c *ctx) createConfig(b binary) (string, error) {
+func (c *ctx) createConfig(b binary, version string) (string, error) {
 	// read sample config
-	sample := filepath.Join(c.s.Destination, "decred-"+c.s.Tuple, b.Example)
+	sample := filepath.Join(c.s.Destination,
+		"decred-"+c.s.Tuple+"-"+version,
+		b.Example)
 
 	f, err := os.Open(sample)
 	if err != nil {
@@ -467,7 +470,7 @@ func (c *ctx) createConfig(b binary) (string, error) {
 	}
 
 	if b.Config == ticketbuyerConf {
-		return c.createConfigTicketbuyer(b, f)
+		return c.createConfigTicketbuyer(b, f, version)
 	}
 
 	return c.createConfigNormal(b, f)
@@ -557,7 +560,7 @@ func _main() error {
 
 	// lay down config files with parsed answers
 	for _, v := range binaries {
-		config, err := c.createConfig(v)
+		config, err := c.createConfig(v, version)
 		if err != nil {
 			return err
 		}
