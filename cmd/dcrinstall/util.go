@@ -8,6 +8,7 @@ import (
 	"io"
 	"os"
 	"path/filepath"
+	"regexp"
 	"strings"
 
 	"github.com/docker/docker/pkg/archive"
@@ -97,11 +98,11 @@ func sha256File(filename string) ([]byte, error) {
 }
 
 // extract downloaded package.
-func (c *ctx) extract() error {
+func (c *ctx) extract() (string, error) {
 	manifest := filepath.Join(c.s.Path, c.s.Manifest)
 	_, filename, err := findOS(c.s.Tuple, manifest)
 	if err != nil {
-		return err
+		return "", err
 	}
 
 	if c.s.Verbose {
@@ -111,8 +112,10 @@ func (c *ctx) extract() error {
 	err = archive.UntarPath(filepath.Join(c.s.Path, filename),
 		c.s.Destination)
 	if err != nil {
-		return err
+		return "", err
 	}
 
-	return nil
+	// fish out version
+	re := regexp.MustCompile("v[0-9]+.[0-9]+.[0-9]+")
+	return re.FindString(filename), nil
 }

@@ -321,10 +321,11 @@ func (c *ctx) verify() error {
 }
 
 // validate verifies that all binaries can be executed.
-func (c *ctx) validate() error {
+func (c *ctx) validate(version string) error {
 	for _, v := range binaries {
 		// not in love with this, pull this out of tar instead
-		filename := filepath.Join(c.s.Destination, "decred-"+c.s.Tuple,
+		filename := filepath.Join(c.s.Destination,
+			"decred-"+c.s.Tuple+"-"+version,
 			v.Name)
 
 		if c.s.Verbose {
@@ -522,12 +523,12 @@ func _main() error {
 		return err
 	}
 
-	err = c.extract()
+	version, err := c.extract()
 	if err != nil {
 		return err
 	}
 
-	err = c.validate()
+	err = c.validate(version)
 	if err != nil {
 		return err
 	}

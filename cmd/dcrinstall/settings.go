@@ -3,6 +3,7 @@ package main
 import (
 	"flag"
 	"fmt"
+	"path/filepath"
 	"runtime"
 
 	homedir "github.com/mitchellh/go-homedir"
@@ -49,11 +50,11 @@ func parseSettings() (*Settings, error) {
 		s.SkipVerify = true
 	}
 
-	var err error
-	s.Destination, err = homedir.Expand(*dest)
+	destination, err := homedir.Expand(*dest)
 	if err != nil {
 		return nil, err
 	}
+	s.Destination = filepath.Join(destination, "decred")
 
 	s.Manifest = *manifest
 	s.Path = *path
