@@ -105,6 +105,11 @@ func (c *ctx) extract() (string, error) {
 		return "", err
 	}
 
+	err = os.MkdirAll(c.s.Destination, 0700)
+	if err != nil {
+		return "", err
+	}
+
 	if c.s.Verbose {
 		fmt.Printf("extracting: %v -> %v\n", filename, c.s.Destination)
 	}
