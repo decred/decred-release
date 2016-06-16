@@ -9,6 +9,7 @@ import (
 	"os"
 	"path/filepath"
 	"regexp"
+	"runtime"
 	"strings"
 
 	"github.com/docker/docker/pkg/archive"
@@ -114,8 +115,18 @@ func (c *ctx) extract() (string, error) {
 		fmt.Printf("extracting: %v -> %v\n", filename, c.s.Destination)
 	}
 
-	err = archive.UntarPath(filepath.Join(c.s.Path, filename),
-		c.s.Destination)
+	src := filepath.Join(c.s.Path, filename)
+	a, err := os.Open(src)
+	if err != nil {
+		return "", err
+	}
+	defer a.Close()
+
+	var options *archive.TarOptions
+	if runtime.GOOS == "darwin" {
+		options = &archive.TarOptions{NoLchown: true}
+	}
+	err = archive.Untar(a, c.s.Destination, options)
 	if err != nil {
 		return "", err
 	}
