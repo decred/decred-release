@@ -12,12 +12,14 @@ import (
 	"os/exec"
 	"os/user"
 	"path/filepath"
+	"runtime"
 	"strings"
 
 	"github.com/decred/dcrd/chaincfg"
 	"github.com/decred/dcrutil"
 	"github.com/decred/dcrwallet/prompt"
 	"github.com/decred/dcrwallet/wallet"
+	"github.com/docker/docker/pkg/archive"
 
 	_ "github.com/decred/dcrwallet/walletdb/bdb"
 )
@@ -255,6 +257,49 @@ func (c *ctx) verify() error {
 
 	if c.s.Verbose {
 		fmt.Printf("OK\n")
+	}
+
+	return nil
+}
+
+// copy verifies that all binaries can be executed.
+func (c *ctx) copy(version string) error {
+	for _, v := range binaries {
+		// not in love with this, pull this out of tar instead
+		filename := filepath.Join(c.s.Destination,
+			"decred-"+c.s.Tuple+"-"+version,
+			v.Name)
+
+		// yep, this is ferrealz
+		if runtime.GOOS == "windows" {
+			filename += ".exe"
+		}
+
+		if c.s.Verbose {
+			fmt.Printf("installing: %v -> %v\n",
+				filename, c.s.Destination)
+		}
+
+		// +"/" is needed to indicate the to tar that it is a directory
+		err := archive.CopyResource(filename, c.s.Destination+"/", false)
+		if err != nil {
+			return err
+		}
+	}
+
+	// non binaries
+	filename := filepath.Join(c.s.Destination,
+		"decred-"+c.s.Tuple+"-"+version,
+		"webui")
+
+	if c.s.Verbose {
+		fmt.Printf("installing: %v -> %v\n",
+			filename, c.s.Destination)
+	}
+
+	err := archive.CopyResource(filename, c.s.Destination+"/", false)
+	if err != nil {
+		return err
 	}
 
 	return nil
@@ -565,6 +610,12 @@ func _main() error {
 	_ = w
 
 	err = loader.UnloadWallet()
+	if err != nil {
+		return err
+	}
+
+	// install binaries in final location
+	err = c.copy(version)
 	if err != nil {
 		return err
 	}
