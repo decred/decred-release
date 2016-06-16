@@ -25,6 +25,9 @@ import (
 // global context
 type ctx struct {
 	s *Settings
+
+	user     string
+	password string
 }
 
 type binary struct {
@@ -62,26 +65,26 @@ const (
 	ticketbuyerConf = "ticketbuyer.conf"
 )
 
-func obtainUserName() (string, error) {
+func (c *ctx) obtainUserName() error {
 	u, err := user.Current()
 	if err != nil {
-		return "", err
+		return err
 	}
-
-	return u.Username, nil
+	c.user = u.Username
+	return nil
 }
 
-func obtainPassword() (string, error) {
+func (c *ctx) obtainPassword() error {
 	b := make([]byte, 24)
 	_, err := io.ReadFull(rand.Reader, b[:])
 	if err != nil {
-		return "", err
+		return err
 	}
 
 	// convert password to something readable
-	password := base64.StdEncoding.EncodeToString(b)
+	c.password = base64.StdEncoding.EncodeToString(b)
 
-	return password, nil
+	return nil
 }
 
 // findOS itterates over the entire manifest and plucks out the digest and
@@ -329,18 +332,10 @@ func (c *ctx) createConfigNormal(b binary, f *os.File) (string, error) {
 		}
 
 		if strings.HasPrefix(line, usr) {
-			username, err := obtainUserName()
-			if err != nil {
-				return "", err
-			}
-			line = usr[2:] + username + "\n"
+			line = usr[2:] + c.user + "\n"
 		}
 		if strings.HasPrefix(line, pwd) {
-			password, err := obtainPassword()
-			if err != nil {
-				return "", err
-			}
-			line = pwd[2:] + password + "\n"
+			line = pwd[2:] + c.password + "\n"
 		}
 		if strings.HasPrefix(line, network) {
 			line = network[2:] + "1\n"
@@ -361,16 +356,6 @@ func (c *ctx) createConfigNormal(b binary, f *os.File) (string, error) {
 }
 
 func (c *ctx) createConfigTicketbuyer(b binary, f *os.File) (string, error) {
-	username, err := obtainUserName()
-	if err != nil {
-		return "", err
-	}
-
-	password, err := obtainPassword()
-	if err != nil {
-		return "", err
-	}
-
 	seen := false
 	rv := ""
 	br := bufio.NewReader(f)
@@ -382,16 +367,16 @@ func (c *ctx) createConfigTicketbuyer(b binary, f *os.File) (string, error) {
 
 		switch {
 		case strings.HasPrefix(line, "dcrduser"):
-			line = fmt.Sprintf("dcrduser=%v\n", username)
+			line = fmt.Sprintf("dcrduser=%v\n", c.user)
 
 		case strings.HasPrefix(line, "dcrwuser"):
-			line = fmt.Sprintf("dcrwuser=%v\n", username)
+			line = fmt.Sprintf("dcrwuser=%v\n", c.user)
 
 		case strings.HasPrefix(line, "dcrdpass"):
-			line = fmt.Sprintf("dcrdpass=%v\n", password)
+			line = fmt.Sprintf("dcrdpass=%v\n", c.password)
 
 		case strings.HasPrefix(line, "dcrwpass"):
-			line = fmt.Sprintf("dcrwpass=%v\n", password)
+			line = fmt.Sprintf("dcrwpass=%v\n", c.password)
 
 		case strings.HasPrefix(line, "httpsvrport"):
 			// use default from config file
@@ -508,6 +493,17 @@ func _main() error {
 	}
 
 	err = c.exists()
+	if err != nil {
+		return err
+	}
+
+	// prime defaults
+	err = c.obtainUserName()
+	if err != nil {
+		return err
+	}
+
+	err = c.obtainPassword()
 	if err != nil {
 		return err
 	}
