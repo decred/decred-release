@@ -67,59 +67,11 @@ var (
 			Example: "sample-dcrwallet.conf",
 		},
 	}
-
-	// DO NOT ALTER ORDER
-	qa = []QA{
-		{
-			Question:      "RPC user name",
-			ObtainDefault: obtainUserName,
-			Validate:      notEmpty,
-			Visible:       true,
-		},
-		{
-			Question:      "RPC password (hit enter to auto-generate)",
-			ObtainDefault: obtainPassword,
-			Validate:      notEmpty,
-		},
-		{
-			Question:      "Run on testnet",
-			ObtainDefault: obtainTestnet,
-			Validate:      trueFalse,
-			Visible:       true,
-		},
-	}
 )
 
 const (
-	qaRPCUser = 0 // this is the index offset in the qa Array
-	qaRPCPass = 1
-	qaTestnet = 2
-
 	ticketbuyerConf = "ticketbuyer.conf"
 )
-
-func notEmpty(s string) (string, error) {
-	if len(s) == 0 {
-		return "", fmt.Errorf("input may not be empty")
-	}
-	return s, nil
-}
-
-func trueFalse(s string) (string, error) {
-	if len(s) == 0 {
-		return "", fmt.Errorf("input may not be empty")
-	}
-	s = strings.ToLower(s)
-
-	if s[0] == 'y' || s[0] == '1' || s[0] == 't' {
-		return "true", nil
-	}
-	if s[0] == 'n' || s[0] == '0' || s[0] == 'f' {
-		return "false", nil
-	}
-
-	return "", fmt.Errorf("Answer must be true/false/1/0/yes/no")
-}
 
 func obtainUserName() (string, error) {
 	u, err := user.Current()
@@ -141,10 +93,6 @@ func obtainPassword() (string, error) {
 	password := base64.StdEncoding.EncodeToString(b)
 
 	return password, nil
-}
-
-func obtainTestnet() (string, error) {
-	return "true", nil
 }
 
 // findOS itterates over the entire manifest and plucks out the digest and
@@ -288,7 +236,7 @@ func (c *ctx) verify() error {
 		}
 
 		if c.s.Verbose {
-			fmt.Printf("ok\n")
+			fmt.Printf("OK\n")
 		}
 	}
 
@@ -314,7 +262,7 @@ func (c *ctx) verify() error {
 	}
 
 	if c.s.Verbose {
-		fmt.Printf("ok\n")
+		fmt.Printf("OK\n")
 	}
 
 	return nil
@@ -342,7 +290,7 @@ func (c *ctx) validate(version string) error {
 		}
 
 		if c.s.Verbose {
-			fmt.Printf("ok\n")
+			fmt.Printf("OK\n")
 		}
 
 	}
@@ -374,10 +322,11 @@ func (c *ctx) exists() error {
 }
 
 func (c *ctx) createConfigNormal(b binary, f *os.File) (string, error) {
+	seen := false
 	rv := ""
 	usr := "; rpcuser="
 	pwd := "; rpcpass="
-	tst := "; testnet="
+	network := "; " + strings.ToLower(c.s.Net) + "="
 	if b.Name == "dcrwallet" {
 		usr = "; username="
 		pwd = "; password="
@@ -391,22 +340,49 @@ func (c *ctx) createConfigNormal(b binary, f *os.File) (string, error) {
 		}
 
 		if strings.HasPrefix(line, usr) {
-			line = usr[2:] + qa[qaRPCUser].Answer + "\n"
+			username, err := obtainUserName()
+			if err != nil {
+				return "", err
+			}
+			line = usr[2:] + username + "\n"
 		}
 		if strings.HasPrefix(line, pwd) {
-			line = pwd[2:] + qa[qaRPCPass].Answer + "\n"
+			password, err := obtainPassword()
+			if err != nil {
+				return "", err
+			}
+			line = pwd[2:] + password + "\n"
 		}
-		if strings.HasPrefix(line, tst) {
-			line = tst[2:] + qa[qaTestnet].Answer + "\n"
+		if strings.HasPrefix(line, network) {
+			line = network[2:] + "1\n"
+			seen = true
 		}
 
 		rv += line
 	}
 
+	if c.s.Net != netMain {
+		if seen == false {
+			return "", fmt.Errorf("could not set net to %v\n",
+				c.s.Net)
+		}
+	}
+
 	return rv, nil
 }
 
-func (c *ctx) createConfigTicketbuyer(b binary, f *os.File, version string) (string, error) {
+func (c *ctx) createConfigTicketbuyer(b binary, f *os.File) (string, error) {
+	username, err := obtainUserName()
+	if err != nil {
+		return "", err
+	}
+
+	password, err := obtainPassword()
+	if err != nil {
+		return "", err
+	}
+
+	seen := false
 	rv := ""
 	br := bufio.NewReader(f)
 	for {
@@ -417,27 +393,39 @@ func (c *ctx) createConfigTicketbuyer(b binary, f *os.File, version string) (str
 
 		switch {
 		case strings.HasPrefix(line, "dcrduser"):
-			line = fmt.Sprintf("dcrduser=%v\n", qa[qaRPCUser].Answer)
+			line = fmt.Sprintf("dcrduser=%v\n", username)
 
 		case strings.HasPrefix(line, "dcrwuser"):
-			line = fmt.Sprintf("dcrwuser=%v\n", qa[qaRPCUser].Answer)
+			line = fmt.Sprintf("dcrwuser=%v\n", username)
 
 		case strings.HasPrefix(line, "dcrdpass"):
-			line = fmt.Sprintf("dcrdpass=%v\n", qa[qaRPCPass].Answer)
+			line = fmt.Sprintf("dcrdpass=%v\n", password)
 
 		case strings.HasPrefix(line, "dcrwpass"):
-			line = fmt.Sprintf("dcrwpass=%v\n", qa[qaRPCPass].Answer)
+			line = fmt.Sprintf("dcrwpass=%v\n", password)
 
 		case strings.HasPrefix(line, "httpsvrport"):
 			// use default from config file
 
 		case strings.HasPrefix(line, "httpuipath"):
-			dir := filepath.Join(c.s.Destination,
-				"decred-"+c.s.Tuple+"-"+version, "webui")
+			dir := filepath.Join(c.s.Destination, "webui")
 			line = fmt.Sprintf("httpuipath=%v\n", dir)
 
+		case strings.HasPrefix(line, "simnet"):
+			a := "0"
+			if c.s.Net == netSim {
+				a = "1"
+			}
+			line = fmt.Sprintf("simnet=%v\n", a)
+			seen = true
+
 		case strings.HasPrefix(line, "testnet"):
-			line = fmt.Sprintf("testnet=%v\n", qa[qaTestnet].Answer)
+			a := "0"
+			if c.s.Net == netTest {
+				a = "1"
+			}
+			line = fmt.Sprintf("testnet=%v\n", a)
+			seen = true
 
 		case strings.HasPrefix(line, "\n"):
 			// do nothing
@@ -448,6 +436,13 @@ func (c *ctx) createConfigTicketbuyer(b binary, f *os.File, version string) (str
 		}
 
 		rv += line
+	}
+
+	if c.s.Net != netMain {
+		if seen == false {
+			return "", fmt.Errorf("could not set net to %v\n",
+				c.s.Net)
+		}
 	}
 
 	return rv, nil
@@ -470,7 +465,7 @@ func (c *ctx) createConfig(b binary, version string) (string, error) {
 	}
 
 	if b.Config == ticketbuyerConf {
-		return c.createConfigTicketbuyer(b, f, version)
+		return c.createConfigTicketbuyer(b, f)
 	}
 
 	return c.createConfigNormal(b, f)
@@ -501,19 +496,6 @@ func _main() error {
 		return err
 	}
 
-	// set all quenstions and default answers
-	for i := range qa {
-		if qa[i].ObtainDefault == nil {
-			continue
-		}
-
-		d, err := qa[i].ObtainDefault()
-		if err != nil {
-			return err
-		}
-		qa[i].Default = d
-	}
-
 	if !c.s.SkipDownload {
 		c.s.Path, err = c.download()
 		if err != nil {
@@ -541,23 +523,6 @@ func _main() error {
 		return err
 	}
 
-	// Q and A
-	for i, v := range qa {
-	retry:
-		def := "[]"
-		if v.Visible {
-			def = fmt.Sprintf("[%v]", v.Default)
-		}
-		fmt.Printf("%v %v: ", v.Question, def)
-		a := answer(v.Default)
-		a, err = v.Validate(a)
-		if err != nil {
-			fmt.Printf("%v\n", err)
-			goto retry
-		}
-		qa[i].Answer = a
-	}
-
 	// lay down config files with parsed answers
 	for _, v := range binaries {
 		config, err := c.createConfig(v, version)
@@ -582,15 +547,8 @@ func _main() error {
 	}
 
 	// create wallet
-	var walletType string
-	if qa[qaTestnet].Answer == "true" {
-		walletType = "Testnet"
-	} else {
-		walletType = "Mainnet"
-	}
-
 	if c.s.Verbose {
-		fmt.Printf("creating wallet: %v\n", walletType)
+		fmt.Printf("creating wallet: %v\n", c.s.Net)
 	}
 
 	r := bufio.NewReader(os.Stdin)
@@ -600,11 +558,17 @@ func _main() error {
 	}
 
 	var chainParams *chaincfg.Params
-	if qa[qaTestnet].Answer == "true" {
-		chainParams = &chaincfg.TestNetParams
-	} else {
+	switch c.s.Net {
+	case netMain:
 		chainParams = &chaincfg.MainNetParams
+	case netTest:
+		chainParams = &chaincfg.TestNetParams
+	case netSim:
+		chainParams = &chaincfg.SimNetParams
+	default:
+		return fmt.Errorf("invalid wallet type: %v", c.s.Net)
 	}
+
 	dbDir := filepath.Join(dcrutil.AppDataDir("dcrwallet", false),
 		chainParams.Name)
 	loader := wallet.NewLoader(chainParams, dbDir, new(wallet.StakeOptions),
