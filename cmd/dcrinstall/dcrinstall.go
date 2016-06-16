@@ -27,17 +27,6 @@ type ctx struct {
 	s *Settings
 }
 
-// question answer struct
-type QA struct {
-	Question string
-	Default  string
-	Answer   string
-	Visible  bool // print Default?
-
-	Validate      func(string) (string, error) // validate and sanitize value
-	ObtainDefault func() (string, error)       // obtain default value
-}
-
 type binary struct {
 	Name    string // binary filename
 	Config  string // actual config file
