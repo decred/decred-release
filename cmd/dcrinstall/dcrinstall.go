@@ -239,11 +239,11 @@ func (c *ctx) verify() error {
 
 		err = pgpVerify(manifest+".asc", manifest)
 		if err != nil {
-			c.log("FAIL\n")
+			c.logNoTime("FAIL\n")
 			return fmt.Errorf("manifest PGP signature incorrect: %v", err)
 		}
 
-		c.log("OK\n")
+		c.logNoTime("OK\n")
 	}
 
 	// verify digest
@@ -257,13 +257,13 @@ func (c *ctx) verify() error {
 
 	// verify package digest
 	if hex.EncodeToString(d) != digest {
-		c.log("FAILED\n")
+		c.logNoTime("FAILED\n")
 		c.log("%v %v\n", hex.EncodeToString(d), digest)
 
 		return fmt.Errorf("corrupt digest %v", filename)
 	}
 
-	c.log("OK\n")
+	c.logNoTime("OK\n")
 
 	return nil
 }
@@ -318,11 +318,32 @@ func (c *ctx) validate(version string) error {
 		cmd := exec.Command(filename, "-h")
 		err := cmd.Start()
 		if err != nil {
-			c.log("FAILED\n")
+			c.logNoTime("FAILED\n")
 			return err
 		}
 
-		c.log("OK\n")
+		c.logNoTime("OK\n")
+
+	}
+	return nil
+}
+
+//
+func (c *ctx) recordCurrent() error {
+	for _, v := range binaries {
+		// not in love with this, pull this out of tar instead
+		filename := filepath.Join(c.s.Destination, v.Name)
+
+		c.log("current version: %v ", filename)
+
+		cmd := exec.Command(filename, "--version")
+		version, err := cmd.CombinedOutput()
+		if err != nil {
+			c.logNoTime("NOT INSTALLED\n")
+			continue
+		}
+
+		c.logNoTime("%v\n", strings.TrimSpace(string(version)))
 
 	}
 	return nil
@@ -517,6 +538,11 @@ func (c *ctx) main() error {
 	}
 
 	err = c.validate(version)
+	if err != nil {
+		return err
+	}
+
+	err = c.recordCurrent()
 	if err != nil {
 		return err
 	}
