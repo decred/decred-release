@@ -632,6 +632,10 @@ func main() {
 
 	// exit with error set
 	if err != nil {
+		if !c.s.Verbose {
+			// let user know something went wrong when not verbose
+			fmt.Fprintf(os.Stderr, "%v\n", err)
+		}
 		os.Exit(1)
 	}
 }
