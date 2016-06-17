@@ -328,7 +328,30 @@ func (c *ctx) validate(version string) error {
 	return nil
 }
 
-//
+func (c *ctx) stopWallet() error {
+	filename := filepath.Join(c.s.Destination, "dcrctl")
+	cmd := exec.Command(filename, "--wallet", "stop")
+	err := cmd.Start()
+	if err != nil {
+		return err
+	}
+
+	return nil
+}
+
+func (c *ctx) stopDrcd() error {
+	filename := filepath.Join(c.s.Destination, "dcrctl")
+	cmd := exec.Command(filename, "stop")
+	err := cmd.Start()
+	if err != nil {
+		return err
+	}
+
+	return nil
+}
+
+// recordCurrent iterates over binaries and records their version number in
+// the log file.
 func (c *ctx) recordCurrent() error {
 	for _, v := range binaries {
 		// not in love with this, pull this out of tar instead
@@ -346,13 +369,15 @@ func (c *ctx) recordCurrent() error {
 		c.logNoTime("%v\n", strings.TrimSpace(string(version)))
 
 	}
+
 	return nil
 }
 
 // exists ensures that either all or none of the binary config files exst.
-func (c *ctx) exists() error {
+func (c *ctx) exists() ([]string, error) {
 	x := 0
 	s := ""
+	found := make([]string, 0, len(binaries))
 	for _, v := range binaries {
 		// check actual config file
 		dir := dcrutil.AppDataDir(v.Name, false)
@@ -362,15 +387,16 @@ func (c *ctx) exists() error {
 			continue
 		}
 
+		found = append(found, filepath.Base(conf))
 		s += filepath.Base(conf) + " "
 		x++
 	}
 
 	if x != 0 {
-		return fmt.Errorf("%valready exists", s)
+		return found, fmt.Errorf("%valready exists", s)
 	}
 
-	return nil
+	return nil, nil
 }
 
 func (c *ctx) createConfigNormal(b binary, f *os.File) (string, error) {
@@ -547,77 +573,99 @@ func (c *ctx) main() error {
 		return err
 	}
 
-	err = c.exists()
+	found, err := c.exists()
 	if err != nil {
-		return err
-	}
-
-	// prime defaults
-	err = c.obtainUserName()
-	if err != nil {
-		return err
-	}
-
-	err = c.obtainPassword()
-	if err != nil {
-		return err
-	}
-
-	// lay down config files with parsed answers
-	for _, v := range binaries {
-		config, err := c.createConfig(v, version)
-		if err != nil {
+		switch {
+		default:
+			c.log("--- Unknown state, manual intervention ---" +
+				"required\n")
 			return err
+
+		case len(found) == len(binaries):
+			c.log("--- Performing upgrade ---\n")
+
+			//err = c.stopWallet()
+			//if err != nil {
+			//	return err
+			//}
+
+			//err = c.stopDrcd()
+			//if err != nil {
+			//	return err
+			//}
+
+		case len(found) == 0:
+			c.log("--- Performing install ---\n")
+
+			// prime defaults
+			err = c.obtainUserName()
+			if err != nil {
+				return err
+			}
+
+			err = c.obtainPassword()
+			if err != nil {
+				return err
+			}
+
+			// lay down config files with parsed answers
+			for _, v := range binaries {
+				config, err := c.createConfig(v, version)
+				if err != nil {
+					return err
+				}
+
+				dir := dcrutil.AppDataDir(v.Name, false)
+				c.log("creating directory: %v\n", dir)
+
+				err = os.MkdirAll(dir, 0700)
+				if err != nil {
+					return err
+				}
+
+				err = c.writeConfig(v, config)
+				if err != nil {
+					return err
+				}
+			}
+
+			// create wallet
+			c.log("creating wallet: %v\n", c.s.Net)
+
+			r := bufio.NewReader(os.Stdin)
+			privPass, pubPass, seed, err := prompt.Setup(r)
+			if err != nil {
+				return err
+			}
+
+			var chainParams *chaincfg.Params
+			switch c.s.Net {
+			case netMain:
+				chainParams = &chaincfg.MainNetParams
+			case netTest:
+				chainParams = &chaincfg.TestNetParams
+			case netSim:
+				chainParams = &chaincfg.SimNetParams
+			default:
+				return fmt.Errorf("invalid wallet type: %v",
+					c.s.Net)
+			}
+
+			dbDir := filepath.Join(dcrutil.AppDataDir("dcrwallet",
+				false), chainParams.Name)
+			loader := wallet.NewLoader(chainParams, dbDir,
+				new(wallet.StakeOptions), false, false, 0, false)
+			w, err := loader.CreateNewWallet(pubPass, privPass, seed)
+			if err != nil {
+				return err
+			}
+			_ = w
+
+			err = loader.UnloadWallet()
+			if err != nil {
+				return err
+			}
 		}
-
-		dir := dcrutil.AppDataDir(v.Name, false)
-		c.log("creating directory: %v\n", dir)
-
-		err = os.MkdirAll(dir, 0700)
-		if err != nil {
-			return err
-		}
-
-		err = c.writeConfig(v, config)
-		if err != nil {
-			return err
-		}
-	}
-
-	// create wallet
-	c.log("creating wallet: %v\n", c.s.Net)
-
-	r := bufio.NewReader(os.Stdin)
-	privPass, pubPass, seed, err := prompt.Setup(r)
-	if err != nil {
-		return err
-	}
-
-	var chainParams *chaincfg.Params
-	switch c.s.Net {
-	case netMain:
-		chainParams = &chaincfg.MainNetParams
-	case netTest:
-		chainParams = &chaincfg.TestNetParams
-	case netSim:
-		chainParams = &chaincfg.SimNetParams
-	default:
-		return fmt.Errorf("invalid wallet type: %v", c.s.Net)
-	}
-
-	dbDir := filepath.Join(dcrutil.AppDataDir("dcrwallet", false),
-		chainParams.Name)
-	loader := wallet.NewLoader(chainParams, dbDir, new(wallet.StakeOptions),
-		false, false, 0, false)
-	w, err := loader.CreateNewWallet(pubPass, privPass, seed)
-	if err != nil {
-		return err
-	}
-	_ = w
-
-	err = loader.UnloadWallet()
-	if err != nil {
-		return err
 	}
 
 	// install binaries in final location
