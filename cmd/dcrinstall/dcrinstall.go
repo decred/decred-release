@@ -328,26 +328,36 @@ func (c *ctx) validate(version string) error {
 	return nil
 }
 
-func (c *ctx) stopWallet() error {
+func (c *ctx) walletRunning() bool {
 	filename := filepath.Join(c.s.Destination, "dcrctl")
-	cmd := exec.Command(filename, "--wallet", "stop")
-	err := cmd.Start()
-	if err != nil {
-		return err
+	if !exist(filename) {
+		// shouldn't be running if it doesn't exist
+		return false
 	}
 
-	return nil
+	cmd := exec.Command(filename, "--wallet", "ping")
+	_, err := cmd.CombinedOutput()
+	if err != nil {
+		return false
+	}
+
+	return true
 }
 
-func (c *ctx) stopDrcd() error {
+func (c *ctx) dcrdRunning() bool {
 	filename := filepath.Join(c.s.Destination, "dcrctl")
-	cmd := exec.Command(filename, "stop")
-	err := cmd.Start()
-	if err != nil {
-		return err
+	if !exist(filename) {
+		// shouldn't be running if it doesn't exist
+		return false
 	}
 
-	return nil
+	cmd := exec.Command(filename, "ping")
+	_, err := cmd.CombinedOutput()
+	if err != nil {
+		return false
+	}
+
+	return true
 }
 
 // recordCurrent iterates over binaries and records their version number in
@@ -546,6 +556,14 @@ func (c *ctx) writeConfig(b binary, cf string) error {
 func (c *ctx) main() error {
 	var err error
 
+	if c.walletRunning() {
+		return fmt.Errorf("dcrwallet is still running")
+	}
+
+	if c.dcrdRunning() {
+		return fmt.Errorf("dcrd is still running")
+	}
+
 	if !c.s.SkipDownload {
 		c.s.Path, err = c.download()
 		if err != nil {
@@ -583,16 +601,6 @@ func (c *ctx) main() error {
 
 		case len(found) == len(binaries):
 			c.log("--- Performing upgrade ---\n")
-
-			//err = c.stopWallet()
-			//if err != nil {
-			//	return err
-			//}
-
-			//err = c.stopDrcd()
-			//if err != nil {
-			//	return err
-			//}
 
 		case len(found) == 0:
 			c.log("--- Performing install ---\n")
