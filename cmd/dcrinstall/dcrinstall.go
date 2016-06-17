@@ -14,6 +14,7 @@ import (
 	"path/filepath"
 	"runtime"
 	"strings"
+	"time"
 
 	"github.com/decred/dcrd/chaincfg"
 	"github.com/decred/dcrutil"
@@ -30,6 +31,8 @@ type ctx struct {
 
 	user     string
 	password string
+
+	logFilename string
 }
 
 type binary struct {
@@ -66,6 +69,31 @@ var (
 const (
 	ticketbuyerConf = "ticketbuyer.conf"
 )
+
+func (c *ctx) logNoTime(format string, args ...interface{}) error {
+	f, err := os.OpenFile(c.logFilename, os.O_CREATE|os.O_RDWR|os.O_APPEND,
+		0600)
+	if err != nil {
+		return err
+	}
+	defer f.Close()
+
+	if c.s.Verbose {
+		fmt.Printf(format, args...)
+	}
+
+	_, err = fmt.Fprintf(f, format, args...)
+	if err != nil {
+		return err
+	}
+
+	return nil
+}
+
+func (c *ctx) log(format string, args ...interface{}) error {
+	t := time.Now().Format("15:04:05.000 ")
+	return c.logNoTime(t+format, args...)
+}
 
 func (c *ctx) obtainUserName() error {
 	u, err := user.Current()
@@ -148,10 +176,8 @@ func (c *ctx) download() (string, error) {
 
 	// download manifest
 	manifestURI := c.s.URI + "/" + c.s.Manifest
-	if c.s.Verbose {
-		fmt.Printf("temporary directory: %v\n", td)
-		fmt.Printf("downloading manifest: %v\n", manifestURI)
-	}
+	c.log("temporary directory: %v\n", td)
+	c.log("downloading manifest: %v\n", manifestURI)
 
 	manifest := filepath.Join(td, filepath.Base(manifestURI))
 	err = downloadToFile(manifestURI, manifest, c.s.SkipVerify)
@@ -162,15 +188,11 @@ func (c *ctx) download() (string, error) {
 	// download manifest signature
 	manifestAscURI := c.s.URI + "/" + c.s.Manifest + ".asc"
 	if c.s.SkipVerify {
-		if c.s.Verbose {
-			fmt.Printf("SKIPPING downloading manifest "+
-				"signatures: %v\n", manifestAscURI)
-		}
+		c.log("SKIPPING downloading manifest "+
+			"signatures: %v\n", manifestAscURI)
 	} else {
-		if c.s.Verbose {
-			fmt.Printf("downloading manifest signatures: %v\n",
-				manifestAscURI)
-		}
+		c.log("downloading manifest signatures: %v\n",
+			manifestAscURI)
 
 		manifestAsc := filepath.Join(td, filepath.Base(manifestAscURI))
 		err = downloadToFile(manifestAscURI, manifestAsc,
@@ -188,9 +210,7 @@ func (c *ctx) download() (string, error) {
 
 	// download requested package
 	packageURI := c.s.URI + "/" + filename
-	if c.s.Verbose {
-		fmt.Printf("downloading package: %v\n", packageURI)
-	}
+	c.log("downloading package: %v\n", packageURI)
 
 	pkg := filepath.Join(td, filepath.Base(packageURI))
 	err = downloadToFile(packageURI, pkg, c.s.SkipVerify)
@@ -211,33 +231,23 @@ func (c *ctx) verify() error {
 	}
 
 	if c.s.SkipVerify {
-		if c.s.Verbose {
-			fmt.Printf("SKIPPING verifying manifest: %v\n",
-				c.s.Manifest)
-		}
+		c.log("SKIPPING verifying manifest: %v\n",
+			c.s.Manifest)
 	} else {
 		// verify manifest
-		if c.s.Verbose {
-			fmt.Printf("verifying manifest: %v ", c.s.Manifest)
-		}
+		c.log("verifying manifest: %v ", c.s.Manifest)
 
 		err = pgpVerify(manifest+".asc", manifest)
 		if err != nil {
-			if c.s.Verbose {
-				fmt.Printf("fail\n")
-			}
+			c.log("FAIL\n")
 			return fmt.Errorf("manifest PGP signature incorrect: %v", err)
 		}
 
-		if c.s.Verbose {
-			fmt.Printf("OK\n")
-		}
+		c.log("OK\n")
 	}
 
 	// verify digest
-	if c.s.Verbose {
-		fmt.Printf("verifying package: %v ", filename)
-	}
+	c.log("verifying package: %v ", filename)
 
 	pkg := filepath.Join(c.s.Path, filename)
 	d, err := sha256File(pkg)
@@ -247,17 +257,13 @@ func (c *ctx) verify() error {
 
 	// verify package digest
 	if hex.EncodeToString(d) != digest {
-		if c.s.Verbose {
-			fmt.Printf("failed\n")
-		}
-		fmt.Printf("%v %v\n", hex.EncodeToString(d), digest)
+		c.log("FAILED\n")
+		c.log("%v %v\n", hex.EncodeToString(d), digest)
 
 		return fmt.Errorf("corrupt digest %v", filename)
 	}
 
-	if c.s.Verbose {
-		fmt.Printf("OK\n")
-	}
+	c.log("OK\n")
 
 	return nil
 }
@@ -275,10 +281,7 @@ func (c *ctx) copy(version string) error {
 			filename += ".exe"
 		}
 
-		if c.s.Verbose {
-			fmt.Printf("installing: %v -> %v\n",
-				filename, c.s.Destination)
-		}
+		c.log("installing: %v -> %v\n", filename, c.s.Destination)
 
 		// +"/" is needed to indicate the to tar that it is a directory
 		err := archive.CopyResource(filename, c.s.Destination+"/", false)
@@ -292,10 +295,7 @@ func (c *ctx) copy(version string) error {
 		"decred-"+c.s.Tuple+"-"+version,
 		"webui")
 
-	if c.s.Verbose {
-		fmt.Printf("installing: %v -> %v\n",
-			filename, c.s.Destination)
-	}
+	c.log("installing: %v -> %v\n", filename, c.s.Destination)
 
 	err := archive.CopyResource(filename, c.s.Destination+"/", false)
 	if err != nil {
@@ -313,22 +313,16 @@ func (c *ctx) validate(version string) error {
 			"decred-"+c.s.Tuple+"-"+version,
 			v.Name)
 
-		if c.s.Verbose {
-			fmt.Printf("checking: %v ", filename)
-		}
+		c.log("checking: %v ", filename)
 
 		cmd := exec.Command(filename, "-h")
 		err := cmd.Start()
 		if err != nil {
-			if c.s.Verbose {
-				fmt.Printf("failed\n")
-			}
+			c.log("FAILED\n")
 			return err
 		}
 
-		if c.s.Verbose {
-			fmt.Printf("OK\n")
-		}
+		c.log("OK\n")
 
 	}
 	return nil
@@ -479,9 +473,7 @@ func (c *ctx) createConfig(b binary, version string) (string, error) {
 	}
 	defer f.Close()
 
-	if c.s.Verbose {
-		fmt.Printf("parsing: %v\n", sample)
-	}
+	c.log("parsing: %v\n", sample)
 
 	if b.Config == ticketbuyerConf {
 		return c.createConfigTicketbuyer(b, f)
@@ -494,9 +486,7 @@ func (c *ctx) writeConfig(b binary, cf string) error {
 	dir := dcrutil.AppDataDir(b.Name, false)
 	conf := filepath.Join(dir, b.Config)
 
-	if c.s.Verbose {
-		fmt.Printf("writing: %v\n", conf)
-	}
+	c.log("writing: %v\n", conf)
 
 	err := ioutil.WriteFile(conf, []byte(cf), 0600)
 	if err != nil {
@@ -506,14 +496,8 @@ func (c *ctx) writeConfig(b binary, cf string) error {
 	return nil
 }
 
-func _main() error {
+func (c *ctx) main() error {
 	var err error
-
-	c := &ctx{}
-	c.s, err = parseSettings()
-	if err != nil {
-		return err
-	}
 
 	if !c.s.SkipDownload {
 		c.s.Path, err = c.download()
@@ -561,9 +545,7 @@ func _main() error {
 		}
 
 		dir := dcrutil.AppDataDir(v.Name, false)
-		if c.s.Verbose {
-			fmt.Printf("creating directory: %v\n", dir)
-		}
+		c.log("creating directory: %v\n", dir)
 
 		err = os.MkdirAll(dir, 0700)
 		if err != nil {
@@ -577,9 +559,7 @@ func _main() error {
 	}
 
 	// create wallet
-	if c.s.Verbose {
-		fmt.Printf("creating wallet: %v\n", c.s.Net)
-	}
+	c.log("creating wallet: %v\n", c.s.Net)
 
 	r := bufio.NewReader(os.Stdin)
 	privPass, pubPass, seed, err := prompt.Setup(r)
@@ -624,9 +604,34 @@ func _main() error {
 }
 
 func main() {
-	err := _main()
+	var err error
+
+	c := &ctx{}
+	c.s, err = parseSettings()
 	if err != nil {
 		fmt.Fprintf(os.Stderr, "%v\n", err)
+		os.Exit(1)
+	}
+	c.logFilename = filepath.Join(c.s.Destination, "dcrinstaller.log")
+
+	c.logNoTime("=== dcrinstall run %v ===\n",
+		time.Now().Format(time.RFC850))
+
+	err = os.MkdirAll(c.s.Destination, 0700)
+	if err != nil {
+		c.log("%v\n", err)
+	} else {
+		err = c.main()
+		if err != nil {
+			c.log("%v\n", err)
+		}
+	}
+
+	c.logNoTime("=== dcrinstall complete %v ===\n",
+		time.Now().Format(time.RFC850))
+
+	// exit with error set
+	if err != nil {
 		os.Exit(1)
 	}
 }
