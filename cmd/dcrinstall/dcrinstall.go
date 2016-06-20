@@ -328,36 +328,8 @@ func (c *ctx) validate(version string) error {
 	return nil
 }
 
-func (c *ctx) walletRunning() bool {
-	filename := filepath.Join(c.s.Destination, "dcrctl")
-	if !exist(filename) {
-		// shouldn't be running if it doesn't exist
-		return false
-	}
-
-	cmd := exec.Command(filename, "--wallet", "ping")
-	_, err := cmd.CombinedOutput()
-	if err != nil {
-		return false
-	}
-
-	return true
-}
-
-func (c *ctx) dcrdRunning() bool {
-	filename := filepath.Join(c.s.Destination, "dcrctl")
-	if !exist(filename) {
-		// shouldn't be running if it doesn't exist
-		return false
-	}
-
-	cmd := exec.Command(filename, "ping")
-	_, err := cmd.CombinedOutput()
-	if err != nil {
-		return false
-	}
-
-	return true
+func (c *ctx) running(name string) (bool, error) {
+	return c.isRunning(name)
 }
 
 // recordCurrent iterates over binaries and records their version number in
@@ -554,13 +526,25 @@ func (c *ctx) writeConfig(b binary, cf string) error {
 }
 
 func (c *ctx) main() error {
-	var err error
 
-	if c.walletRunning() {
+	running, err := c.running("dcrticketbuyer")
+	if err != nil {
+		return err
+	} else if running {
+		return fmt.Errorf("dcrticketbuyer is still running")
+	}
+
+	running, err = c.running("dcrwallet")
+	if err != nil {
+		return err
+	} else if running {
 		return fmt.Errorf("dcrwallet is still running")
 	}
 
-	if c.dcrdRunning() {
+	running, err = c.running("dcrd")
+	if err != nil {
+		return err
+	} else if running {
 		return fmt.Errorf("dcrd is still running")
 	}
 
