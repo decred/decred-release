@@ -16,10 +16,10 @@ func (c *ctx) isRunning(name string) (bool, error) {
 
 	switch runtime.GOOS {
 	case "linux":
-		args = []string{"-A", "aewww"}
+		args = []string{"-A", "aeww"}
 	default:
 		// BSD*
-		args = []string{"Aaeww"}
+		args = []string{"-Aaeww"}
 	}
 	cmd := exec.Command("ps", args...)
 	o, err := cmd.CombinedOutput()
@@ -27,7 +27,7 @@ func (c *ctx) isRunning(name string) (bool, error) {
 		return false, err
 	}
 
-	re := regexp.MustCompile("_=[[:print:]]*" + name + " ")
+	re := regexp.MustCompile("_=[[:print:]]*" + name)
 
 	br := bytes.NewBuffer(o)
 	for {
