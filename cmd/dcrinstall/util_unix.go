@@ -1,4 +1,4 @@
-// build !windows
+// +build !windows
 
 package main
 
@@ -19,7 +19,7 @@ func (c *ctx) isRunning(name string) (bool, error) {
 		args = []string{"-A", "aeww"}
 	default:
 		// BSD*
-		args = []string{"-Aaeww"}
+		args = []string{"Aaeww"}
 	}
 	cmd := exec.Command("ps", args...)
 	o, err := cmd.CombinedOutput()
