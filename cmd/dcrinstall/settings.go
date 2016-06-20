@@ -35,7 +35,7 @@ type Settings struct {
 func parseSettings() (*Settings, error) {
 	s := Settings{}
 
-	dest := flag.String("dest", "~", "extract path")
+	dest := flag.String("dest", "~/decred", "extract path")
 	manifest := flag.String("manifest", latestManifest, "manifest name")
 	net := flag.String("net", netMain, "decred net "+netMain+", "+netTest+
 		" or "+netSim)
