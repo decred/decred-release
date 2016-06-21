@@ -525,6 +525,17 @@ func (c *ctx) writeConfig(b binary, cf string) error {
 	return nil
 }
 
+func (c *ctx) walletDBExists() bool {
+	dir := dcrutil.AppDataDir("dcrwallet", false)
+	if exist(filepath.Join(dir, netMain, walletDB)) ||
+		exist(filepath.Join(dir, netTest, walletDB)) ||
+		exist(filepath.Join(dir, netSim, walletDB)) {
+		return true
+	}
+
+	return false
+}
+
 func (c *ctx) main() error {
 
 	running, err := c.running("dcrticketbuyer")
@@ -587,6 +598,13 @@ func (c *ctx) main() error {
 		}
 
 	} else if len(found) == 0 {
+		if c.walletDBExists() {
+			c.log("--- Unknown state, manual intervention ---" +
+				"required\n")
+			return fmt.Errorf("wallet.db exists without a " +
+				"dcrwallet.conf")
+		}
+
 		c.log("--- Performing install ---\n")
 
 		// prime defaults
