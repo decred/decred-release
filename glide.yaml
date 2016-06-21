@@ -1,0 +1,18 @@
+package: github.com/decred/decred-release
+import:
+- package: github.com/decred/dcrd
+  subpackages:
+  - chaincfg
+- package: github.com/decred/dcrutil
+- package: github.com/decred/dcrwallet
+  subpackages:
+  - prompt
+  - wallet
+  - walletdb/bdb
+- package: github.com/docker/docker
+  subpackages:
+  - pkg/archive
+- package: github.com/mitchellh/go-homedir
+- package: golang.org/x/crypto
+  subpackages:
+  - openpgp
