@@ -13,9 +13,10 @@ const (
 	latestManifest = "manifest-v0.1.6.txt"
 	defaultURI     = "https://github.com/decred/decred-binaries/releases/download/v0.1.6"
 
-	netMain = "Mainnet"
-	netTest = "Testnet"
-	netSim  = "Simnet"
+	netMain  = "mainnet"
+	netTest  = "testnet"
+	netSim   = "simnet"
+	walletDB = "wallet.db" // start using wallet package one
 )
 
 type Settings struct {
