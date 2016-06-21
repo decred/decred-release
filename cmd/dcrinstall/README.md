@@ -126,13 +126,13 @@ Testnet to the command:
 
 
 ```
-dcrinstall.exe -net Testnet
+dcrinstall.exe -net testnet
 ```
 
 or on OSX/UNIX:
 
 ```
-./dcrinstall -net Testnet
+./dcrinstall -net testnet
 ```
 
 ## Running decred programs
