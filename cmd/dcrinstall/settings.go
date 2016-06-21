@@ -11,7 +11,7 @@ import (
 // latestVersion and latestManifest must be updated every release.
 const (
 	latestManifest = "manifest-v0.1.6.txt"
-	defaultURI     = "https://github.com/decred/decred-release/releases/download/v0.1.6"
+	defaultURI     = "https://github.com/decred/decred-binaries/releases/download/v0.1.6"
 
 	netMain = "Mainnet"
 	netTest = "Testnet"
