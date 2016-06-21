@@ -536,6 +536,46 @@ func (c *ctx) walletDBExists() bool {
 	return false
 }
 
+func (c *ctx) createWallet() error {
+	// create wallet
+	c.log("creating wallet: %v\n", c.s.Net)
+
+	r := bufio.NewReader(os.Stdin)
+	privPass, pubPass, seed, err := prompt.Setup(r)
+	if err != nil {
+		return err
+	}
+
+	var chainParams *chaincfg.Params
+	switch c.s.Net {
+	case netMain:
+		chainParams = &chaincfg.MainNetParams
+	case netTest:
+		chainParams = &chaincfg.TestNetParams
+	case netSim:
+		chainParams = &chaincfg.SimNetParams
+	default:
+		return fmt.Errorf("invalid wallet type: %v",
+			c.s.Net)
+	}
+
+	dbDir := filepath.Join(dcrutil.AppDataDir("dcrwallet",
+		false), chainParams.Name)
+	loader := wallet.NewLoader(chainParams, dbDir,
+		new(wallet.StakeOptions), false, false, 0, false)
+	w, err := loader.CreateNewWallet(pubPass, privPass, seed)
+	if err != nil {
+		return err
+	}
+	_ = w
+
+	err = loader.UnloadWallet()
+	if err != nil {
+		return err
+	}
+	return nil
+}
+
 func (c *ctx) main() error {
 
 	running, err := c.running("dcrticketbuyer")
@@ -598,13 +638,6 @@ func (c *ctx) main() error {
 		}
 
 	} else if len(found) == 0 {
-		if c.walletDBExists() {
-			c.log("--- Unknown state, manual intervention ---" +
-				"required\n")
-			return fmt.Errorf("wallet.db exists without a " +
-				"dcrwallet.conf")
-		}
-
 		c.log("--- Performing install ---\n")
 
 		// prime defaults
@@ -639,41 +672,13 @@ func (c *ctx) main() error {
 			}
 		}
 
-		// create wallet
-		c.log("creating wallet: %v\n", c.s.Net)
-
-		r := bufio.NewReader(os.Stdin)
-		privPass, pubPass, seed, err := prompt.Setup(r)
-		if err != nil {
-			return err
-		}
-
-		var chainParams *chaincfg.Params
-		switch c.s.Net {
-		case netMain:
-			chainParams = &chaincfg.MainNetParams
-		case netTest:
-			chainParams = &chaincfg.TestNetParams
-		case netSim:
-			chainParams = &chaincfg.SimNetParams
-		default:
-			return fmt.Errorf("invalid wallet type: %v",
-				c.s.Net)
-		}
-
-		dbDir := filepath.Join(dcrutil.AppDataDir("dcrwallet",
-			false), chainParams.Name)
-		loader := wallet.NewLoader(chainParams, dbDir,
-			new(wallet.StakeOptions), false, false, 0, false)
-		w, err := loader.CreateNewWallet(pubPass, privPass, seed)
-		if err != nil {
-			return err
-		}
-		_ = w
-
-		err = loader.UnloadWallet()
-		if err != nil {
-			return err
+		if c.walletDBExists() {
+			c.log("wallet.db exists, skipping wallet creation.\n")
+		} else {
+			err = c.createWallet()
+			if err != nil {
+				return err
+			}
 		}
 	}
 
