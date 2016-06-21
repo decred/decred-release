@@ -9,7 +9,6 @@ import (
 	"os"
 	"path/filepath"
 	"regexp"
-	"runtime"
 	"strings"
 
 	"github.com/docker/docker/pkg/archive"
@@ -115,9 +114,13 @@ func (c *ctx) extract() (string, error) {
 	}
 	defer a.Close()
 
-	var options *archive.TarOptions
-	if runtime.GOOS == "darwin" {
-		options = &archive.TarOptions{NoLchown: true}
+	uid := os.Getuid()
+	gid := os.Getgid()
+	options := &archive.TarOptions{
+		ChownOpts: &archive.TarChownOptions{
+			UID: uid,
+			GID: gid,
+		},
 	}
 	err = archive.Untar(a, c.s.Destination, options)
 	if err != nil {
