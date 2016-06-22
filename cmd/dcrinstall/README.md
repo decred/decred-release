@@ -188,3 +188,8 @@ version).
 dcrinstall has been tested on Windows 10, OSX 10.11, Bitrig current,
 Ubuntu, and Raspbian.
 
+## License
+
+dcrinstall is licensed under the [copyfree](http://copyfree.org) ISC
+License.
+
