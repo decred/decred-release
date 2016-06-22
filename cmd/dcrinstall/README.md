@@ -86,7 +86,8 @@ cd %HOMEPATH%\Download
 dcrinstall.exe
 ```
 
-For OSX and UNIX:
+For OSX and UNIX you will also need to make the file executable before
+runnning it:
 
 ```
 cd Downloads/
