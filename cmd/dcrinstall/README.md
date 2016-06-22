@@ -185,8 +185,8 @@ dcrinstall can only install decred releases v0.1.6 or later only
 (although as described above it can be used to upgrade from an older
 version).
 
-dcrinstall has been tested on Windows 10, OSX 10.11, Bitrig current,
-Ubuntu, and Raspbian.
+dcrinstall has been tested on Windows 10, Windows 7, OSX 10.11, Bitrig current,
+OpenBSD, Fedora, Ubuntu, and Raspbian.
 
 ## License
 
