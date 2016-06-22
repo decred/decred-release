@@ -117,6 +117,22 @@ cd Downloads/
 You will be asked to provide a passphrase for you wallet and given the
 opportunity to use and existing wallet seed if you have one.
 
+## Log file
+
+dcrinstall saves a log file with information on everything it did
+which you may examine if you need more information.  On Windows the
+file is located at:
+
+```
+%HOMEPATH%\decred\dcrinstaller.log
+```
+
+On OSX and UNIX the file is located at:
+
+```
+~/decred/dcrinstaller.log
+```
+
 ## Testnet
 
 It is possible to use dcrinstall to setup decred for testnet.  This
