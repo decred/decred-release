@@ -208,6 +208,11 @@ version).
 dcrinstall has been tested on Windows 10, Windows 7, OSX 10.11, Bitrig current,
 OpenBSD, Fedora, Ubuntu, and Raspbian.
 
+Due to an issue with the go cross-compiler, binaries are not available
+for linux-arm64.  Users running Linux on arm64 should either build
+from source or contact the decred developers for a binary for that
+platform.
+
 ## License
 
 dcrinstall is licensed under the [copyfree](http://copyfree.org) ISC
