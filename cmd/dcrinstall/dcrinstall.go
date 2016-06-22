@@ -147,7 +147,8 @@ func findOS(which, manifest string) (string, string, error) {
 				manifest, i)
 		}
 
-		if !strings.Contains(a[1], which) {
+		// add "-" to disambiguate arm and arm64
+		if !strings.Contains(a[1], which+"-") {
 			continue
 		}
 
