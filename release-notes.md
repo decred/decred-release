@@ -2,16 +2,6 @@
 
 ## 2016-06-22
 
-This is the initial release of dcrinstall, the simple installer and
-upgrader for the decred software.
+This is the initial release of dcrinstall, the simple installer and upgrader for the decred software. Binaries are provided for most platforms (Windows, OSX, Linux, BSD).  For usage instructions and more information see [the dcrinstall README](https://github.com/decred/decred-release/blob/master/cmd/dcrinstall/README.md).
 
-Binaries are provided for a number of platforms.
-
-For usage instructions and more information see
-[README.md](https://github.com/decred/decred-release/blob/master/cmd/dcrinstall/README.md).
-
-See manifest-v0.1.6.txt for sha256sums of the packages and
-manifest-v0.1.6.txt.asc to confirm those shas.
-
-See https://wiki.decred.org/Verifying_Binaries for more info on
-verifying the files.
+For instructions on how to verify the dcrinstall binary, please see [the documentation on cryptographically verifying binaries](https://wiki.decred.org/Verifying_Binaries).
