@@ -90,6 +90,7 @@ For OSX and UNIX:
 
 ```
 cd Downloads/
+chmod u+x dcrinstall
 ./dcrinstall
 ```
 
