@@ -582,28 +582,32 @@ func (c *ctx) createWallet() error {
 }
 
 func (c *ctx) main() error {
+	var (
+		err     error
+		running bool
+	)
+	if !c.s.DownloadOnly {
+		running, err = c.running("dcrticketbuyer")
+		if err != nil {
+			return err
+		} else if running {
+			return fmt.Errorf("dcrticketbuyer is still running")
+		}
 
-	running, err := c.running("dcrticketbuyer")
-	if err != nil {
-		return err
-	} else if running {
-		return fmt.Errorf("dcrticketbuyer is still running")
+		running, err = c.running("dcrwallet")
+		if err != nil {
+			return err
+		} else if running {
+			return fmt.Errorf("dcrwallet is still running")
+		}
+
+		running, err = c.running("dcrd")
+		if err != nil {
+			return err
+		} else if running {
+			return fmt.Errorf("dcrd is still running")
+		}
 	}
-
-	running, err = c.running("dcrwallet")
-	if err != nil {
-		return err
-	} else if running {
-		return fmt.Errorf("dcrwallet is still running")
-	}
-
-	running, err = c.running("dcrd")
-	if err != nil {
-		return err
-	} else if running {
-		return fmt.Errorf("dcrd is still running")
-	}
-
 	if !c.s.SkipDownload {
 		c.s.Path, err = c.download()
 		if err != nil {
@@ -616,83 +620,84 @@ func (c *ctx) main() error {
 		return err
 	}
 
-	version, err := c.extract()
-	if err != nil {
-		return err
-	}
-
-	err = c.validate(version)
-	if err != nil {
-		return err
-	}
-
-	err = c.recordCurrent()
-	if err != nil {
-		return err
-	}
-
-	found, err := c.exists()
-	if err != nil {
-		if len(found) == len(binaries) {
-			c.log("--- Performing upgrade ---\n")
-
-		} else {
-			c.log("--- Unknown state, manual intervention ---" +
-				"required\n")
-			return err
-		}
-
-	} else if len(found) == 0 {
-		c.log("--- Performing install ---\n")
-
-		// prime defaults
-		err = c.obtainUserName()
+	if !c.s.DownloadOnly {
+		version, err := c.extract()
 		if err != nil {
 			return err
 		}
 
-		err = c.obtainPassword()
+		err = c.validate(version)
 		if err != nil {
 			return err
 		}
 
-		// lay down config files with parsed answers
-		for _, v := range binaries {
-			config, err := c.createConfig(v, version)
+		err = c.recordCurrent()
+		if err != nil {
+			return err
+		}
+
+		found, err := c.exists()
+		if err != nil {
+			if len(found) == len(binaries) {
+				c.log("--- Performing upgrade ---\n")
+
+			} else {
+				c.log("--- Unknown state, manual intervention ---" +
+					"required\n")
+				return err
+			}
+
+		} else if len(found) == 0 {
+			c.log("--- Performing install ---\n")
+
+			// prime defaults
+			err = c.obtainUserName()
 			if err != nil {
 				return err
 			}
 
-			dir := dcrutil.AppDataDir(v.Name, false)
-			c.log("creating directory: %v\n", dir)
-
-			err = os.MkdirAll(dir, 0700)
+			err = c.obtainPassword()
 			if err != nil {
 				return err
 			}
 
-			err = c.writeConfig(v, config)
-			if err != nil {
-				return err
+			// lay down config files with parsed answers
+			for _, v := range binaries {
+				config, err := c.createConfig(v, version)
+				if err != nil {
+					return err
+				}
+
+				dir := dcrutil.AppDataDir(v.Name, false)
+				c.log("creating directory: %v\n", dir)
+
+				err = os.MkdirAll(dir, 0700)
+				if err != nil {
+					return err
+				}
+
+				err = c.writeConfig(v, config)
+				if err != nil {
+					return err
+				}
+			}
+
+			if c.walletDBExists() {
+				c.log("wallet.db exists, skipping wallet creation.\n")
+			} else {
+				err = c.createWallet()
+				if err != nil {
+					return err
+				}
 			}
 		}
 
-		if c.walletDBExists() {
-			c.log("wallet.db exists, skipping wallet creation.\n")
-		} else {
-			err = c.createWallet()
-			if err != nil {
-				return err
-			}
+		// install binaries in final location
+		err = c.copy(version)
+		if err != nil {
+			return err
 		}
 	}
-
-	// install binaries in final location
-	err = c.copy(version)
-	if err != nil {
-		return err
-	}
-
 	return nil
 }
 
@@ -710,13 +715,23 @@ func main() {
 	c.logNoTime("=== dcrinstall run %v ===\n",
 		time.Now().Format(time.RFC850))
 
-	err = os.MkdirAll(c.s.Destination, 0700)
+	if !c.s.DownloadOnly {
+		err = os.MkdirAll(c.s.Destination, 0700)
+	}
 	if err != nil {
 		c.log("%v\n", err)
 	} else {
 		err = c.main()
 		if err != nil {
 			c.log("%v\n", err)
+		} else {
+			if c.s.DownloadOnly {
+				vrf := ""
+				if !c.s.SkipVerify {
+					vrf = "verified and "
+				}
+				fmt.Printf("%vdownloaded to %v \n", vrf, c.s.Path)
+			}
 		}
 	}
 

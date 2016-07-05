@@ -23,8 +23,8 @@ const (
 	walletDB = "wallet.db" // start using wallet package one
 )
 
+// Settings struct contains command line switches
 type Settings struct {
-	// command line settings
 	Destination  string // destination path
 	Manifest     string // manifest name
 	Net          string // which network to use
@@ -34,6 +34,7 @@ type Settings struct {
 	SkipDownload bool   // requires path to files
 	SkipVerify   bool   // skip TLS and signature checks, internal use only
 	Verbose      bool   // loudnes
+	DownloadOnly bool   // no install, just download
 }
 
 func parseSettings() (*Settings, error) {
@@ -49,8 +50,12 @@ func parseSettings() (*Settings, error) {
 	uri := flag.String("uri", defaultURI, "URI to manifest and sets")
 	skip := flag.Bool("skip", false, "skip download, requires path")
 	verbose := flag.Bool("verbose", false, "verbose")
+	downloadOnly := flag.Bool("downloadonly", false, "download and verify only, no install")
 	flag.Parse()
 
+	if *skip && *downloadOnly {
+		return nil, fmt.Errorf("at most one of 'skip' and 'downloadonly' allowed")
+	}
 	if *tuple == "" {
 		return nil, fmt.Errorf("must provide OS-Arch tuple")
 	}
@@ -81,6 +86,7 @@ func parseSettings() (*Settings, error) {
 	s.URI = *uri
 	s.SkipDownload = *skip
 	s.Verbose = *verbose
+	s.DownloadOnly = *downloadOnly
 
 	return &s, nil
 }
