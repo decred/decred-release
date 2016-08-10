@@ -14,7 +14,6 @@ import (
 	"io/ioutil"
 	"os"
 	"os/exec"
-	"os/user"
 	"path/filepath"
 	"runtime"
 	"strings"
@@ -25,6 +24,7 @@ import (
 	"github.com/decred/dcrwallet/prompt"
 	"github.com/decred/dcrwallet/wallet"
 	"github.com/docker/docker/pkg/archive"
+	"github.com/marcopeereboom/go-homedir"
 
 	_ "github.com/decred/dcrwallet/walletdb/bdb"
 )
@@ -100,11 +100,11 @@ func (c *ctx) log(format string, args ...interface{}) error {
 }
 
 func (c *ctx) obtainUserName() error {
-	u, err := user.Current()
+	u, err := homedir.User()
 	if err != nil {
 		return err
 	}
-	c.user = u.Username
+	c.user = u
 	return nil
 }
 

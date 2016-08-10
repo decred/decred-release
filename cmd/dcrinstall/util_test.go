@@ -8,7 +8,7 @@ import (
 	"path/filepath"
 	"testing"
 
-	"github.com/mitchellh/go-homedir"
+	"github.com/marcopeereboom/go-homedir"
 )
 
 func TestRunning(t *testing.T) {

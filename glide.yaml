@@ -12,7 +12,7 @@ import:
 - package: github.com/docker/docker
   subpackages:
   - pkg/archive
-- package: github.com/mitchellh/go-homedir
+- package: github.com/marcopeereboom/go-homedir
 - package: golang.org/x/crypto
   subpackages:
   - openpgp
