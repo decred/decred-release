@@ -9,7 +9,7 @@ import (
 	"fmt"
 	"runtime"
 
-	homedir "github.com/mitchellh/go-homedir"
+	homedir "github.com/marcopeereboom/go-homedir"
 )
 
 // latestVersion and latestManifest must be updated every release.

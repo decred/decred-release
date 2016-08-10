@@ -1,5 +1,5 @@
-hash: 8c0703f7dcaad7d3998dd5143bd548b0570f8667e3d0eb47b4564a3de9d53101
-updated: 2016-06-14T11:49:38.0908073-05:00
+hash: d25a06b1773f783304f6060d654c88601a03c898413650b8f76f382f79f55dae
+updated: 2016-08-10T13:11:34.579747588-05:00
 imports:
 - name: github.com/boltdb/bolt
   version: 831b652a7f8dbefaf94da0eb66abd46c0c4bcf23
@@ -87,8 +87,8 @@ imports:
   - pkg/longpath
 - name: github.com/docker/go-units
   version: f2d77a61e3c169b43402a0a1e84f06daf29b8190
-- name: github.com/mitchellh/go-homedir
-  version: 1111e456ffea841564ac0fa5f69c26ef44dafec9
+- name: github.com/marcopeereboom/go-homedir
+  version: 56341bedd946382d5f8cd3ea68d14dc37aa4eb30
 - name: github.com/Sirupsen/logrus
   version: f3cfb454f4c209e6668c95216c4744b8fddb2356
 - name: golang.org/x/crypto
