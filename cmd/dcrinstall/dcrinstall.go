@@ -454,10 +454,6 @@ func (c *ctx) createConfigTicketbuyer(b binary, f *os.File) (string, error) {
 		case strings.HasPrefix(line, "httpsvrport"):
 			// use default from config file
 
-		case strings.HasPrefix(line, "httpuipath"):
-			dir := filepath.Join(c.s.Destination, "webui")
-			line = fmt.Sprintf("httpuipath=%v\n", dir)
-
 		case strings.HasPrefix(line, "simnet"):
 			a := "0"
 			if c.s.Net == netSim {
