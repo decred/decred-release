@@ -1,3 +1,13 @@
+#[v0.4.0](https://github.com/decred/decred-release/releases/tag/v0.4.0)
+
+## 2016-09-06
+
+This upgrades dcrinstall to default to the current release of the dcr
+tools.
+
+For instructions on how to verify the dcrinstall binary, please see
+[README.md](./README.md).
+
 #[v0.3.0](https://github.com/decred/decred-release/releases/tag/v0.3.0)
 
 ## 2016-08-15
