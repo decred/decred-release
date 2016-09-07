@@ -297,8 +297,7 @@ func (c *ctx) copy(version string) error {
 
 	// non binaries
 	filename := filepath.Join(c.s.Destination,
-		"decred-"+c.s.Tuple+"-"+version,
-		"webui")
+		"decred-"+c.s.Tuple+"-"+version)
 
 	c.log("installing: %v -> %v\n", filename, c.s.Destination)
 
