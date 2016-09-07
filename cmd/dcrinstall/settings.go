@@ -7,7 +7,10 @@ package main
 import (
 	"flag"
 	"fmt"
+	"os"
+	"path/filepath"
 	"runtime"
+	"strings"
 
 	homedir "github.com/marcopeereboom/go-homedir"
 )
@@ -34,6 +37,7 @@ type Settings struct {
 	SkipDownload bool   // requires path to files
 	SkipVerify   bool   // skip TLS and signature checks, internal use only
 	Verbose      bool   // loudnes
+	Version      bool   // show version.
 }
 
 func parseSettings() (*Settings, error) {
@@ -49,7 +53,16 @@ func parseSettings() (*Settings, error) {
 	uri := flag.String("uri", defaultURI, "URI to manifest and sets")
 	skip := flag.Bool("skip", false, "skip download, requires path")
 	verbose := flag.Bool("verbose", false, "verbose")
+	ver := flag.Bool("version", false, "display version")
 	flag.Parse()
+
+	if *ver {
+		// Show the version and exit if the version flag was specified.
+		appName := filepath.Base(os.Args[0])
+		appName = strings.TrimSuffix(appName, filepath.Ext(appName))
+		fmt.Println(appName, "version", version())
+		os.Exit(0)
+	}
 
 	if *tuple == "" {
 		return nil, fmt.Errorf("must provide OS-Arch tuple")
