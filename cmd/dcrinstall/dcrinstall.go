@@ -322,6 +322,10 @@ func (c *ctx) validate(version string) error {
 }
 
 func (c *ctx) running(name string) (bool, error) {
+	if c.s.DownloadOnly {
+		return false, nil
+	}
+
 	return c.isRunning(name)
 }
 
