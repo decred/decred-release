@@ -34,6 +34,7 @@ type Settings struct {
 	Path         string // target path for downloads
 	Tuple        string // os-arch tuple
 	URI          string // URI to manifest and sets
+	DownloadOnly bool   // download files only
 	SkipDownload bool   // requires path to files
 	SkipVerify   bool   // skip TLS and signature checks, internal use only
 	Verbose      bool   // loudnes
@@ -51,6 +52,8 @@ func parseSettings() (*Settings, error) {
 	tuple := flag.String("tuple", runtime.GOOS+"-"+runtime.GOARCH,
 		"OS-Arch tuple, e.g. windows-amd64")
 	uri := flag.String("uri", defaultURI, "URI to manifest and sets")
+	download := flag.Bool("downloadonly", false, "download binaries "+
+		"but don't install")
 	skip := flag.Bool("skip", false, "skip download, requires path")
 	verbose := flag.Bool("verbose", false, "verbose")
 	ver := flag.Bool("version", false, "display version")
@@ -69,6 +72,9 @@ func parseSettings() (*Settings, error) {
 	}
 	if *skip && *path == "" {
 		return nil, fmt.Errorf("must provide download path")
+	}
+	if *skip && *download {
+		return nil, fmt.Errorf("downloadonly and skip are mutually exclusive")
 	}
 	if *uri != defaultURI {
 		s.SkipVerify = true
@@ -94,6 +100,7 @@ func parseSettings() (*Settings, error) {
 	s.URI = *uri
 	s.SkipDownload = *skip
 	s.Verbose = *verbose
+	s.DownloadOnly = *download
 
 	return &s, nil
 }
