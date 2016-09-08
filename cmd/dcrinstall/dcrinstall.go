@@ -566,7 +566,6 @@ func (c *ctx) createWallet() error {
 }
 
 func (c *ctx) main() error {
-
 	running, err := c.running("dcrticketbuyer")
 	if err != nil {
 		return err
@@ -598,6 +597,11 @@ func (c *ctx) main() error {
 	err = c.verify()
 	if err != nil {
 		return err
+	}
+
+	if c.s.DownloadOnly {
+		// all done
+		return nil
 	}
 
 	version, err := c.extract()
