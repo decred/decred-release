@@ -37,7 +37,8 @@ type Settings struct {
 	DownloadOnly bool   // download files only
 	SkipDownload bool   // requires path to files
 	SkipVerify   bool   // skip TLS and signature checks, internal use only
-	Verbose      bool   // loudnes
+	Quiet        bool   // quiet
+	Verbose      bool   // loudness
 	Version      bool   // show version.
 }
 
@@ -55,8 +56,10 @@ func parseSettings() (*Settings, error) {
 	download := flag.Bool("downloadonly", false, "download binaries "+
 		"but don't install")
 	skip := flag.Bool("skip", false, "skip download, requires path")
-	verbose := flag.Bool("verbose", false, "verbose")
 	ver := flag.Bool("version", false, "display version")
+	// for backwards compat
+	quiet := flag.Bool("quiet", false, "quiet (default false)")
+	verbose := flag.Bool("verbose", true, "verbose (deprecated in favor of quiet)")
 	flag.Parse()
 
 	if *ver {
@@ -94,12 +97,18 @@ func parseSettings() (*Settings, error) {
 	}
 	s.Destination = destination
 
+	if *verbose == true {
+		s.Verbose = true
+	}
+	if *quiet == true {
+		s.Verbose = false
+	}
+
 	s.Manifest = *manifest
 	s.Path = *path
 	s.Tuple = *tuple
 	s.URI = *uri
 	s.SkipDownload = *skip
-	s.Verbose = *verbose
 	s.DownloadOnly = *download
 
 	return &s, nil
