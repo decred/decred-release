@@ -1,3 +1,25 @@
+#[v0.5.0](https://github.com/decred/decred-release/releases/tag/v0.5.0)
+
+## 2016-10-10
+
+This upgrades dcrinstall to default to the current release of the dcr
+tools.
+
+Several improvements to the dcrinstall tool itself have been made
+(including showing output by default and adding a downloadonly flag).
+
+For instructions on how to verify the dcrinstall binary, please see
+[README.md](./README.md).
+
+| Description | Pull Request |
+| --- | ---- |
+| remove last reference to webui | [decred/decred-release#59](https://github.com/decred/decred-release/pull/59) |
+| Add -version flag | [decred/decred-release#61](https://github.com/decred/decred-release/pull/61) |
+| don't need to copy directories anymore; fixes windows upgrade race | [decred/decred-release#62](https://github.com/decred/decred-release/pull/62) |
+| Implement downloadonly flag. | [decred/decred-release#64](https://github.com/decred/decred-release/pull/64) |
+| show output by default and add quiet option | [decred/decred-release#66](https://github.com/decred/decred-release/pull/66) |
+| Bump version and defaults for v0.5.0 | [decred/decred-release#67](https://github.com/decred/decred-release/pull/67) |
+
 #[v0.4.0](https://github.com/decred/decred-release/releases/tag/v0.4.0)
 
 ## 2016-09-06
