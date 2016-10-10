@@ -1,3 +1,9 @@
+#[v0.5.1](https://github.com/decred/decred-release/releases/tag/v0.5.1)
+
+## 2016-10-10
+
+This upgrades dcrinstall to use v0.5.1 (a bug fix for dcrwallet only).
+
 #[v0.5.0](https://github.com/decred/decred-release/releases/tag/v0.5.0)
 
 ## 2016-10-10
