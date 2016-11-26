@@ -1,6 +1,6 @@
-#[v0.6.0](https://github.com/decred/decred-release/releases/tag/v0.6.0)
+#[v0.6.1](https://github.com/decred/decred-release/releases/tag/v0.6.1)
 
-## 2016-11-09
+## 2016-11-25
 
 This upgrades dcrinstall to default to the current release of the dcr
 tools.
