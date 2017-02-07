@@ -58,20 +58,11 @@ var (
 			Example: "sample-dcrd.conf",
 		},
 		{
-			Name:    "dcrticketbuyer",
-			Config:  ticketbuyerConf,
-			Example: "ticketbuyer-example.conf",
-		},
-		{
 			Name:    "dcrwallet",
 			Config:  "dcrwallet.conf",
 			Example: "sample-dcrwallet.conf",
 		},
 	}
-)
-
-const (
-	ticketbuyerConf = "ticketbuyer.conf"
 )
 
 func (c *ctx) logNoTime(format string, args ...interface{}) error {
@@ -420,69 +411,6 @@ func (c *ctx) createConfigNormal(b binary, f *os.File) (string, error) {
 	return rv, nil
 }
 
-func (c *ctx) createConfigTicketbuyer(b binary, f *os.File) (string, error) {
-	seen := false
-	rv := ""
-	br := bufio.NewReader(f)
-	for {
-		line, err := br.ReadString('\n')
-		if err == io.EOF {
-			break
-		}
-
-		switch {
-		case strings.HasPrefix(line, "dcrduser"):
-			line = fmt.Sprintf("dcrduser=%v\n", c.user)
-
-		case strings.HasPrefix(line, "dcrwuser"):
-			line = fmt.Sprintf("dcrwuser=%v\n", c.user)
-
-		case strings.HasPrefix(line, "dcrdpass"):
-			line = fmt.Sprintf("dcrdpass=%v\n", c.password)
-
-		case strings.HasPrefix(line, "dcrwpass"):
-			line = fmt.Sprintf("dcrwpass=%v\n", c.password)
-
-		case strings.HasPrefix(line, "httpsvrport"):
-			// use default from config file
-
-		case strings.HasPrefix(line, "simnet"):
-			a := "0"
-			if c.s.Net == netSim {
-				a = "1"
-			}
-			line = fmt.Sprintf("simnet=%v\n", a)
-			seen = true
-
-		case strings.HasPrefix(line, "testnet"):
-			a := "0"
-			if c.s.Net == netTest {
-				a = "1"
-			}
-			line = fmt.Sprintf("testnet=%v\n", a)
-			seen = true
-
-		case strings.HasPrefix(line, "\n"):
-			// do nothing
-
-		case !strings.HasPrefix(line, "#"):
-			// comment out
-			line = "#" + line
-		}
-
-		rv += line
-	}
-
-	if c.s.Net != netMain {
-		if seen == false {
-			return "", fmt.Errorf("could not set net to %v\n",
-				c.s.Net)
-		}
-	}
-
-	return rv, nil
-}
-
 func (c *ctx) createConfig(b binary, version string) (string, error) {
 	// read sample config
 	sample := filepath.Join(c.s.Destination,
@@ -496,10 +424,6 @@ func (c *ctx) createConfig(b binary, version string) (string, error) {
 	defer f.Close()
 
 	c.log("parsing: %v\n", sample)
-
-	if b.Config == ticketbuyerConf {
-		return c.createConfigTicketbuyer(b, f)
-	}
 
 	return c.createConfigNormal(b, f)
 }
@@ -570,14 +494,7 @@ func (c *ctx) createWallet() error {
 }
 
 func (c *ctx) main() error {
-	running, err := c.running("dcrticketbuyer")
-	if err != nil {
-		return err
-	} else if running {
-		return fmt.Errorf("dcrticketbuyer is still running")
-	}
-
-	running, err = c.running("dcrwallet")
+	running, err := c.running("dcrwallet")
 	if err != nil {
 		return err
 	} else if running {

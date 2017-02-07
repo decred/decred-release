@@ -4,10 +4,10 @@ dcrinstall is a tool to automate the install, upgrade, and setup
 process for the decred software.
 
 In install mode dcrinstall downloads the latest released binaries of
-dcrd, dcrwallet, dcrctl, and dcrticketbuyer for your operating system
-and platform, installs them, sets up the config files, and creates a
-wallet for you.  In upgrade mode, dcrinstall replaces your binaries
-with the latest copies but makes no changes to your configs.
+dcrd, dcrwallet, and dcrctl for your operating system and platform,
+installs them, sets up the config files, and creates a wallet for you.
+In upgrade mode, dcrinstall replaces your binaries with the latest
+copies but makes no changes to your configs.
 
 ## Upgrading an existing installation
 
@@ -33,7 +33,6 @@ Configuration files:
 ```
 %LOCALAPPDATA%\Dcrctl\dcrctl.conf
 %LOCALAPPDATA%\Dcrd\dcrd.conf
-%LOCALAPPDATA%\Dcrticketbuyer\ticketbuyer.conf
 %LOCALAPPDATA%\Dcrwallet\dcrwallet.conf
 ```
 
@@ -48,7 +47,6 @@ Configuration files:
 ```
 ~/Library/Application Support/Dcrctl/dcrctl.conf
 ~/Library/Application Support/Dcrd/dcrd.conf
-~/Library/Application Support/Dcrticketbuyer/ticketbuyer.conf
 ~/Library/Application Support/Dcrwallet/dcrwallet.conf
 ```
 
@@ -63,7 +61,6 @@ Configuration files:
 ```
 ~/.dcrctl/dcrctl.conf
 ~/.dcrd/dcrd.conf
-~/.dcrticketbuyer/ticketbuyer.conf
 ~/.dcrwallet/dcrwallet.conf
 ```
 
