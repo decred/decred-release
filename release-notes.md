@@ -1,3 +1,15 @@
+#[v0.8.0](https://github.com/decred/decred-release/releases/tag/v0.8.0)
+
+## 2017-02-13
+
+This upgrades dcrinstall to default to the current release of the dcr
+tools.
+
+The dcrticketbuyer tool has been removed from the installer as it has ben superseded by the built-in ticketbuyer in dcrwallet.
+
+For instructions on how to verify the dcrinstall binary, please see
+[README.md](./README.md).
+
 #[v0.7.0](https://github.com/decred/decred-release/releases/tag/v0.7.0)
 
 ## 2016-12-20
