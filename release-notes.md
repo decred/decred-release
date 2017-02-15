@@ -1,3 +1,14 @@
+#[v0.8.2](https://github.com/decred/decred-release/releases/tag/v0.8.2)
+
+## 2017-02-16
+
+This upgrades dcrinstall to default to the current release of the dcr tools.
+
+For instructions on how to verify the dcrinstall binary, please see
+[README.md](./README.md).
+
+---
+
 #[v0.8.0](https://github.com/decred/decred-release/releases/tag/v0.8.0)
 
 ## 2017-02-13
@@ -10,12 +21,16 @@ The dcrticketbuyer tool has been removed from the installer as it has ben supers
 For instructions on how to verify the dcrinstall binary, please see
 [README.md](./README.md).
 
+---
+
 #[v0.7.0](https://github.com/decred/decred-release/releases/tag/v0.7.0)
 
 ## 2016-12-20
 
 This upgrades dcrinstall to default to the current release of the dcr
 tools.
+
+---
 
 #[v0.6.1](https://github.com/decred/decred-release/releases/tag/v0.6.1)
 
@@ -24,11 +39,15 @@ tools.
 This upgrades dcrinstall to default to the current release of the dcr
 tools.
 
+---
+
 #[v0.5.1](https://github.com/decred/decred-release/releases/tag/v0.5.1)
 
 ## 2016-10-10
 
 This upgrades dcrinstall to use v0.5.1 (a bug fix for dcrwallet only).
+
+---
 
 #[v0.5.0](https://github.com/decred/decred-release/releases/tag/v0.5.0)
 
@@ -52,6 +71,8 @@ For instructions on how to verify the dcrinstall binary, please see
 | show output by default and add quiet option | [decred/decred-release#66](https://github.com/decred/decred-release/pull/66) |
 | Bump version and defaults for v0.5.0 | [decred/decred-release#67](https://github.com/decred/decred-release/pull/67) |
 
+---
+
 #[v0.4.0](https://github.com/decred/decred-release/releases/tag/v0.4.0)
 
 ## 2016-09-06
@@ -61,6 +82,8 @@ tools.
 
 For instructions on how to verify the dcrinstall binary, please see
 [README.md](./README.md).
+
+---
 
 #[v0.3.0](https://github.com/decred/decred-release/releases/tag/v0.3.0)
 
@@ -72,6 +95,8 @@ tools.
 For instructions on how to verify the dcrinstall binary, please see
 [README.md](./README.md).
 
+---
+
 #[v0.2.0](https://github.com/decred/decred-release/releases/tag/v0.2.0)
 
 ## 2016-07-22
@@ -81,6 +106,8 @@ tools.
 
 For instructions on how to verify the dcrinstall binary, please see
 [README.md](./README.md).
+
+---
 
 #[v0.1.6](https://github.com/decred/decred-release/releases/tag/v0.1.6)
 
