@@ -1,4 +1,4 @@
-// Copyright (c) 2016 The Decred developers
+// Copyright (c) 2016-2017 The Decred developers
 // Use of this source code is governed by an ISC
 // license that can be found in the LICENSE file.
 
@@ -61,6 +61,9 @@ var (
 			Name:    "dcrwallet",
 			Config:  "dcrwallet.conf",
 			Example: "sample-dcrwallet.conf",
+		},
+		{
+			Name: "promptsecret",
 		},
 	}
 )
@@ -343,7 +346,7 @@ func (c *ctx) recordCurrent() error {
 	return nil
 }
 
-// exists ensures that either all or none of the binary config files exst.
+// exists ensures that either all or none of the binary config files exist.
 func (c *ctx) exists() ([]string, error) {
 	x := 0
 	s := ""
@@ -565,24 +568,27 @@ func (c *ctx) main() error {
 			return err
 		}
 
-		// lay down config files with parsed answers
+		// lay down config files with parsed answers only if a Config
+		// was defined
 		for _, v := range binaries {
-			config, err := c.createConfig(v, version)
-			if err != nil {
-				return err
-			}
+			if v.Config != "" {
+				config, err := c.createConfig(v, version)
+				if err != nil {
+					return err
+				}
 
-			dir := dcrutil.AppDataDir(v.Name, false)
-			c.log("creating directory: %v\n", dir)
+				dir := dcrutil.AppDataDir(v.Name, false)
+				c.log("creating directory: %v\n", dir)
 
-			err = os.MkdirAll(dir, 0700)
-			if err != nil {
-				return err
-			}
+				err = os.MkdirAll(dir, 0700)
+				if err != nil {
+					return err
+				}
 
-			err = c.writeConfig(v, config)
-			if err != nil {
-				return err
+				err = c.writeConfig(v, config)
+				if err != nil {
+					return err
+				}
 			}
 		}
 

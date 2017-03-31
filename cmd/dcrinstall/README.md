@@ -4,10 +4,10 @@ dcrinstall is a tool to automate the install, upgrade, and setup
 process for the decred software.
 
 In install mode dcrinstall downloads the latest released binaries of
-dcrd, dcrwallet, and dcrctl for your operating system and platform,
-installs them, sets up the config files, and creates a wallet for you.
-In upgrade mode, dcrinstall replaces your binaries with the latest
-copies but makes no changes to your configs.
+dcrd, dcrwallet, dcrctl, and promptsecret for your operating system
+and platform, installs them, sets up the config files, and creates a
+wallet for you.  In upgrade mode, dcrinstall replaces your binaries
+with the latest copies but makes no changes to your configs.
 
 ## Upgrading an existing installation
 
