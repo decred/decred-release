@@ -5,7 +5,7 @@
 This upgrades dcrinstall to default to the current release of the dcr tools.
 
 For instructions on how to verify the dcrinstall binary, please see
-[README.md](./README.md).
+[README.md](./README.md#verifying-binaries).
 
 ---
 
@@ -19,7 +19,7 @@ tools.
 The dcrticketbuyer tool has been removed from the installer as it has ben superseded by the built-in ticketbuyer in dcrwallet.
 
 For instructions on how to verify the dcrinstall binary, please see
-[README.md](./README.md).
+[README.md](./README.md#verifying-binaries).
 
 ---
 
@@ -60,7 +60,7 @@ Several improvements to the dcrinstall tool itself have been made
 (including showing output by default and adding a downloadonly flag).
 
 For instructions on how to verify the dcrinstall binary, please see
-[README.md](./README.md).
+[README.md](./README.md#verifying-binaries).
 
 | Description | Pull Request |
 | --- | ---- |
@@ -81,7 +81,7 @@ This upgrades dcrinstall to default to the current release of the dcr
 tools.
 
 For instructions on how to verify the dcrinstall binary, please see
-[README.md](./README.md).
+[README.md](./README.md#verifying-binaries).
 
 ---
 
@@ -93,7 +93,7 @@ This upgrades dcrinstall to default to the current release of the dcr
 tools.
 
 For instructions on how to verify the dcrinstall binary, please see
-[README.md](./README.md).
+[README.md](./README.md#verifying-binaries).
 
 ---
 
@@ -105,7 +105,7 @@ This upgrades dcrinstall to default to the current release of the dcr
 tools.
 
 For instructions on how to verify the dcrinstall binary, please see
-[README.md](./README.md).
+[README.md](./README.md#verifying-binaries).
 
 ---
 
@@ -115,4 +115,4 @@ For instructions on how to verify the dcrinstall binary, please see
 
 This is the initial release of dcrinstall, the simple installer and upgrader for the decred software. Binaries are provided for most platforms (Windows, OSX, Linux, BSD).  For usage instructions and more information see [the dcrinstall README](https://github.com/decred/decred-release/blob/master/cmd/dcrinstall/README.md).
 
-For instructions on how to verify the dcrinstall binary, please see [the documentation on cryptographically verifying binaries](https://wiki.decred.org/Verifying_Binaries).
+For instructions on how to verify the dcrinstall binary, please see [the documentation on cryptographically verifying binaries](./README.md#verifying-binaries).
