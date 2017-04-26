@@ -545,15 +545,7 @@ func (c *ctx) main() error {
 
 	found, err := c.exists()
 	if err != nil {
-		if len(found) == len(binaries) {
-			c.log("--- Performing upgrade ---\n")
-
-		} else {
-			c.log("--- Unknown state, manual intervention ---" +
-				"required\n")
-			return err
-		}
-
+		c.log("--- Performing upgrade ---\n")
 	} else if len(found) == 0 {
 		c.log("--- Performing install ---\n")
 
