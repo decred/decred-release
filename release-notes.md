@@ -1,3 +1,20 @@
+#[v1.0.1](https://github.com/decred/decred-release/releases/tag/v1.0.1)
+
+## 2017-04-28
+
+This upgrades dcrinstall to default to the current release of the dcr tools.
+
+For instructions on how to verify the dcrinstall binary, please see
+[README.md](./README.md#verifying-binaries).
+
+| Description | Pull Request |
+| --- | ---- |
+| remove check | [decred/decred-release#99](https://github.com/decred/decred-release/pull/99) |
+| Bump for v1.0.1 | [decred/decred-release#101](https://github.com/decred/decred-release/pull/101) |
+
+---
+
+
 #[v1.0.0](https://github.com/decred/decred-release/releases/tag/v1.0.0)
 
 ## 2017-04-26
