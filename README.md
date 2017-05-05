@@ -40,7 +40,7 @@ The steps to verify the binaries are as follows:
 the Decred Release Signing Key.
 
 	```
-   $ gpg --verify manifest-dcrinstall-v0.3.0.txt
+   $ gpg --verify manifest-dcrinstall-v0.3.0.txt.asc
       gpg: assuming signed data in `manifest-dcrinstall-v0.3.0.txt'
       gpg: Signature made Wed 27 Jan 2016 08:56:59 PM UTC using RSA key ID 518A031D
       gpg: Good signature from "Decred Release <release@decred.org>"
