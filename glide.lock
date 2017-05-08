@@ -1,26 +1,14 @@
-hash: d25a06b1773f783304f6060d654c88601a03c898413650b8f76f382f79f55dae
-updated: 2016-08-10T13:11:34.579747588-05:00
+hash: 40078361253908d63ceb270bcc8ba7c7fa91c59f7968bdf46efa3ce106d299dc
+updated: 2017-05-08T16:06:23.980137294-05:00
 imports:
 - name: github.com/boltdb/bolt
-  version: 831b652a7f8dbefaf94da0eb66abd46c0c4bcf23
+  version: 583e8937c61f1af6513608ccc75c97b6abdf4ff9
 - name: github.com/btcsuite/btclog
-  version: f96df2375f37300305f329b8e5258764b4f19a7f
-- name: github.com/btcsuite/fastsha256
-  version: 302ad4db268b46f9ebda3078f6f7397f96047735
+  version: 73889fb79bd687870312b6e40effcecffbd57d30
 - name: github.com/btcsuite/go-socks
-  version: cfe8b59e565c1a5bd4e2005d77cd9aa8b2e14524
+  version: 4720035b7bfd2a9bb130b1c184f8bbe41b6f0d0f
   subpackages:
   - socks
-- name: github.com/btcsuite/golangcrypto
-  version: 53f62d9b43e87a6c56975cf862af7edf33a8d0df
-  subpackages:
-  - ripemd160
-  - ssh/terminal
-  - nacl/secretbox
-  - scrypt
-  - poly1305
-  - salsa20/salsa
-  - pbkdf2
 - name: github.com/btcsuite/seelog
   version: 313961b101eb55f65ae0f03ddd4e322731763b6c
 - name: github.com/btcsuite/websocket
@@ -30,83 +18,105 @@ imports:
 - name: github.com/decred/blake256
   version: a840e32d7c31fe2e0218607334cb120a683951a4
 - name: github.com/decred/dcrd
-  version: 927932170b20a637945dfc19b40dd2a0b55c8117
+  version: bbef8b8ccb42a4798d77bcd2f752a1b0752d48cd
   subpackages:
-  - chaincfg
-  - chaincfg/chainhash
-  - wire
-  - chaincfg/chainec
   - blockchain
+  - blockchain/internal/dbnamespace
+  - blockchain/internal/progresslog
   - blockchain/stake
-  - dcrjson
-  - txscript
+  - blockchain/stake/internal/dbnamespace
+  - blockchain/stake/internal/ticketdb
+  - blockchain/stake/internal/tickettreap
+  - chaincfg
+  - chaincfg/chainec
+  - chaincfg/chainhash
+  - database
   - dcrec/edwards
   - dcrec/secp256k1
   - dcrec/secp256k1/schnorr
-  - database
+  - dcrjson
+  - txscript
+  - wire
 - name: github.com/decred/dcrrpcclient
-  version: f3c620d63cb02aec0c1152a72d3c8669b92a2fb5
+  version: 4536faefc970fe06267bf4af1bb7d10871138ea4
 - name: github.com/decred/dcrutil
-  version: 4a3bdb1cb08b49811674750998363b8b8ccfd66e
+  version: ebd2e98736e819ac043d54439969b30144b92ced
   subpackages:
   - base58
   - hdkeychain
 - name: github.com/decred/dcrwallet
-  version: dfb6bcd9c988137ae37d6b2dd947f18d9b088d7d
+  version: cc556328a36a9ebc5df96ec4348a4b902defc85c
   subpackages:
-  - prompt
-  - wallet
-  - walletdb/bdb
-  - internal/prompt
+  - apperrors
   - chain
-  - waddrmgr
+  - internal/helpers
+  - internal/prompt
+  - internal/zero
+  - loader
+  - pgpwordlist
+  - prompt
+  - snacl
+  - ticketbuyer
+  - wallet
+  - wallet/internal/txsizes
   - wallet/txauthor
   - wallet/txrules
+  - wallet/udb
   - walletdb
-  - wstakemgr
-  - wtxmgr
-  - pgpwordlist
-  - internal/zero
-  - snacl
-  - internal/helpers
-  - wallet/internal/txsizes
+  - walletdb/bdb
+  - walletseed
 - name: github.com/decred/ed25519
   version: b0909d3f798b97a03c9e77023f97a5301a2a7900
   subpackages:
   - edwards25519
 - name: github.com/docker/docker
-  version: c913dd5f575c877b93a812c8f57dcc212d566b87
+  version: daa8b262fe44f5e9567477f55e026cca907e9589
   subpackages:
   - pkg/archive
   - pkg/fileutils
   - pkg/idtools
   - pkg/ioutils
+  - pkg/longpath
   - pkg/pools
   - pkg/promise
   - pkg/system
-  - pkg/longpath
 - name: github.com/docker/go-units
-  version: f2d77a61e3c169b43402a0a1e84f06daf29b8190
+  version: 0dadbb0345b35ec7ef35e228dabb8de89a65bf52
 - name: github.com/marcopeereboom/go-homedir
   version: 56341bedd946382d5f8cd3ea68d14dc37aa4eb30
-- name: github.com/Sirupsen/logrus
-  version: f3cfb454f4c209e6668c95216c4744b8fddb2356
-- name: golang.org/x/crypto
-  version: f3241ce8505855877cc8a9717bd61a0f7c4ea83c
+- name: github.com/Microsoft/go-winio
+  version: d311c76e775b5092c023569caacdbb4e569c3243
+- name: github.com/opencontainers/runc
+  version: 2daa11574b12d2dd7f6dad3ffaa302871f21bd12
   subpackages:
+  - libcontainer/system
+  - libcontainer/user
+- name: github.com/Sirupsen/logrus
+  version: 5b60b3d3ee017ed00bcd0225fcca7acab767844b
+- name: golang.org/x/crypto
+  version: 122d919ec1efcfb58483215da23f815853e24b81
+  subpackages:
+  - cast5
+  - nacl/secretbox
   - openpgp
   - openpgp/armor
+  - openpgp/elgamal
   - openpgp/errors
   - openpgp/packet
   - openpgp/s2k
-  - cast5
-  - openpgp/elgamal
+  - pbkdf2
+  - poly1305
+  - ripemd160
+  - salsa20/salsa
+  - scrypt
+  - ssh/terminal
 - name: golang.org/x/net
-  version: 3f122ce3dbbe488b7e6a8bdb26f41edec852a40b
+  version: feeb485667d1fdabe727840fe00adc22431bc86e
   subpackages:
   - context
 - name: golang.org/x/sys
-  version: 5a8c7f28c1853e998847117cf1f3fe96ce88a59f
+  version: 9ccfe848b9db8435a24c424abbc07a921adf1df5
   subpackages:
   - unix
-devImports: []
+  - windows
+testImports: []
