@@ -19,7 +19,7 @@ installers in that release.  To verify these, you will need:
 
 The steps to verify the binaries are as follows:
 
-1. Download the file manifest (manifest-dcrinstall-vX.X.X.txt), the signature for the file manifest (manifest-dcrinstall-vX.X.X.txt.asc), and the installer for your OS from here https://github.com/decred/decred-release/releases.
+1. Download the file manifest (manifest-dcrinstall-vX.X.X.txt), the signature for the file manifest (manifest-dcrinstall-vX.X.X.txt.asc), and the installer for your OS from [here](https://github.com/decred/decred-release/releases).
 2. Obtain the SHA256 value for the installer for your OS and check that it matches the value in the file manifest, e.g. for 64-bit Linux
 
    ```
