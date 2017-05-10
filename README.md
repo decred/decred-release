@@ -1,9 +1,9 @@
 # decred-release
 Decred Release
 
-This repository contains the decred installer.
+This repository contains the decred installers and the installer manifests.
 
-For the release notes, manifests, and released binary achives please
+For the binary archives, binary manifests and release notes please 
 go to [decred-binaries](https://github.com/decred/decred-binaries).
 
 ## Verifying dcrinstall
