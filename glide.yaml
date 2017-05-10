@@ -6,8 +6,8 @@ import:
 - package: github.com/decred/dcrutil
 - package: github.com/decred/dcrwallet
   subpackages:
+  - loader
   - prompt
-  - wallet
   - walletdb/bdb
 - package: github.com/docker/docker
   subpackages:
