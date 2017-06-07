@@ -1,3 +1,21 @@
+#[v1.0.3](https://github.com/decred/decred-release/releases/tag/v1.0.3)
+
+## 2017-06-08
+
+This upgrades dcrinstall to default to the current release of the dcr tools.
+
+For instructions on how to verify the dcrinstall binary, please see
+[README.md](./README.md#verifying-binaries).
+
+| Description | Pull Request |
+| --- | ---- |
+| Update README.md | [decred/decred-release#105](https://github.com/decred/decred-release/pull/105) |
+| update glide and switch to testnet2 | [decred/decred-release#106](https://github.com/decred/decred-release/pull/106) |
+| Patch 1 | [decred/decred-release#107](https://github.com/decred/decred-release/pull/107) |
+| Bump for v1.0.3 | [decred/decred-release#108](https://github.com/decred/decred-release/pull/108) |
+
+---
+
 #[v1.0.1](https://github.com/decred/decred-release/releases/tag/v1.0.1)
 
 ## 2017-04-28
@@ -13,7 +31,6 @@ For instructions on how to verify the dcrinstall binary, please see
 | Bump for v1.0.1 | [decred/decred-release#101](https://github.com/decred/decred-release/pull/101) |
 
 ---
-
 
 #[v1.0.0](https://github.com/decred/decred-release/releases/tag/v1.0.0)
 
