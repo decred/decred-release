@@ -29,7 +29,7 @@ The steps to verify the binaries are as follows:
 
 3. Import the Decred Release Signing Key in GnuPG.
    ```
-   $ gpg --keyserver pgp.mit.edu --recv-keys 0x518A031D
+   $ gpg --keyserver pgp.mit.edu --recv-keys 0x6D897EDF518A031D
       gpg: requesting key 518A031D from hkp server pgp.mit.edu
       gpg: /home/user/.gnupg/trustdb.gpg: trustdb created
       gpg: key 7608AF04: public key "Decred Release <release@decred.org>" imported
