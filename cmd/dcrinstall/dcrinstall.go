@@ -40,30 +40,33 @@ type ctx struct {
 }
 
 type binary struct {
-	Name    string // binary filename
-	Config  string // actual config file
-	Example string // example config file
+	Name            string // binary filename
+	Config          string // actual config file
+	Example         string // example config file
+	SupportsVersion bool   // whether or not it supports --version
 }
 
 var (
 	binaries = []binary{
 		{
-			Name:    "dcrctl",
-			Config:  "dcrctl.conf",
-			Example: "sample-dcrctl.conf",
+			Name:            "dcrctl",
+			Config:          "dcrctl.conf",
+			Example:         "sample-dcrctl.conf",
+			SupportsVersion: true,
 		},
 		{
-			Name:    "dcrd",
-			Config:  "dcrd.conf",
-			Example: "sample-dcrd.conf",
+			Name:            "dcrd",
+			SupportsVersion: true,
 		},
 		{
-			Name:    "dcrwallet",
-			Config:  "dcrwallet.conf",
-			Example: "sample-dcrwallet.conf",
+			Name:            "dcrwallet",
+			Config:          "dcrwallet.conf",
+			Example:         "sample-dcrwallet.conf",
+			SupportsVersion: true,
 		},
 		{
-			Name: "promptsecret",
+			Name:            "promptsecret",
+			SupportsVersion: false,
 		},
 	}
 )
@@ -327,6 +330,10 @@ func (c *ctx) running(name string) (bool, error) {
 // the log file.
 func (c *ctx) recordCurrent() error {
 	for _, v := range binaries {
+		if !v.SupportsVersion {
+			continue
+		}
+
 		// not in love with this, pull this out of tar instead
 		filename := filepath.Join(c.s.Destination, v.Name)
 
