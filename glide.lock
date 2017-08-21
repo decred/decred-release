@@ -1,16 +1,18 @@
-hash: 40078361253908d63ceb270bcc8ba7c7fa91c59f7968bdf46efa3ce106d299dc
-updated: 2017-05-08T16:06:23.980137294-05:00
+hash: b9a3ad4c9d42e59c401f803f81170c189493f33879c1a5a9dc4e622dbaaabece
+updated: 2017-08-21T17:12:29.0364377-04:00
 imports:
+- name: github.com/agl/ed25519
+  version: 278e1ec8e8a6e017cd07577924d6766039146ced
+  subpackages:
+  - edwards25519
 - name: github.com/boltdb/bolt
-  version: 583e8937c61f1af6513608ccc75c97b6abdf4ff9
+  version: 2f1ce7a837dcb8da3ec595b1dac9d0632f0f99e8
 - name: github.com/btcsuite/btclog
-  version: 73889fb79bd687870312b6e40effcecffbd57d30
+  version: 84c8d2346e9fc8c7b947e243b9c24e6df9fd206a
 - name: github.com/btcsuite/go-socks
   version: 4720035b7bfd2a9bb130b1c184f8bbe41b6f0d0f
   subpackages:
   - socks
-- name: github.com/btcsuite/seelog
-  version: 313961b101eb55f65ae0f03ddd4e322731763b6c
 - name: github.com/btcsuite/websocket
   version: 31079b6807923eb23992c421b114992b95131b55
 - name: github.com/decred/bitset
@@ -18,7 +20,7 @@ imports:
 - name: github.com/decred/blake256
   version: a840e32d7c31fe2e0218607334cb120a683951a4
 - name: github.com/decred/dcrd
-  version: bbef8b8ccb42a4798d77bcd2f752a1b0752d48cd
+  version: 64119dfabb82f0aa30c079012737e7d73626a6ca
   subpackages:
   - blockchain
   - blockchain/internal/dbnamespace
@@ -38,14 +40,14 @@ imports:
   - txscript
   - wire
 - name: github.com/decred/dcrrpcclient
-  version: 4536faefc970fe06267bf4af1bb7d10871138ea4
+  version: abc326aeb97b299c7eb6b13b81353fc375e9b95d
 - name: github.com/decred/dcrutil
-  version: ebd2e98736e819ac043d54439969b30144b92ced
+  version: 166211f0196be1d3be344ae64149e7c4f5ca36b0
   subpackages:
   - base58
   - hdkeychain
 - name: github.com/decred/dcrwallet
-  version: cc556328a36a9ebc5df96ec4348a4b902defc85c
+  version: a2599956184c6cecce9e8c20a7d6c37e03ae84c5
   subpackages:
   - apperrors
   - chain
@@ -65,18 +67,15 @@ imports:
   - walletdb
   - walletdb/bdb
   - walletseed
-- name: github.com/decred/ed25519
-  version: b0909d3f798b97a03c9e77023f97a5301a2a7900
-  subpackages:
-  - edwards25519
 - name: github.com/docker/docker
-  version: daa8b262fe44f5e9567477f55e026cca907e9589
+  version: 361a473121f2cd4e688a3bb71fbeff00aaf674d7
   subpackages:
   - pkg/archive
   - pkg/fileutils
   - pkg/idtools
   - pkg/ioutils
   - pkg/longpath
+  - pkg/mount
   - pkg/pools
   - pkg/promise
   - pkg/system
@@ -85,16 +84,18 @@ imports:
 - name: github.com/marcopeereboom/go-homedir
   version: 56341bedd946382d5f8cd3ea68d14dc37aa4eb30
 - name: github.com/Microsoft/go-winio
-  version: d311c76e775b5092c023569caacdbb4e569c3243
+  version: 78439966b38d69bf38227fbf57ac8a6fee70f69a
 - name: github.com/opencontainers/runc
-  version: 2daa11574b12d2dd7f6dad3ffaa302871f21bd12
+  version: ae2948042b08ad3d6d13cd09f40a50ffff4fc688
   subpackages:
   - libcontainer/system
   - libcontainer/user
-- name: github.com/Sirupsen/logrus
-  version: 5b60b3d3ee017ed00bcd0225fcca7acab767844b
+- name: github.com/pkg/errors
+  version: c605e284fe17294bda444b34710735b29d1a9d90
+- name: github.com/sirupsen/logrus
+  version: 84573d5f03ab3740f524c7842c3a9bf617961d32
 - name: golang.org/x/crypto
-  version: 122d919ec1efcfb58483215da23f815853e24b81
+  version: eb71ad9bd329b5ac0fd0148dd99bd62e8be8e035
   subpackages:
   - cast5
   - nacl/secretbox
@@ -111,11 +112,11 @@ imports:
   - scrypt
   - ssh/terminal
 - name: golang.org/x/net
-  version: feeb485667d1fdabe727840fe00adc22431bc86e
+  version: 1c05540f6879653db88113bc4a2b70aec4bd491f
   subpackages:
   - context
 - name: golang.org/x/sys
-  version: 9ccfe848b9db8435a24c424abbc07a921adf1df5
+  version: 07c182904dbd53199946ba614a412c61d3c548f5
   subpackages:
   - unix
   - windows
