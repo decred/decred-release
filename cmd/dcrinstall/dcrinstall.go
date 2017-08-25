@@ -20,6 +20,7 @@ import (
 	"time"
 
 	"github.com/decred/dcrd/chaincfg"
+	"github.com/decred/dcrd/sampleconfig"
 	"github.com/decred/dcrutil"
 	"github.com/decred/dcrwallet/loader"
 	"github.com/decred/dcrwallet/prompt"
@@ -43,6 +44,7 @@ type binary struct {
 	Name            string // binary filename
 	Config          string // actual config file
 	Example         string // example config file
+	ExampleGenerate bool   // whether or not to generate the example config
 	SupportsVersion bool   // whether or not it supports --version
 }
 
@@ -56,6 +58,9 @@ var (
 		},
 		{
 			Name:            "dcrd",
+			Config:          "dcrd.conf",
+			Example:         "sample-dcrd.conf",
+			ExampleGenerate: true,
 			SupportsVersion: true,
 		},
 		{
@@ -422,11 +427,23 @@ func (c *ctx) createConfigNormal(b binary, f *os.File) (string, error) {
 }
 
 func (c *ctx) createConfig(b binary, version string) (string, error) {
-	// read sample config
 	sample := filepath.Join(c.s.Destination,
 		"decred-"+c.s.Tuple+"-"+version,
 		b.Example)
 
+	// write sample config if needed
+	if b.ExampleGenerate {
+		switch b.Name {
+		case "dcrd":
+			err := ioutil.WriteFile(sample, []byte(sampleconfig.FileContents), 0644)
+			if err != nil {
+				return "", fmt.Errorf("unable to write sample config to %v: %v",
+					sample, err)
+			}
+		}
+	}
+
+	// read sample config
 	f, err := os.Open(sample)
 	if err != nil {
 		return "", err

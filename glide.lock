@@ -1,5 +1,5 @@
-hash: b9a3ad4c9d42e59c401f803f81170c189493f33879c1a5a9dc4e622dbaaabece
-updated: 2017-08-21T17:12:29.0364377-04:00
+hash: c94c15d4dee0fdd0ab919b101ad7eeb070ce46580c1ef97aba63d0c9caf9c71f
+updated: 2017-08-25T12:18:28.690233768-05:00
 imports:
 - name: github.com/agl/ed25519
   version: 278e1ec8e8a6e017cd07577924d6766039146ced
@@ -15,12 +15,12 @@ imports:
   - socks
 - name: github.com/btcsuite/websocket
   version: 31079b6807923eb23992c421b114992b95131b55
+- name: github.com/dchest/blake256
+  version: dee3fe6eb0e98dc774a94fc231f85baf7c29d360
 - name: github.com/decred/bitset
   version: 484b833245d5f9046e2893a6bd2e54b1df3a53a4
-- name: github.com/decred/blake256
-  version: a840e32d7c31fe2e0218607334cb120a683951a4
 - name: github.com/decred/dcrd
-  version: 64119dfabb82f0aa30c079012737e7d73626a6ca
+  version: f0a01ced0aad52437f62b626e8ffe43c3ae689a5
   subpackages:
   - blockchain
   - blockchain/internal/dbnamespace
@@ -37,6 +37,7 @@ imports:
   - dcrec/secp256k1
   - dcrec/secp256k1/schnorr
   - dcrjson
+  - sampleconfig
   - txscript
   - wire
 - name: github.com/decred/dcrrpcclient
@@ -47,7 +48,7 @@ imports:
   - base58
   - hdkeychain
 - name: github.com/decred/dcrwallet
-  version: a2599956184c6cecce9e8c20a7d6c37e03ae84c5
+  version: 2befc6ae9e4979ca6fa72a5c900f6c1d2e13953a
   subpackages:
   - apperrors
   - chain
