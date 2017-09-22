@@ -1,4 +1,5 @@
+cmd/dcrinstall/dcrinstall
 *.sw?
 .vscode
-vendor
+vendor/
 *~
