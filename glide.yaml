@@ -1,13 +1,13 @@
 package: github.com/decred/decred-release
 import:
 - package: github.com/decred/dcrd
-  version: v1.0.7
+  version: v1.1.0
   subpackages:
   - chaincfg
   - sampleconfig
 - package: github.com/decred/dcrutil
 - package: github.com/decred/dcrwallet
-  version: v1.0.7
+  version: v1.1.0
   subpackages:
   - loader
   - prompt

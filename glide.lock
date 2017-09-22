@@ -1,8 +1,8 @@
-hash: c94c15d4dee0fdd0ab919b101ad7eeb070ce46580c1ef97aba63d0c9caf9c71f
-updated: 2017-08-25T12:18:28.690233768-05:00
+hash: 3c7401b1952201514228360443d1ece18c1e893fc719bd178cbd5e61aa82be1f
+updated: 2017-09-22T13:32:06.641375733-04:00
 imports:
 - name: github.com/agl/ed25519
-  version: 278e1ec8e8a6e017cd07577924d6766039146ced
+  version: 5312a61534124124185d41f09206b9fef1d88403
   subpackages:
   - edwards25519
 - name: github.com/boltdb/bolt
@@ -15,14 +15,19 @@ imports:
   - socks
 - name: github.com/btcsuite/websocket
   version: 31079b6807923eb23992c421b114992b95131b55
+- name: github.com/containerd/continuity
+  version: 35d55c5e8dd23b32037d56cf97174aff3efdfa83
+  subpackages:
+  - pathdriver
 - name: github.com/dchest/blake256
   version: dee3fe6eb0e98dc774a94fc231f85baf7c29d360
 - name: github.com/decred/bitset
   version: 484b833245d5f9046e2893a6bd2e54b1df3a53a4
 - name: github.com/decred/dcrd
-  version: f0a01ced0aad52437f62b626e8ffe43c3ae689a5
+  version: 1500e972e2b0f0a687bc83308c868708ca5f7c16
   subpackages:
   - blockchain
+  - blockchain/indexers
   - blockchain/internal/dbnamespace
   - blockchain/internal/progresslog
   - blockchain/stake
@@ -37,18 +42,20 @@ imports:
   - dcrec/secp256k1
   - dcrec/secp256k1/schnorr
   - dcrjson
+  - mempool
+  - mining
   - sampleconfig
   - txscript
   - wire
 - name: github.com/decred/dcrrpcclient
-  version: abc326aeb97b299c7eb6b13b81353fc375e9b95d
+  version: bd992834efae9f8a81842221a634f4af22b77a0f
 - name: github.com/decred/dcrutil
-  version: 166211f0196be1d3be344ae64149e7c4f5ca36b0
+  version: ddbde93f65ab0692e54ed8a5ad325fa2e8af4daa
   subpackages:
   - base58
   - hdkeychain
 - name: github.com/decred/dcrwallet
-  version: 2befc6ae9e4979ca6fa72a5c900f6c1d2e13953a
+  version: cf426bf26d89e6b0c750bd0cdb0f2b2635eecda9
   subpackages:
   - apperrors
   - chain
@@ -69,7 +76,7 @@ imports:
   - walletdb/bdb
   - walletseed
 - name: github.com/docker/docker
-  version: 361a473121f2cd4e688a3bb71fbeff00aaf674d7
+  version: ba317637de9b9918cdc2139466dd51c6200bd158
   subpackages:
   - pkg/archive
   - pkg/fileutils
@@ -87,16 +94,16 @@ imports:
 - name: github.com/Microsoft/go-winio
   version: 78439966b38d69bf38227fbf57ac8a6fee70f69a
 - name: github.com/opencontainers/runc
-  version: ae2948042b08ad3d6d13cd09f40a50ffff4fc688
+  version: e385f67a0e45fa1d8ef8154e2aea5128ea1d331b
   subpackages:
   - libcontainer/system
   - libcontainer/user
 - name: github.com/pkg/errors
-  version: c605e284fe17294bda444b34710735b29d1a9d90
+  version: 2b3a18b5f0fb6b4f9190549597d3f962c02bc5eb
 - name: github.com/sirupsen/logrus
-  version: 84573d5f03ab3740f524c7842c3a9bf617961d32
+  version: 89742aefa4b206dcf400792f3bd35b542998eb3b
 - name: golang.org/x/crypto
-  version: eb71ad9bd329b5ac0fd0148dd99bd62e8be8e035
+  version: 7d9177d70076375b9a59c8fde23d52d9c4a7ecd5
   subpackages:
   - cast5
   - nacl/secretbox
@@ -113,11 +120,15 @@ imports:
   - scrypt
   - ssh/terminal
 - name: golang.org/x/net
-  version: 1c05540f6879653db88113bc4a2b70aec4bd491f
+  version: 0744d001aa8470aaa53df28d32e5ceeb8af9bd70
   subpackages:
   - context
+- name: golang.org/x/sync
+  version: f52d1811a62927559de87708c8913c1650ce4f26
+  subpackages:
+  - errgroup
 - name: golang.org/x/sys
-  version: 07c182904dbd53199946ba614a412c61d3c548f5
+  version: 429f518978ab01db8bb6f44b66785088e7fba58b
   subpackages:
   - unix
   - windows
