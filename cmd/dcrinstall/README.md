@@ -173,18 +173,17 @@ refer to the documentation for your shell.
 
 dcrinstall can be used from the provided binaries but if you prefer to
 build from source you can use these steps.  Note that dcrinstall uses
-glide to manage dependencies so you cannot just use go get.  The
+dep to manage dependencies so you cannot just use go get.  The
 following instructions are for OSX and UNIX only.
 
 ```
-go get -u github.com/Masterminds/glide
+go get -u github.com/golang/dep/cmd/dep
 mkdir -p $GOPATH/src/github.com/decred
 cd $GOPATH/src/github.com/decred
 git clone https://github.com/decred/decred-release
 cd decred-release
-glide install
-cd cmd/dcrinstall
-go install
+dep ensure
+go install ./cmd/...
 ```
 
 ## Public Keys
