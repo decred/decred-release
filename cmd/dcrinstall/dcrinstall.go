@@ -89,11 +89,7 @@ func (c *ctx) logNoTime(format string, args ...interface{}) error {
 	}
 
 	_, err = fmt.Fprintf(f, format, args...)
-	if err != nil {
-		return err
-	}
-
-	return nil
+	return err
 }
 
 func (c *ctx) log(format string, args ...interface{}) error {
@@ -417,8 +413,8 @@ func (c *ctx) createConfigNormal(b binary, f *os.File) (string, error) {
 	}
 
 	if c.s.Net != netMain {
-		if seen == false {
-			return "", fmt.Errorf("could not set net to %v\n",
+		if !seen {
+			return "", fmt.Errorf("could not set net to %v",
 				c.s.Net)
 		}
 	}
@@ -461,23 +457,14 @@ func (c *ctx) writeConfig(b binary, cf string) error {
 
 	c.log("writing: %v\n", conf)
 
-	err := ioutil.WriteFile(conf, []byte(cf), 0600)
-	if err != nil {
-		return err
-	}
-
-	return nil
+	return ioutil.WriteFile(conf, []byte(cf), 0600)
 }
 
 func (c *ctx) walletDBExists() bool {
 	dir := dcrutil.AppDataDir("dcrwallet", false)
-	if exist(filepath.Join(dir, netMain, walletDB)) ||
+	return exist(filepath.Join(dir, netMain, walletDB)) ||
 		exist(filepath.Join(dir, netTest, walletDB)) ||
-		exist(filepath.Join(dir, netSim, walletDB)) {
-		return true
-	}
-
-	return false
+		exist(filepath.Join(dir, netSim, walletDB))
 }
 
 func (c *ctx) createWallet() error {
@@ -513,11 +500,7 @@ func (c *ctx) createWallet() error {
 	}
 	_ = w
 
-	err = loader.UnloadWallet()
-	if err != nil {
-		return err
-	}
-	return nil
+	return loader.UnloadWallet()
 }
 
 func (c *ctx) main() error {
@@ -619,12 +602,7 @@ func (c *ctx) main() error {
 	}
 
 	// install binaries in final location
-	err = c.copy(version)
-	if err != nil {
-		return err
-	}
-
-	return nil
+	return c.copy(version)
 }
 
 func main() {

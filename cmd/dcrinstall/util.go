@@ -45,11 +45,8 @@ func yes() bool {
 
 func exist(path string) bool {
 	_, err := os.Stat(path)
-	if err != nil {
-		return false
-	}
 
-	return true
+	return err == nil
 }
 
 // pgpVerify verifies the signature of manifest file using global pubkey.
@@ -77,11 +74,7 @@ func pgpVerify(signature, manifest string) error {
 
 	// verify signature
 	_, err = openpgp.CheckArmoredDetachedSignature(keyring, mf, sf)
-	if err != nil {
-		return err
-	}
-
-	return nil
+	return err
 }
 
 //sha256File returns the sha256 digest of the provided file.

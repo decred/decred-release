@@ -36,9 +36,5 @@ func downloadToFile(url, filename string, skipVerify bool) error {
 	}
 
 	_, err = io.Copy(f, res.Body)
-	if err != nil {
-		return err
-	}
-
-	return nil
+	return err
 }
