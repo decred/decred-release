@@ -26,6 +26,7 @@ const (
 	walletDB = "wallet.db" // start using wallet package one
 )
 
+// Settings defines the settings
 type Settings struct {
 	// command line settings
 	Destination  string // destination path
@@ -97,10 +98,10 @@ func parseSettings() (*Settings, error) {
 	}
 	s.Destination = destination
 
-	if *verbose == true {
+	if *verbose {
 		s.Verbose = true
 	}
-	if *quiet == true {
+	if *quiet {
 		s.Verbose = false
 	}
 
