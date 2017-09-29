@@ -1,0 +1,24 @@
+
+[[constraint]]
+  name = "github.com/decred/dcrd"
+  version = "v1.1.0"
+
+[[constraint]]
+  branch = "master"
+  name = "github.com/decred/dcrutil"
+
+[[constraint]]
+  name = "github.com/decred/dcrwallet"
+  version = "v1.1.0"
+
+[[constraint]]
+  branch = "master"
+  name = "github.com/docker/docker"
+
+[[constraint]]
+  branch = "master"
+  name = "github.com/marcopeereboom/go-homedir"
+
+[[constraint]]
+  branch = "master"
+  name = "golang.org/x/crypto"

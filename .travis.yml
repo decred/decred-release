@@ -4,8 +4,8 @@ go:
   - 1.9.x
 sudo: false
 install:
-  - go get -v github.com/Masterminds/glide/...
-  - glide install
+  - go get -v github.com/golang/dep/cmd/dep
+  - dep ensure
   - go install ./cmd/...
   - go get -v github.com/alecthomas/gometalinter
   - gometalinter --install
