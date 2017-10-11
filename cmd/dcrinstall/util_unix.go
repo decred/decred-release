@@ -45,6 +45,10 @@ func (c *ctx) isRunning(name string) (bool, error) {
 		if s == "" {
 			continue
 		}
+		
+		if len(strings.Split(s, "=")) != 2 {
+			continue
+		}
 
 		return true, nil
 	}
