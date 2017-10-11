@@ -20,7 +20,7 @@ func (c *ctx) isRunning(name string) (bool, error) {
 
 	switch runtime.GOOS {
 	case "linux":
-		args = []string{"-A", "aeww"}
+		args = []string{"aeww"}
 	default:
 		// BSD*
 		args = []string{"Aaeww"}
