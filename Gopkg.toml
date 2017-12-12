@@ -1,15 +1,11 @@
 
 [[constraint]]
   name = "github.com/decred/dcrd"
-  version = "v1.1.0"
-
-[[constraint]]
-  branch = "master"
-  name = "github.com/decred/dcrutil"
+  revision = "008e80bf8668544de4200a08927e95e5926439a0"
 
 [[constraint]]
   name = "github.com/decred/dcrwallet"
-  version = "v1.1.0"
+  revision = "0027db2f7a9fcce036af661938ff5a35727547a9"
 
 [[constraint]]
   branch = "master"
