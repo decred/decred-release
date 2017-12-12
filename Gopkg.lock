@@ -41,7 +41,7 @@
   branch = "master"
   name = "github.com/containerd/continuity"
   packages = ["pathdriver"]
-  revision = "617902de2ab5e18974efd88a58eeef67ac82d127"
+  revision = "0cf103d319cc2d7efe085224094f466d1f8b9640"
 
 [[projects]]
   branch = "master"
@@ -51,39 +51,25 @@
 
 [[projects]]
   branch = "master"
-  name = "github.com/decred/bitset"
+  name = "github.com/decred/base58"
   packages = ["."]
-  revision = "484b833245d5f9046e2893a6bd2e54b1df3a53a4"
+  revision = "b3520e187fa8ebe65eb74245408cf4b83e6a65d3"
 
 [[projects]]
   name = "github.com/decred/dcrd"
-  packages = ["blockchain","blockchain/indexers","blockchain/internal/dbnamespace","blockchain/internal/progresslog","blockchain/stake","blockchain/stake/internal/dbnamespace","blockchain/stake/internal/ticketdb","blockchain/stake/internal/tickettreap","chaincfg","chaincfg/chainec","chaincfg/chainhash","database","dcrec/edwards","dcrec/secp256k1","dcrec/secp256k1/schnorr","dcrjson","mempool","mining","sampleconfig","txscript","wire"]
-  revision = "1500e972e2b0f0a687bc83308c868708ca5f7c16"
-  version = "v1.1.0"
-
-[[projects]]
-  branch = "master"
-  name = "github.com/decred/dcrrpcclient"
-  packages = ["."]
-  revision = "efe7aaf4a0f0616b75e3f3ad8fa494572ff96760"
-
-[[projects]]
-  branch = "master"
-  name = "github.com/decred/dcrutil"
-  packages = [".","base58","hdkeychain"]
-  revision = "ddbde93f65ab0692e54ed8a5ad325fa2e8af4daa"
+  packages = ["blockchain","blockchain/indexers","blockchain/internal/dbnamespace","blockchain/internal/progresslog","blockchain/stake","blockchain/stake/internal/dbnamespace","blockchain/stake/internal/ticketdb","blockchain/stake/internal/tickettreap","chaincfg","chaincfg/chainec","chaincfg/chainhash","database","dcrec/edwards","dcrec/secp256k1","dcrec/secp256k1/schnorr","dcrjson","dcrutil","hdkeychain","mempool","mining","rpcclient","sampleconfig","txscript","wire"]
+  revision = "008e80bf8668544de4200a08927e95e5926439a0"
 
 [[projects]]
   name = "github.com/decred/dcrwallet"
-  packages = ["apperrors","chain","internal/helpers","internal/prompt","internal/zero","loader","pgpwordlist","prompt","snacl","ticketbuyer","wallet","wallet/internal/txsizes","wallet/txauthor","wallet/txrules","wallet/udb","walletdb","walletdb/bdb","walletseed"]
-  revision = "cf426bf26d89e6b0c750bd0cdb0f2b2635eecda9"
-  version = "v1.1.0"
+  packages = ["apperrors","internal/helpers","internal/prompt","internal/zero","loader","pgpwordlist","prompt","snacl","ticketbuyer","wallet","wallet/internal/txsizes","wallet/txauthor","wallet/txrules","wallet/udb","walletdb","walletdb/bdb","walletseed"]
+  revision = "0027db2f7a9fcce036af661938ff5a35727547a9"
 
 [[projects]]
   branch = "master"
   name = "github.com/docker/docker"
   packages = ["pkg/archive","pkg/fileutils","pkg/idtools","pkg/ioutils","pkg/longpath","pkg/mount","pkg/pools","pkg/system"]
-  revision = "de6cb7ab848d6131634e40d21d30bf2fe183e9a3"
+  revision = "1082aa759ebd73971a92a48c6c7b253cf1605ae7"
 
 [[projects]]
   name = "github.com/docker/go-units"
@@ -93,9 +79,27 @@
 
 [[projects]]
   branch = "master"
+  name = "github.com/jrick/bitset"
+  packages = ["."]
+  revision = "06eae37cdf93c699c0503c23f998167ce841974c"
+
+[[projects]]
+  branch = "master"
   name = "github.com/marcopeereboom/go-homedir"
   packages = ["."]
   revision = "56341bedd946382d5f8cd3ea68d14dc37aa4eb30"
+
+[[projects]]
+  name = "github.com/opencontainers/go-digest"
+  packages = ["."]
+  revision = "279bed98673dd5bef374d3b6e4b09e2af76183bf"
+  version = "v1.0.0-rc1"
+
+[[projects]]
+  name = "github.com/opencontainers/image-spec"
+  packages = ["specs-go","specs-go/v1"]
+  revision = "d60099175f88c47cd379c4738d158884749ed235"
+  version = "v1.0.1"
 
 [[projects]]
   name = "github.com/opencontainers/runc"
@@ -112,36 +116,36 @@
 [[projects]]
   name = "github.com/sirupsen/logrus"
   packages = ["."]
-  revision = "f006c2ac4710855cf0f916dd6b77acf6b048dc6e"
-  version = "v1.0.3"
+  revision = "d682213848ed68c0a260ca37d6dd5ace8423f5ba"
+  version = "v1.0.4"
 
 [[projects]]
   branch = "master"
   name = "golang.org/x/crypto"
   packages = ["cast5","nacl/secretbox","openpgp","openpgp/armor","openpgp/elgamal","openpgp/errors","openpgp/packet","openpgp/s2k","pbkdf2","poly1305","ripemd160","salsa20/salsa","scrypt","ssh/terminal"]
-  revision = "76eec36fa14229c4b25bb894c2d0e591527af429"
+  revision = "94eea52f7b742c7cbe0b03b22f0c4c8631ece122"
 
 [[projects]]
   branch = "master"
   name = "golang.org/x/net"
   packages = ["context"]
-  revision = "0a9397675ba34b2845f758fe3cd68828369c6517"
+  revision = "d866cfc389cec985d6fda2859936a575a55a3ab6"
 
 [[projects]]
   branch = "master"
   name = "golang.org/x/sync"
   packages = ["errgroup"]
-  revision = "8e0aa688b654ef28caa72506fa5ec8dba9fc7690"
+  revision = "fd80eb99c8f653c847d294a001bdf2a3a6f768f5"
 
 [[projects]]
   branch = "master"
   name = "golang.org/x/sys"
   packages = ["unix","windows"]
-  revision = "314a259e304ff91bd6985da2a7149bbf91237993"
+  revision = "53aa286056ef226755cd898109dbcdaba8ac0b81"
 
 [solve-meta]
   analyzer-name = "dep"
   analyzer-version = 1
-  inputs-digest = "34c6e2cec280807895f4f359cbd1d65c47b3ca2d9b67d74de1020f75eb4737bc"
+  inputs-digest = "6882463adff62f0a04f6b9f5ce817b0f83f1e686f54d7c6a5ae12744e8b0efa0"
   solver-name = "gps-cdcl"
   solver-version = 1

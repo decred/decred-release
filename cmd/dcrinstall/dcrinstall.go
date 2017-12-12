@@ -20,8 +20,8 @@ import (
 	"time"
 
 	"github.com/decred/dcrd/chaincfg"
+	"github.com/decred/dcrd/dcrutil"
 	"github.com/decred/dcrd/sampleconfig"
-	"github.com/decred/dcrutil"
 	"github.com/decred/dcrwallet/loader"
 	"github.com/decred/dcrwallet/prompt"
 	"github.com/docker/docker/pkg/archive"
@@ -472,7 +472,7 @@ func (c *ctx) createWallet() error {
 	c.log("creating wallet: %v\n", c.s.Net)
 
 	r := bufio.NewReader(os.Stdin)
-	privPass, pubPass, seed, err := prompt.Setup(r)
+	privPass, pubPass, seed, _, err := prompt.Setup(r)
 	if err != nil {
 		return err
 	}
