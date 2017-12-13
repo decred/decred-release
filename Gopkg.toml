@@ -8,8 +8,8 @@
   revision = "0027db2f7a9fcce036af661938ff5a35727547a9"
 
 [[constraint]]
-  branch = "master"
   name = "github.com/docker/docker"
+  version = "17.03.2-ce"
 
 [[constraint]]
   branch = "master"

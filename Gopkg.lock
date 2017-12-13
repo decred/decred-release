@@ -8,6 +8,12 @@
   version = "v0.4.5"
 
 [[projects]]
+  name = "github.com/Sirupsen/logrus"
+  packages = ["."]
+  revision = "d682213848ed68c0a260ca37d6dd5ace8423f5ba"
+  version = "v1.0.4"
+
+[[projects]]
   branch = "master"
   name = "github.com/agl/ed25519"
   packages = [".","edwards25519"]
@@ -39,12 +45,6 @@
 
 [[projects]]
   branch = "master"
-  name = "github.com/containerd/continuity"
-  packages = ["pathdriver"]
-  revision = "0cf103d319cc2d7efe085224094f466d1f8b9640"
-
-[[projects]]
-  branch = "master"
   name = "github.com/dchest/blake256"
   packages = ["."]
   revision = "dee3fe6eb0e98dc774a94fc231f85baf7c29d360"
@@ -66,10 +66,10 @@
   revision = "0027db2f7a9fcce036af661938ff5a35727547a9"
 
 [[projects]]
-  branch = "master"
   name = "github.com/docker/docker"
-  packages = ["pkg/archive","pkg/fileutils","pkg/idtools","pkg/ioutils","pkg/longpath","pkg/mount","pkg/pools","pkg/system"]
-  revision = "1082aa759ebd73971a92a48c6c7b253cf1605ae7"
+  packages = ["pkg/archive","pkg/fileutils","pkg/idtools","pkg/ioutils","pkg/longpath","pkg/pools","pkg/promise","pkg/system"]
+  revision = "eef6495eddab52828327aade186443681ed71a4e"
+  version = "v17.03.2-ce-rc1"
 
 [[projects]]
   name = "github.com/docker/go-units"
@@ -90,34 +90,10 @@
   revision = "56341bedd946382d5f8cd3ea68d14dc37aa4eb30"
 
 [[projects]]
-  name = "github.com/opencontainers/go-digest"
-  packages = ["."]
-  revision = "279bed98673dd5bef374d3b6e4b09e2af76183bf"
-  version = "v1.0.0-rc1"
-
-[[projects]]
-  name = "github.com/opencontainers/image-spec"
-  packages = ["specs-go","specs-go/v1"]
-  revision = "d60099175f88c47cd379c4738d158884749ed235"
-  version = "v1.0.1"
-
-[[projects]]
   name = "github.com/opencontainers/runc"
   packages = ["libcontainer/system","libcontainer/user"]
   revision = "baf6536d6259209c3edfa2b22237af82942d3dfa"
   version = "v0.1.1"
-
-[[projects]]
-  name = "github.com/pkg/errors"
-  packages = ["."]
-  revision = "645ef00459ed84a119197bfb8d8205042c6df63d"
-  version = "v0.8.0"
-
-[[projects]]
-  name = "github.com/sirupsen/logrus"
-  packages = ["."]
-  revision = "d682213848ed68c0a260ca37d6dd5ace8423f5ba"
-  version = "v1.0.4"
 
 [[projects]]
   branch = "master"
@@ -146,6 +122,6 @@
 [solve-meta]
   analyzer-name = "dep"
   analyzer-version = 1
-  inputs-digest = "6882463adff62f0a04f6b9f5ce817b0f83f1e686f54d7c6a5ae12744e8b0efa0"
+  inputs-digest = "d41231ac29cf0e9b74c4f420bfb89d44acd4edd3b68950bf2e90ae91255060a3"
   solver-name = "gps-cdcl"
   solver-version = 1
