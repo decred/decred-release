@@ -1,7 +1,7 @@
 language: go
 go:
-  - 1.8.x
   - 1.9.x
+  - 1.10.x
 sudo: false
 install:
   - go get -v github.com/golang/dep/cmd/dep
@@ -11,4 +11,11 @@ install:
   - gometalinter --install
 script:
   - export PATH=$PATH:$HOME/gopath/bin
-  - ./goclean.sh
+  - gometalinter --vendor --disable-all --deadline=10m
+    --enable=gofmt
+    --enable=golint
+    --enable=vet
+    --enable=gosimple
+    --enable=unconvert
+    --enable=ineffassign
+  - env GORACE="halt_on_error=1" go test -race ./...
