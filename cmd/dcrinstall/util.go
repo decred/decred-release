@@ -15,7 +15,7 @@ import (
 	"regexp"
 	"strings"
 
-	"github.com/docker/docker/pkg/archive"
+	"github.com/moby/moby/pkg/archive"
 
 	"golang.org/x/crypto/openpgp"
 )

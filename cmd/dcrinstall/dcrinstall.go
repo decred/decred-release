@@ -24,10 +24,10 @@ import (
 	"github.com/decred/dcrd/sampleconfig"
 	"github.com/decred/dcrwallet/loader"
 	"github.com/decred/dcrwallet/prompt"
-	"github.com/docker/docker/pkg/archive"
 	"github.com/marcopeereboom/go-homedir"
+	"github.com/moby/moby/pkg/archive"
 
-	_ "github.com/decred/dcrwallet/walletdb/bdb"
+	_ "github.com/decred/dcrwallet/wallet/drivers/bdb"
 )
 
 // global context
@@ -482,7 +482,7 @@ func (c *ctx) createWallet() error {
 	case netMain:
 		chainParams = &chaincfg.MainNetParams
 	case netTest:
-		chainParams = &chaincfg.TestNet2Params
+		chainParams = &chaincfg.TestNet3Params
 	case netSim:
 		chainParams = &chaincfg.SimNetParams
 	default:
@@ -493,7 +493,7 @@ func (c *ctx) createWallet() error {
 	dbDir := filepath.Join(dcrutil.AppDataDir("dcrwallet",
 		false), chainParams.Name)
 	loader := loader.NewLoader(chainParams, dbDir,
-		new(loader.StakeOptions), 0, false, 0)
+		new(loader.StakeOptions), 0, false, 0, 0)
 	w, err := loader.CreateNewWallet(pubPass, privPass, seed)
 	if err != nil {
 		return err

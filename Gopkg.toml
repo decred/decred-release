@@ -1,14 +1,14 @@
 
 [[constraint]]
   name = "github.com/decred/dcrd"
-  version = "1.2.0-rc1"
+  version = "release-v1.3.0-rc1"
 
 [[constraint]]
   name = "github.com/decred/dcrwallet"
-  version = "1.2.0-rc1"
+  branch = "release-v1.3"
 
 [[constraint]]
-  name = "github.com/docker/docker"
+  name = "github.com/moby/moby"
   version = "17.03.2-ce"
 
 [[constraint]]
