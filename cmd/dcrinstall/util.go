@@ -13,12 +13,52 @@ import (
 	"os"
 	"path/filepath"
 	"regexp"
+	"strconv"
 	"strings"
 
 	"github.com/moby/moby/pkg/archive"
 
 	"golang.org/x/crypto/openpgp"
 )
+
+var relRE = regexp.MustCompile(`(v|release-v)?(0|[1-9]\d*)\.(0|[1-9]\d*)\.(0|[1-9]\d*)(-(0|[1-9]\d*|\d*[a-zA-Z-][0-9a-zA-Z-]*)(\.(0|[1-9]\d*|\d*[a-zA-Z-][0-9a-zA-Z-]*))*)?(\+[0-9a-zA-Z-]+(\.[0-9a-zA-Z-]+)*)?`)
+
+type semVerInfo struct {
+	Major      uint32
+	Minor      uint32
+	Patch      uint32
+	PreRelease string
+	Build      string
+}
+
+func extractSemVer(s string) (*semVerInfo, error) {
+	matches := relRE.FindStringSubmatch(s)
+	if len(matches) == 0 {
+		return nil, fmt.Errorf("version string %q does not follow semantic "+
+			"versioning requirements", s)
+	}
+
+	major, err := strconv.ParseInt(matches[2], 10, 32)
+	if err != nil {
+		return nil, err
+	}
+	minor, err := strconv.ParseInt(matches[3], 10, 32)
+	if err != nil {
+		return nil, err
+	}
+	patch, err := strconv.ParseInt(matches[4], 10, 32)
+	if err != nil {
+		return nil, err
+	}
+
+	return &semVerInfo{
+		Major:      uint32(major),
+		Minor:      uint32(minor),
+		Patch:      uint32(patch),
+		PreRelease: matches[6],
+		Build:      matches[9],
+	}, nil
+}
 
 func answer(def string) string {
 	r := bufio.NewReader(os.Stdin)
@@ -118,6 +158,15 @@ func (c *ctx) extract() (string, error) {
 	}
 
 	// fish out version
-	re := regexp.MustCompile("v[0-9]+.[0-9]+.[0-9]+")
-	return re.FindString(filename), nil
+	info, err := extractSemVer(filename)
+	if err != nil {
+		return "", err
+	}
+
+	version := fmt.Sprintf("v%v.%v.%v", info.Major, info.Minor, info.Patch)
+	if info.PreRelease != "" {
+		version += "-" + info.PreRelease
+	}
+
+	return version, nil
 }
