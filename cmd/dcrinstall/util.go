@@ -5,18 +5,19 @@
 package main
 
 import (
+	"archive/tar"
 	"bufio"
 	"bytes"
+	"compress/gzip"
 	"crypto/sha256"
 	"fmt"
 	"io"
+	"io/ioutil"
 	"os"
 	"path/filepath"
 	"regexp"
 	"strconv"
 	"strings"
-
-	"github.com/moby/moby/pkg/archive"
 
 	"golang.org/x/crypto/openpgp"
 )
@@ -145,16 +146,50 @@ func (c *ctx) extract() (string, error) {
 	c.log("extracting: %v -> %v\n", filename, c.s.Destination)
 
 	src := filepath.Join(c.s.Path, filename)
-	a, err := os.Open(src)
+
+	a, err := ioutil.ReadFile(src)
 	if err != nil {
 		return "", err
 	}
-	defer a.Close()
-
-	options := &archive.TarOptions{NoLchown: true}
-	err = archive.Untar(a, c.s.Destination, options)
+	ab := bytes.NewReader(a)
+	gz, err := gzip.NewReader(ab)
 	if err != nil {
 		return "", err
+	}
+	defer gz.Close()
+	tr := tar.NewReader(gz)
+	for {
+		hdr, err := tr.Next()
+		if err != nil {
+			if err == io.EOF {
+				break // end of archive
+			}
+			return "", err
+		}
+		if hdr == nil {
+			continue
+		}
+		target := filepath.Join(c.s.Destination, hdr.Name)
+		c.log("contents of %v\n", target)
+		switch hdr.Typeflag {
+		case tar.TypeDir:
+			if err := os.MkdirAll(target, 0755); err != nil {
+				return "", err
+			}
+		case tar.TypeReg:
+			f, err := os.OpenFile(target, os.O_CREATE|os.O_RDWR, os.FileMode(hdr.Mode))
+			if err != nil {
+				return "", err
+			}
+
+			// copy to file
+			if _, err := io.Copy(f, tr); err != nil {
+				f.Close()
+				return "", err
+			}
+
+			f.Close()
+		}
 	}
 
 	// fish out version

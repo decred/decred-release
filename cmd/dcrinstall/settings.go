@@ -1,4 +1,4 @@
-// Copyright (c) 2016-2017 The Decred developers
+// Copyright (c) 2016-2019 The Decred developers
 // Use of this source code is governed by an ISC
 // license that can be found in the LICENSE file.
 
@@ -17,8 +17,8 @@ import (
 
 // latestVersion and latestManifest must be updated every release.
 const (
-	latestManifest = "manifest-v1.3.0-rc1.txt"
-	defaultURI     = "https://github.com/decred/decred-binaries/releases/download/v1.3.0-rc1"
+	latestManifest = "manifest-v1.4.0.txt"
+	defaultURI     = "https://github.com/decred/decred-binaries/releases/download/v1.4.0"
 
 	netMain  = "mainnet"
 	netTest  = "testnet"
