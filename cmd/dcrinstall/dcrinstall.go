@@ -25,7 +25,6 @@ import (
 	"github.com/decred/dcrwallet/loader"
 	"github.com/decred/dcrwallet/prompt"
 	"github.com/marcopeereboom/go-homedir"
-	"github.com/moby/moby/pkg/archive"
 
 	_ "github.com/decred/dcrwallet/wallet/drivers/bdb"
 )
@@ -271,23 +270,30 @@ func (c *ctx) verify() error {
 	return nil
 }
 
-// copy verifies that all binaries can be executed.
+// copy installs all binaries into their final destination.
 func (c *ctx) copy(version string) error {
 	for _, v := range binaries {
-		// not in love with this, pull this out of tar instead
-		filename := filepath.Join(c.s.Destination,
+		src := filepath.Join(c.s.Destination,
 			"decred-"+c.s.Tuple+"-"+version,
 			v.Name)
+		dst := filepath.Join(c.s.Destination, v.Name)
 
 		// yep, this is ferrealz
 		if runtime.GOOS == "windows" {
-			filename += ".exe"
+			src += ".exe"
 		}
 
-		c.log("installing: %v -> %v\n", filename, c.s.Destination)
-
-		// +"/" is needed to indicate the to tar that it is a directory
-		err := archive.CopyResource(filename, c.s.Destination+"/", false)
+		c.log("installing %v -> %v\n", src, dst)
+		srcBytes, err := ioutil.ReadFile(src)
+		if err != nil {
+			return err
+		}
+		f, err := os.OpenFile(dst, os.O_CREATE|os.O_RDWR|os.O_TRUNC, 0700)
+		if err != nil {
+			return err
+		}
+		_, err = f.Write(srcBytes)
+		f.Close()
 		if err != nil {
 			return err
 		}
