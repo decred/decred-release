@@ -19,14 +19,9 @@ import (
 	"strings"
 	"time"
 
-	"github.com/decred/dcrd/chaincfg"
 	"github.com/decred/dcrd/dcrutil"
 	"github.com/decred/dcrd/sampleconfig"
-	"github.com/decred/dcrwallet/loader"
-	"github.com/decred/dcrwallet/prompt"
 	"github.com/marcopeereboom/go-homedir"
-
-	_ "github.com/decred/dcrwallet/wallet/drivers/bdb"
 )
 
 // global context
@@ -473,40 +468,27 @@ func (c *ctx) walletDBExists() bool {
 		exist(filepath.Join(dir, netSim, walletDB))
 }
 
-func (c *ctx) createWallet() error {
+func (c *ctx) createWallet(version string) error {
 	// create wallet
 	c.log("creating wallet: %v\n", c.s.Net)
 
-	r := bufio.NewReader(os.Stdin)
-	privPass, pubPass, seed, _, err := prompt.Setup(r)
-	if err != nil {
-		return err
+	dcrwalletExe := filepath.Join(c.s.Destination,
+		"decred-"+c.s.Tuple+"-"+version, "dcrwallet")
+	if runtime.GOOS == "windows" {
+		dcrwalletExe += ".exe"
 	}
-
-	var chainParams *chaincfg.Params
+	args := []string{"--create"}
 	switch c.s.Net {
-	case netMain:
-		chainParams = &chaincfg.MainNetParams
 	case netTest:
-		chainParams = &chaincfg.TestNet3Params
+		args = append(args, "--testnet")
 	case netSim:
-		chainParams = &chaincfg.SimNetParams
-	default:
-		return fmt.Errorf("invalid wallet type: %v",
-			c.s.Net)
+		args = append(args, "--simnet")
 	}
-
-	dbDir := filepath.Join(dcrutil.AppDataDir("dcrwallet",
-		false), chainParams.Name)
-	loader := loader.NewLoader(chainParams, dbDir,
-		new(loader.StakeOptions), 0, false, 0, 0)
-	w, err := loader.CreateNewWallet(pubPass, privPass, seed)
-	if err != nil {
-		return err
-	}
-	_ = w
-
-	return loader.UnloadWallet()
+	cmd := exec.Command(dcrwalletExe, args...)
+	cmd.Stdin = os.Stdin
+	cmd.Stdout = os.Stdout
+	cmd.Stderr = os.Stderr
+	return cmd.Run()
 }
 
 func (c *ctx) main() error {
@@ -600,7 +582,7 @@ func (c *ctx) main() error {
 		if c.walletDBExists() {
 			c.log("wallet.db exists, skipping wallet creation.\n")
 		} else {
-			err = c.createWallet()
+			err = c.createWallet(version)
 			if err != nil {
 				return err
 			}
