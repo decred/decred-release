@@ -19,7 +19,7 @@ import (
 	"strings"
 	"time"
 
-	"github.com/decred/dcrd/dcrutil"
+	"github.com/decred/dcrd/dcrutil/v2"
 	"github.com/decred/dcrd/sampleconfig"
 	"github.com/marcopeereboom/go-homedir"
 )
