@@ -67,6 +67,14 @@ var (
 			Name:            "promptsecret",
 			SupportsVersion: false,
 		},
+		{
+			Name:            "dcrlnd",
+			SupportsVersion: true,
+		},
+		{
+			Name:            "dcrlncli",
+			SupportsVersion: true,
+		},
 	}
 )
 
@@ -504,6 +512,13 @@ func (c *ctx) main() error {
 		return err
 	} else if running {
 		return fmt.Errorf("dcrd is still running")
+	}
+
+	running, err = c.running("dcrlnd")
+	if err != nil {
+		return err
+	} else if running {
+		return fmt.Errorf("dcrlnd is still running")
 	}
 
 	if !c.s.SkipDownload {
