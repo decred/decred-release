@@ -6,6 +6,7 @@ package main
 
 import (
 	"archive/tar"
+	"archive/zip"
 	"bufio"
 	"bytes"
 	"compress/gzip"
@@ -144,52 +145,13 @@ func (c *ctx) extract() (string, error) {
 	}
 
 	c.log("extracting: %v -> %v\n", filename, c.s.Destination)
-
-	src := filepath.Join(c.s.Path, filename)
-
-	a, err := ioutil.ReadFile(src)
+	if filepath.Ext(filename) == ".zip" {
+		err = c.unzip(filename)
+	} else {
+		err = c.gunzip(filename)
+	}
 	if err != nil {
 		return "", err
-	}
-	ab := bytes.NewReader(a)
-	gz, err := gzip.NewReader(ab)
-	if err != nil {
-		return "", err
-	}
-	defer gz.Close()
-	tr := tar.NewReader(gz)
-	for {
-		hdr, err := tr.Next()
-		if err != nil {
-			if err == io.EOF {
-				break // end of archive
-			}
-			return "", err
-		}
-		if hdr == nil {
-			continue
-		}
-		target := filepath.Join(c.s.Destination, hdr.Name)
-		c.log("contents of %v\n", target)
-		switch hdr.Typeflag {
-		case tar.TypeDir:
-			if err := os.MkdirAll(target, 0755); err != nil {
-				return "", err
-			}
-		case tar.TypeReg:
-			f, err := os.OpenFile(target, os.O_CREATE|os.O_RDWR, os.FileMode(hdr.Mode))
-			if err != nil {
-				return "", err
-			}
-
-			// copy to file
-			if _, err := io.Copy(f, tr); err != nil {
-				f.Close()
-				return "", err
-			}
-
-			f.Close()
-		}
 	}
 
 	// fish out version
@@ -204,4 +166,85 @@ func (c *ctx) extract() (string, error) {
 	}
 
 	return version, nil
+}
+
+func (c *ctx) gunzip(filename string) error {
+	src := filepath.Join(c.s.Path, filename)
+
+	a, err := ioutil.ReadFile(src)
+	if err != nil {
+		return err
+	}
+	ab := bytes.NewReader(a)
+	gz, err := gzip.NewReader(ab)
+	if err != nil {
+		return err
+	}
+	defer gz.Close()
+	tr := tar.NewReader(gz)
+	for {
+		hdr, err := tr.Next()
+		if err != nil {
+			if err == io.EOF {
+				break // end of archive
+			}
+			return err
+		}
+		if hdr == nil {
+			continue
+		}
+		target := filepath.Join(c.s.Destination, hdr.Name)
+		c.log("contents of %v\n", target)
+		switch hdr.Typeflag {
+		case tar.TypeDir:
+			if err := os.MkdirAll(target, 0755); err != nil {
+				return err
+			}
+		case tar.TypeReg:
+			f, err := os.OpenFile(target, os.O_CREATE|os.O_RDWR, os.FileMode(hdr.Mode))
+			if err != nil {
+				return err
+			}
+
+			// copy to file
+			if _, err := io.Copy(f, tr); err != nil {
+				f.Close()
+				return err
+			}
+
+			f.Close()
+		}
+	}
+
+	return nil
+}
+
+func (c *ctx) unzip(filename string) error {
+	src := filepath.Join(c.s.Path, filename)
+
+	uz, err := zip.OpenReader(src)
+	if err != nil {
+		return err
+	}
+	defer uz.Close()
+
+	for _, file := range uz.File {
+		c.log("contents of %v\n", file.Name)
+		rc, err := file.Open()
+		if err != nil {
+			return err
+		}
+		target := filepath.Join(c.s.Destination, file.Name)
+		f, err := os.OpenFile(target, os.O_CREATE|os.O_WRONLY, os.FileMode(0755))
+		if err != nil {
+			return err
+		}
+		_, err = io.Copy(f, rc)
+		f.Close()
+		rc.Close()
+		if err != nil {
+			return err
+		}
+	}
+	return nil
 }
