@@ -212,7 +212,9 @@ func (c *ctx) gunzip(filename string) error {
 				return err
 			}
 
-			f.Close()
+			if err := f.Close(); err != nil {
+				return err
+			}
 		}
 	}
 
@@ -237,17 +239,24 @@ func (c *ctx) unzip(filename string) error {
 
 		target := filepath.Join(c.s.Destination, file.Name)
 		if err := os.MkdirAll(filepath.Dir(target), 0755); err != nil {
+			rc.Close()
 			return err
 		}
 
 		f, err := os.OpenFile(target, os.O_CREATE|os.O_WRONLY, os.FileMode(0755))
 		if err != nil {
+			rc.Close()
 			return err
 		}
-		_, err = io.Copy(f, rc)
-		f.Close()
-		rc.Close()
-		if err != nil {
+		if _, err = io.Copy(f, rc); err != nil {
+			f.Close()
+			rc.Close()
+			return err
+		}
+		if err = f.Close(); err != nil {
+			return err
+		}
+		if err = rc.Close(); err != nil {
 			return err
 		}
 	}
