@@ -152,11 +152,6 @@ func findOS(which, manifest string) (string, string, error) {
 			continue
 		}
 
-		// XXX quirk skip if .zip XXX
-		if filepath.Ext(a[1]) == ".zip" {
-			continue
-		}
-
 		if !(digest == "" && filename == "") {
 			return "", "",
 				fmt.Errorf("os-arch tuple not unique: %v", which)
