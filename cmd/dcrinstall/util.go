@@ -234,7 +234,12 @@ func (c *ctx) unzip(filename string) error {
 		if err != nil {
 			return err
 		}
+
 		target := filepath.Join(c.s.Destination, file.Name)
+		if err := os.MkdirAll(filepath.Dir(target), 0755); err != nil {
+			return err
+		}
+
 		f, err := os.OpenFile(target, os.O_CREATE|os.O_WRONLY, os.FileMode(0755))
 		if err != nil {
 			return err
