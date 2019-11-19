@@ -20,7 +20,6 @@ import (
 	"time"
 
 	"github.com/decred/dcrd/dcrutil/v2"
-	"github.com/decred/dcrd/sampleconfig"
 	"github.com/marcopeereboom/go-homedir"
 )
 
@@ -38,7 +37,6 @@ type binary struct {
 	Name            string // binary filename
 	Config          string // actual config file
 	Example         string // example config file
-	ExampleGenerate bool   // whether or not to generate the example config
 	SupportsVersion bool   // whether or not it supports --version
 }
 
@@ -54,7 +52,6 @@ var (
 			Name:            "dcrd",
 			Config:          "dcrd.conf",
 			Example:         "sample-dcrd.conf",
-			ExampleGenerate: true,
 			SupportsVersion: true,
 		},
 		{
@@ -70,9 +67,17 @@ var (
 		{
 			Name:            "dcrlnd",
 			SupportsVersion: true,
+			Config:          "dcrlnd.conf",
+			Example:         "sample-dcrlnd.conf",
 		},
 		{
 			Name:            "dcrlncli",
+			SupportsVersion: true,
+		},
+		{
+			Name:            "politeiavoter",
+			Config:          "politeiavoter.conf",
+			Example:         "sample-politeiavoter.conf",
 			SupportsVersion: true,
 		},
 	}
@@ -430,18 +435,6 @@ func (c *ctx) createConfig(b binary, version string) (string, error) {
 	sample := filepath.Join(c.s.Destination,
 		"decred-"+c.s.Tuple+"-"+version,
 		b.Example)
-
-	// write sample config if needed
-	if b.ExampleGenerate {
-		switch b.Name {
-		case "dcrd":
-			err := ioutil.WriteFile(sample, []byte(sampleconfig.FileContents), 0644)
-			if err != nil {
-				return "", fmt.Errorf("unable to write sample config to %v: %v",
-					sample, err)
-			}
-		}
-	}
 
 	// read sample config
 	f, err := os.Open(sample)
