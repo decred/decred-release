@@ -5,7 +5,6 @@
 package main
 
 import (
-	"crypto/tls"
 	"fmt"
 	"io"
 	"net/http"
@@ -13,7 +12,7 @@ import (
 	"strings"
 )
 
-func downloadToFile(url, filename string, skipVerify bool) error {
+func downloadToFile(url, filename string) error {
 	f, err := os.OpenFile(filename, os.O_CREATE|os.O_EXCL|os.O_WRONLY, 0600)
 	if err != nil {
 		return err
@@ -31,12 +30,7 @@ func downloadToFile(url, filename string, skipVerify bool) error {
 		return err
 	}
 
-	tr := &http.Transport{}
-	if skipVerify {
-		tr.TLSClientConfig = &tls.Config{InsecureSkipVerify: true}
-	}
-	client := &http.Client{Transport: tr}
-
+	var client http.Client
 	res, err := client.Get(url)
 	if err != nil {
 		return err

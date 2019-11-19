@@ -20,7 +20,6 @@ import (
 	"time"
 
 	"github.com/decred/dcrd/dcrutil/v2"
-	"github.com/decred/dcrd/sampleconfig"
 	"github.com/marcopeereboom/go-homedir"
 )
 
@@ -38,7 +37,6 @@ type binary struct {
 	Name            string // binary filename
 	Config          string // actual config file
 	Example         string // example config file
-	ExampleGenerate bool   // whether or not to generate the example config
 	SupportsVersion bool   // whether or not it supports --version
 }
 
@@ -54,7 +52,6 @@ var (
 			Name:            "dcrd",
 			Config:          "dcrd.conf",
 			Example:         "sample-dcrd.conf",
-			ExampleGenerate: true,
 			SupportsVersion: true,
 		},
 		{
@@ -70,9 +67,17 @@ var (
 		{
 			Name:            "dcrlnd",
 			SupportsVersion: true,
+			Config:          "dcrlnd.conf",
+			Example:         "sample-dcrlnd.conf",
 		},
 		{
 			Name:            "dcrlncli",
+			SupportsVersion: true,
+		},
+		{
+			Name:            "politeiavoter",
+			Config:          "politeiavoter.conf",
+			Example:         "sample-politeiavoter.conf",
 			SupportsVersion: true,
 		},
 	}
@@ -180,26 +185,20 @@ func (c *ctx) download() (string, error) {
 	c.log("downloading manifest: %v\n", manifestURI)
 
 	manifest := filepath.Join(td, filepath.Base(manifestURI))
-	err = downloadToFile(manifestURI, manifest, c.s.SkipVerify)
+	err = downloadToFile(manifestURI, manifest)
 	if err != nil {
 		return "", err
 	}
 
 	// download manifest signature
 	manifestAscURI := c.s.URI + "/" + c.s.Manifest + ".asc"
-	if c.s.SkipVerify {
-		c.log("SKIPPING downloading manifest "+
-			"signatures: %v\n", manifestAscURI)
-	} else {
-		c.log("downloading manifest signatures: %v\n",
-			manifestAscURI)
+	c.log("downloading manifest signatures: %v\n",
+		manifestAscURI)
 
-		manifestAsc := filepath.Join(td, filepath.Base(manifestAscURI))
-		err = downloadToFile(manifestAscURI, manifestAsc,
-			c.s.SkipVerify)
-		if err != nil {
-			return "", err
-		}
+	manifestAsc := filepath.Join(td, filepath.Base(manifestAscURI))
+	err = downloadToFile(manifestAscURI, manifestAsc)
+	if err != nil {
+		return "", err
 	}
 
 	// determine if os-arch is supported
@@ -213,7 +212,7 @@ func (c *ctx) download() (string, error) {
 	c.log("downloading package: %v\n", packageURI)
 
 	pkg := filepath.Join(td, filepath.Base(packageURI))
-	err = downloadToFile(packageURI, pkg, c.s.SkipVerify)
+	err = downloadToFile(packageURI, pkg)
 	if err != nil {
 		return "", err
 	}
@@ -230,21 +229,16 @@ func (c *ctx) verify() error {
 		return err
 	}
 
-	if c.s.SkipVerify {
-		c.log("SKIPPING verifying manifest: %v\n",
-			c.s.Manifest)
-	} else {
-		// verify manifest
-		c.log("verifying manifest: %v ", c.s.Manifest)
+	// verify manifest
+	c.log("verifying manifest: %v ", c.s.Manifest)
 
-		err = pgpVerify(manifest+".asc", manifest)
-		if err != nil {
-			c.logNoTime("FAIL\n")
-			return fmt.Errorf("manifest PGP signature incorrect: %v", err)
-		}
-
-		c.logNoTime("OK\n")
+	err = pgpVerify(manifest+".asc", manifest)
+	if err != nil {
+		c.logNoTime("FAIL\n")
+		return fmt.Errorf("manifest PGP signature incorrect: %v", err)
 	}
+
+	c.logNoTime("OK\n")
 
 	// verify digest
 	c.log("verifying package: %v ", filename)
@@ -358,32 +352,6 @@ func (c *ctx) recordCurrent() error {
 	return nil
 }
 
-// exists ensures that either all or none of the binary config files exist.
-func (c *ctx) exists() ([]string, error) {
-	x := 0
-	s := ""
-	found := make([]string, 0, len(binaries))
-	for _, v := range binaries {
-		// check actual config file
-		dir := dcrutil.AppDataDir(v.Name, false)
-		conf := filepath.Join(dir, v.Config)
-
-		if !exist(conf) {
-			continue
-		}
-
-		found = append(found, filepath.Base(conf))
-		s += filepath.Base(conf) + " "
-		x++
-	}
-
-	if x != 0 {
-		return found, fmt.Errorf("%valready exists", s)
-	}
-
-	return nil, nil
-}
-
 func (c *ctx) createConfigNormal(b binary, f *os.File) (string, error) {
 	seen := false
 	rv := ""
@@ -430,18 +398,6 @@ func (c *ctx) createConfig(b binary, version string) (string, error) {
 	sample := filepath.Join(c.s.Destination,
 		"decred-"+c.s.Tuple+"-"+version,
 		b.Example)
-
-	// write sample config if needed
-	if b.ExampleGenerate {
-		switch b.Name {
-		case "dcrd":
-			err := ioutil.WriteFile(sample, []byte(sampleconfig.FileContents), 0644)
-			if err != nil {
-				return "", fmt.Errorf("unable to write sample config to %v: %v",
-					sample, err)
-			}
-		}
-	}
 
 	// read sample config
 	f, err := os.Open(sample)
@@ -548,32 +504,28 @@ func (c *ctx) main() error {
 		return err
 	}
 
-	found, err := c.exists()
+	// prime defaults
+	err = c.obtainUserName()
 	if err != nil {
-		c.log("--- Performing upgrade ---\n")
-	} else if len(found) == 0 {
-		c.log("--- Performing install ---\n")
+		return err
+	}
 
-		// prime defaults
-		err = c.obtainUserName()
-		if err != nil {
-			return err
-		}
+	err = c.obtainPassword()
+	if err != nil {
+		return err
+	}
 
-		err = c.obtainPassword()
-		if err != nil {
-			return err
-		}
+	for _, v := range binaries {
+		if v.Config != "" {
+			// check actual config file
+			dir := dcrutil.AppDataDir(v.Name, false)
+			conf := filepath.Join(dir, v.Config)
 
-		// lay down config files with parsed answers only if a Config
-		// was defined
-		for _, v := range binaries {
-			if v.Config != "" {
+			if !exist(conf) {
 				config, err := c.createConfig(v, version)
 				if err != nil {
 					return err
 				}
-
 				dir := dcrutil.AppDataDir(v.Name, false)
 				c.log("creating directory: %v\n", dir)
 
@@ -582,13 +534,15 @@ func (c *ctx) main() error {
 					return err
 				}
 
+				c.log("installing %s\n", conf)
 				err = c.writeConfig(v, config)
 				if err != nil {
 					return err
 				}
+			} else {
+				c.log("skipping %s -- already installed\n", conf)
 			}
 		}
-
 		if c.walletDBExists() {
 			c.log("wallet.db exists, skipping wallet creation.\n")
 		} else {

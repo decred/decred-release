@@ -17,11 +17,11 @@ import (
 
 // latestVersion and latestManifest must be updated every release.
 const (
-	latestManifest = "decred-v1.5.0-rc1-manifest.txt"
-	defaultURI     = "https://github.com/decred/decred-binaries/releases/download/v1.5.0-rc1"
+	latestManifest = "decred-v1.5.0-rc2-manifest.txt"
+	defaultURI     = "https://github.com/decred/decred-binaries/releases/download/v1.5.0-rc2"
 
 	netMain  = "mainnet"
-	netTest  = "testnet"
+	netTest  = "testnet3"
 	netSim   = "simnet"
 	walletDB = "wallet.db" // start using wallet package one
 )
@@ -37,7 +37,6 @@ type Settings struct {
 	URI          string // URI to manifest and sets
 	DownloadOnly bool   // download files only
 	SkipDownload bool   // requires path to files
-	SkipVerify   bool   // skip TLS and signature checks, internal use only
 	Quiet        bool   // quiet
 	Verbose      bool   // loudness
 	Version      bool   // show version.
@@ -79,9 +78,6 @@ func parseSettings() (*Settings, error) {
 	}
 	if *skip && *download {
 		return nil, fmt.Errorf("downloadonly and skip are mutually exclusive")
-	}
-	if *uri != defaultURI {
-		s.SkipVerify = true
 	}
 
 	switch *net {
