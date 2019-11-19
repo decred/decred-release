@@ -363,32 +363,6 @@ func (c *ctx) recordCurrent() error {
 	return nil
 }
 
-// exists ensures that either all or none of the binary config files exist.
-func (c *ctx) exists() ([]string, error) {
-	x := 0
-	s := ""
-	found := make([]string, 0, len(binaries))
-	for _, v := range binaries {
-		// check actual config file
-		dir := dcrutil.AppDataDir(v.Name, false)
-		conf := filepath.Join(dir, v.Config)
-
-		if !exist(conf) {
-			continue
-		}
-
-		found = append(found, filepath.Base(conf))
-		s += filepath.Base(conf) + " "
-		x++
-	}
-
-	if x != 0 {
-		return found, fmt.Errorf("%valready exists", s)
-	}
-
-	return nil, nil
-}
-
 func (c *ctx) createConfigNormal(b binary, f *os.File) (string, error) {
 	seen := false
 	rv := ""
@@ -541,32 +515,28 @@ func (c *ctx) main() error {
 		return err
 	}
 
-	found, err := c.exists()
+	// prime defaults
+	err = c.obtainUserName()
 	if err != nil {
-		c.log("--- Performing upgrade ---\n")
-	} else if len(found) == 0 {
-		c.log("--- Performing install ---\n")
+		return err
+	}
 
-		// prime defaults
-		err = c.obtainUserName()
-		if err != nil {
-			return err
-		}
+	err = c.obtainPassword()
+	if err != nil {
+		return err
+	}
 
-		err = c.obtainPassword()
-		if err != nil {
-			return err
-		}
+	for _, v := range binaries {
+		if v.Config != "" {
+			// check actual config file
+			dir := dcrutil.AppDataDir(v.Name, false)
+			conf := filepath.Join(dir, v.Config)
 
-		// lay down config files with parsed answers only if a Config
-		// was defined
-		for _, v := range binaries {
-			if v.Config != "" {
+			if !exist(conf) {
 				config, err := c.createConfig(v, version)
 				if err != nil {
 					return err
 				}
-
 				dir := dcrutil.AppDataDir(v.Name, false)
 				c.log("creating directory: %v\n", dir)
 
@@ -575,13 +545,15 @@ func (c *ctx) main() error {
 					return err
 				}
 
+				c.log("installing %s\n", conf)
 				err = c.writeConfig(v, config)
 				if err != nil {
 					return err
 				}
+			} else {
+				c.log("skipping %s -- already installed\n", conf)
 			}
 		}
-
 		if c.walletDBExists() {
 			c.log("wallet.db exists, skipping wallet creation.\n")
 		} else {

@@ -21,7 +21,7 @@ const (
 	defaultURI     = "https://github.com/decred/decred-binaries/releases/download/v1.5.0-rc2"
 
 	netMain  = "mainnet"
-	netTest  = "testnet"
+	netTest  = "testnet3"
 	netSim   = "simnet"
 	walletDB = "wallet.db" // start using wallet package one
 )
