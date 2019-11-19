@@ -7,7 +7,7 @@
 set -ex
 
 TAG=$1
-REL=(-ldflags "-X main.appBuild=release")
+REL=(-ldflags "-buildid= -X main.appBuild=release")
 
 PWD=$(pwd)
 PACKAGE=dcrinstall
