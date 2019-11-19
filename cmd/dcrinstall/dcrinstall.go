@@ -185,26 +185,20 @@ func (c *ctx) download() (string, error) {
 	c.log("downloading manifest: %v\n", manifestURI)
 
 	manifest := filepath.Join(td, filepath.Base(manifestURI))
-	err = downloadToFile(manifestURI, manifest, c.s.SkipVerify)
+	err = downloadToFile(manifestURI, manifest)
 	if err != nil {
 		return "", err
 	}
 
 	// download manifest signature
 	manifestAscURI := c.s.URI + "/" + c.s.Manifest + ".asc"
-	if c.s.SkipVerify {
-		c.log("SKIPPING downloading manifest "+
-			"signatures: %v\n", manifestAscURI)
-	} else {
-		c.log("downloading manifest signatures: %v\n",
-			manifestAscURI)
+	c.log("downloading manifest signatures: %v\n",
+		manifestAscURI)
 
-		manifestAsc := filepath.Join(td, filepath.Base(manifestAscURI))
-		err = downloadToFile(manifestAscURI, manifestAsc,
-			c.s.SkipVerify)
-		if err != nil {
-			return "", err
-		}
+	manifestAsc := filepath.Join(td, filepath.Base(manifestAscURI))
+	err = downloadToFile(manifestAscURI, manifestAsc)
+	if err != nil {
+		return "", err
 	}
 
 	// determine if os-arch is supported
@@ -218,7 +212,7 @@ func (c *ctx) download() (string, error) {
 	c.log("downloading package: %v\n", packageURI)
 
 	pkg := filepath.Join(td, filepath.Base(packageURI))
-	err = downloadToFile(packageURI, pkg, c.s.SkipVerify)
+	err = downloadToFile(packageURI, pkg)
 	if err != nil {
 		return "", err
 	}
@@ -235,21 +229,16 @@ func (c *ctx) verify() error {
 		return err
 	}
 
-	if c.s.SkipVerify {
-		c.log("SKIPPING verifying manifest: %v\n",
-			c.s.Manifest)
-	} else {
-		// verify manifest
-		c.log("verifying manifest: %v ", c.s.Manifest)
+	// verify manifest
+	c.log("verifying manifest: %v ", c.s.Manifest)
 
-		err = pgpVerify(manifest+".asc", manifest)
-		if err != nil {
-			c.logNoTime("FAIL\n")
-			return fmt.Errorf("manifest PGP signature incorrect: %v", err)
-		}
-
-		c.logNoTime("OK\n")
+	err = pgpVerify(manifest+".asc", manifest)
+	if err != nil {
+		c.logNoTime("FAIL\n")
+		return fmt.Errorf("manifest PGP signature incorrect: %v", err)
 	}
+
+	c.logNoTime("OK\n")
 
 	// verify digest
 	c.log("verifying package: %v ", filename)

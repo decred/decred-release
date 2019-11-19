@@ -37,7 +37,6 @@ type Settings struct {
 	URI          string // URI to manifest and sets
 	DownloadOnly bool   // download files only
 	SkipDownload bool   // requires path to files
-	SkipVerify   bool   // skip TLS and signature checks, internal use only
 	Quiet        bool   // quiet
 	Verbose      bool   // loudness
 	Version      bool   // show version.
@@ -79,9 +78,6 @@ func parseSettings() (*Settings, error) {
 	}
 	if *skip && *download {
 		return nil, fmt.Errorf("downloadonly and skip are mutually exclusive")
-	}
-	if *uri != defaultURI {
-		s.SkipVerify = true
 	}
 
 	switch *net {
