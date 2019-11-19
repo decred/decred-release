@@ -10,6 +10,7 @@ import (
 	"io"
 	"net/http"
 	"os"
+	"strings"
 )
 
 func downloadToFile(url, filename string, skipVerify bool) error {
@@ -18,6 +19,17 @@ func downloadToFile(url, filename string, skipVerify bool) error {
 		return err
 	}
 	defer f.Close()
+
+	if strings.HasPrefix(url, "file://") {
+		localpath := url[len("file://"):]
+		src, err := os.Open(localpath)
+		if err != nil {
+			return err
+		}
+		defer src.Close()
+		_, err = io.Copy(f, src)
+		return err
+	}
 
 	tr := &http.Transport{}
 	if skipVerify {
