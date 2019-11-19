@@ -27,4 +27,4 @@ for i in $SYS; do
     env CGO_ENABLED=0 GOOS=$OS GOARCH=$ARCH go build -trimpath -tags 'safe,netgo' -o $OUT "${REL[@]}" ./cmd/dcrinstall
 done
 
-(cd $MAINDIR && sha256sum * > dcrinstall-$TAG-manifest.txt)
+(cd $MAINDIR && openssl sha256 -r * > dcrinstall-$TAG-manifest.txt)
