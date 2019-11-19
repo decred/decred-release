@@ -1,5 +1,6 @@
 cmd/dcrinstall/dcrinstall
 *.sw?
 .vscode
+release/
 vendor/
 *~
