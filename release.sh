@@ -14,7 +14,7 @@ PACKAGE=dcrinstall
 MAINDIR=$PWD/release/$PACKAGE-$TAG
 mkdir -p $MAINDIR
 
-SYS="darwin-amd64 freebsd-amd64 linux-386 linux-amd64 linux-arm64 openbsd-amd64 windows-386 windows-amd64"
+SYS="darwin-amd64 freebsd-amd64 linux-386 linux-amd64 linux-arm linux-arm64 openbsd-amd64 windows-386 windows-amd64"
 
 for i in $SYS; do
     OS=$(echo $i | cut -f1 -d-)
@@ -23,8 +23,12 @@ for i in $SYS; do
     if [[ $OS = "windows" ]]; then
 	    OUT="$OUT.exe"
     fi
+    ARM=
+    if [[ $ARCH = "arm" ]]; then
+	ARM=7
+    fi
     echo "Building:" $OS $ARCH
-    env CGO_ENABLED=0 GOOS=$OS GOARCH=$ARCH go build -trimpath -tags 'safe,netgo' -o $OUT "${REL[@]}" ./cmd/dcrinstall
+    env CGO_ENABLED=0 GOOS=$OS GOARCH=$ARCH GOARM=$ARM go build -trimpath -tags 'safe,netgo' -o $OUT "${REL[@]}" ./cmd/dcrinstall
 done
 
 (cd $MAINDIR && openssl sha256 -r * > dcrinstall-$TAG-manifest.txt)
