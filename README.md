@@ -24,12 +24,12 @@ installers in that release.  To verify these, you will need:
 
 The steps to verify the binaries are as follows:
 
-1. Download the file manifest (manifest-dcrinstall-vX.X.X.txt), the signature for the file manifest (manifest-dcrinstall-vX.X.X.txt.asc), and the installer for your OS from [here](https://github.com/decred/decred-release/releases).
+1. Download the file manifest (dcrinstall-vX.X.X-manifest.txt), the signature for the file manifest (dcrinstall-vX.X.X-manifest.txt.asc), and the installer for your OS from [here](https://github.com/decred/decred-release/releases).
 2. Obtain the SHA256 value for the installer for your OS and check that it matches the value in the file manifest, e.g. for 64-bit Linux
 
    ```
-   $ sha256sum dcrinstall-linux-amd64-v0.3.0
-   a53004599daeab51c0e86af026748b7aa55ff9e5d4844bef3b7d8ccf8a5d72a9  dcrinstall-linux-amd64-v0.3.0
+   $ sha256sum dcrinstall-linux-amd64-v1.5.1
+   a53004599daeab51c0e86af026748b7aa55ff9e5d4844bef3b7d8ccf8a5d72a9  dcrinstall-linux-amd64-v1.5.1
    ```
 
 3. Import the Decred Release Signing Key in GnuPG.
@@ -45,8 +45,8 @@ The steps to verify the binaries are as follows:
 the Decred Release Signing Key.
 
 	```
-   $ gpg --verify manifest-dcrinstall-v0.3.0.txt.asc
-      gpg: assuming signed data in `manifest-dcrinstall-v0.3.0.txt'
+   $ gpg --verify dcrinstall-v1.5.1-manifest.txt.asc
+      gpg: assuming signed data in `manifest-dcrinstall-v1.5.1.txt'
       gpg: Signature made Wed 27 Jan 2016 08:56:59 PM UTC using RSA key ID 518A031D
       gpg: Good signature from "Decred Release <release@decred.org>"
       gpg: WARNING: This key is not certified with a trusted signature!
