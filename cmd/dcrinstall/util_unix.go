@@ -20,10 +20,10 @@ func (c *ctx) isRunning(name string) (bool, error) {
 
 	switch runtime.GOOS {
 	case "linux":
-		args = []string{"-A", "aeww"}
+		args = []string{"-A", "aww"}
 	default:
 		// BSD*
-		args = []string{"Aaeww"}
+		args = []string{"Aaww"}
 	}
 	cmd := exec.Command("ps", args...)
 	o, err := cmd.CombinedOutput()
