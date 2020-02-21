@@ -1,4 +1,7 @@
-# dcrinstall
+dcrinstall
+==========
+
+## Overview
 
 dcrinstall is a tool to automate the install, upgrade, and setup
 process for the decred software.
