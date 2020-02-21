@@ -1,4 +1,4 @@
-// Copyright (c) 2016-2019 The Decred developers
+// Copyright (c) 2016-2020 The Decred developers
 // Use of this source code is governed by an ISC
 // license that can be found in the LICENSE file.
 
@@ -8,11 +8,10 @@ import (
 	"flag"
 	"fmt"
 	"os"
+	"os/user"
 	"path/filepath"
 	"runtime"
 	"strings"
-
-	homedir "github.com/marcopeereboom/go-homedir"
 )
 
 // latestVersion and latestManifest must be updated every release.
@@ -44,8 +43,11 @@ type Settings struct {
 
 func parseSettings() (*Settings, error) {
 	s := Settings{}
-
-	dest := flag.String("dest", "~/decred", "extract path")
+	u, err := user.Current()
+	if err != nil {
+		return nil, err
+	}
+	dest := flag.String("dest", filepath.Join(u.HomeDir, "decred"), "extract path")
 	manifest := flag.String("manifest", latestManifest, "manifest name")
 	net := flag.String("net", netMain, "decred net "+netMain+", "+netTest+
 		" or "+netSim)
@@ -70,6 +72,9 @@ func parseSettings() (*Settings, error) {
 		os.Exit(0)
 	}
 
+	if *dest == "" {
+		return nil, fmt.Errorf("destination not set")
+	}
 	if *tuple == "" {
 		return nil, fmt.Errorf("must provide OS-Arch tuple")
 	}
@@ -87,12 +92,7 @@ func parseSettings() (*Settings, error) {
 			netMain, netTest, netSim)
 	}
 	s.Net = *net
-
-	destination, err := homedir.Expand(*dest)
-	if err != nil {
-		return nil, err
-	}
-	s.Destination = destination
+	s.Destination = filepath.Clean(*dest)
 
 	if *verbose {
 		s.Verbose = true

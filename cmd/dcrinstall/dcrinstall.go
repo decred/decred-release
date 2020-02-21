@@ -1,4 +1,4 @@
-// Copyright (c) 2016-2017 The Decred developers
+// Copyright (c) 2016-2020 The Decred developers
 // Use of this source code is governed by an ISC
 // license that can be found in the LICENSE file.
 
@@ -14,13 +14,13 @@ import (
 	"io/ioutil"
 	"os"
 	"os/exec"
+	"os/user"
 	"path/filepath"
 	"runtime"
 	"strings"
 	"time"
 
 	"github.com/decred/dcrd/dcrutil/v2"
-	"github.com/marcopeereboom/go-homedir"
 )
 
 // global context
@@ -105,11 +105,11 @@ func (c *ctx) log(format string, args ...interface{}) error {
 }
 
 func (c *ctx) obtainUserName() error {
-	u, err := homedir.User()
+	u, err := user.Current()
 	if err != nil {
 		return err
 	}
-	c.user = u
+	c.user = u.Username
 	return nil
 }
 
