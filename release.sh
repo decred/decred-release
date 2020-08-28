@@ -28,7 +28,8 @@ for i in $SYS; do
 	ARM=7
     fi
     echo "Building:" $OS $ARCH
-    env CGO_ENABLED=0 GOOS=$OS GOARCH=$ARCH GOARM=$ARM go build -trimpath -tags 'safe,netgo' -o $OUT "${REL[@]}" ./cmd/dcrinstall
+    env CGO_ENABLED=0 GOOS=$OS GOARCH=$ARCH GOARM=$ARM GOFLAGS= \
+        go build -trimpath -tags 'safe,netgo' -o $OUT "${REL[@]}" ./cmd/dcrinstall
 done
 
 (cd $MAINDIR && openssl sha256 -r * > dcrinstall-$TAG-manifest.txt)
