@@ -175,17 +175,14 @@ refer to the documentation for your shell.
 ## Build from source
 
 dcrinstall can be used from the provided binaries but if you prefer to
-build from source you can use these steps.  Note that dcrinstall uses
-dep to manage dependencies so you cannot just use go get.  The
+build from source you can use these steps.  The
 following instructions are for OSX and UNIX only.
 
 ```
-go get -u github.com/golang/dep/cmd/dep
 mkdir -p $GOPATH/src/github.com/decred
 cd $GOPATH/src/github.com/decred
 git clone https://github.com/decred/decred-release
 cd decred-release
-dep ensure
 go install ./cmd/...
 ```
 
