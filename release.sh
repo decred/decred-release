@@ -1,4 +1,4 @@
-#!/usr/bin/env bash
+#!/bin/sh
 
 # Copyright (c) 2019 The Decred developers
 # Use of this source code is governed by the ISC
@@ -7,7 +7,7 @@
 set -ex
 
 TAG=$1
-REL=(-ldflags "-buildid= -X main.appBuild=release")
+LDFLAGS="-buildid= -X main.appBuild=release"
 
 PWD=$(pwd)
 PACKAGE=dcrinstall
@@ -29,7 +29,7 @@ for i in $SYS; do
     fi
     echo "Building:" $OS $ARCH
     env CGO_ENABLED=0 GOOS=$OS GOARCH=$ARCH GOARM=$ARM GOFLAGS= \
-        go build -trimpath -tags 'safe,netgo' -o $OUT "${REL[@]}" ./cmd/dcrinstall
+        go build -trimpath -tags 'safe,netgo' -o $OUT -ldflags="${LDFLAGS}" ./cmd/dcrinstall
 done
 
 (cd $MAINDIR && openssl sha256 -r * > dcrinstall-$TAG-manifest.txt)
