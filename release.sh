@@ -1,4 +1,4 @@
-#!/bin/bash
+#!/usr/bin/env bash
 
 # Copyright (c) 2019 The Decred developers
 # Use of this source code is governed by the ISC
