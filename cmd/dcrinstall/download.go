@@ -38,7 +38,7 @@ func downloadToFile(url, filename string) error {
 	defer res.Body.Close()
 
 	if res.StatusCode != http.StatusOK {
-		return fmt.Errorf("HTTP error: %v", res.Status)
+		return fmt.Errorf("HTTP error: %v (%v)", res.Status, url)
 	}
 
 	_, err = io.Copy(f, res.Body)

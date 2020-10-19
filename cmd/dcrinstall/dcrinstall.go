@@ -6,6 +6,7 @@ package main
 
 import (
 	"bufio"
+	"bytes"
 	"crypto/rand"
 	"encoding/base64"
 	"encoding/hex"
@@ -20,7 +21,7 @@ import (
 	"strings"
 	"time"
 
-	"github.com/decred/dcrd/dcrutil/v2"
+	"github.com/decred/dcrd/dcrutil/v3"
 )
 
 // global context
@@ -38,7 +39,18 @@ type binary struct {
 	Config          string // actual config file
 	Example         string // example config file
 	SupportsVersion bool   // whether or not it supports --version
+
+	// Dex
+	Dcrdex bool   // only install if user set dcrdex to true
+	Conf   string // sample config
+	Copy   bool   // Only copy file, bitcoin only
 }
+
+const (
+	walletClientsPem = "clients.pem"
+	clientPem        = "client.pem"
+	clientKey        = "client-key.pem"
+)
 
 var (
 	binaries = []binary{
@@ -80,6 +92,89 @@ var (
 			Example:         "sample-politeiavoter.conf",
 			SupportsVersion: true,
 		},
+		{
+			Name:            "gencerts",
+			SupportsVersion: false,
+		},
+		{
+			Name:   "bitcoin",
+			Config: "bitcoin.conf",
+			Dcrdex: true,
+			Conf:   bitcoinConf,
+		},
+		{
+			Name:   "bin/bitcoin-cli",
+			Dcrdex: true,
+			Copy:   true,
+		},
+		{
+			Name:   "bin/bitcoin-qt",
+			Dcrdex: true,
+			Copy:   true,
+		},
+		{
+			Name:   "bin/bitcoin-tx",
+			Dcrdex: true,
+			Copy:   true,
+		},
+		{
+			Name:   "bin/bitcoin-wallet",
+			Dcrdex: true,
+			Copy:   true,
+		},
+		{
+			Name:   "bin/bitcoind",
+			Dcrdex: true,
+			Copy:   true,
+		},
+		{
+			Name:   "dexc",
+			Config: "dexc.conf",
+			Dcrdex: true,
+			Conf:   dexcConf,
+		},
+		{
+			Name:   "dexcctl",
+			Config: "dexcctl.conf",
+			Dcrdex: true,
+			Conf:   dexcctlConf,
+		},
+		{
+			Name:   "dexc",
+			Dcrdex: true,
+			Copy:   true,
+		},
+		{
+			Name:   "dexcctl",
+			Dcrdex: true,
+			Copy:   true,
+		},
+	}
+
+	// Bitcoin core constants
+	bitcoinVersion = "0.20.1"
+	bitcoinLink    = "https://bitcoin.org/bin/bitcoin-core-" +
+		bitcoinVersion + "/"
+	bitcoinFilename  = "bitcoin-" + bitcoinVersion
+	bitcoinPrefix    = bitcoinLink + bitcoinFilename
+	bitcoinDownloads = map[string]string{
+		"darwin-amd64":  bitcoinPrefix + "-osx64.tar.gz",
+		"windows-amd64": bitcoinPrefix + "-win64.zip",
+		"linux-amd64":   bitcoinPrefix + "-x86_64-linux-gnu.tar.gz",
+		"linux-arm":     bitcoinPrefix + "-arm-linux-gnueabihf.tar.gz",
+		"linux-arm64":   bitcoinPrefix + "-aarch64-linux-gnu.tar.gz",
+	}
+
+	// Dex
+	dexVersion   = "v0.1.0"
+	dexLink      = "https://whatthefork.info/dl/"
+	dexDownloads = map[string]string{
+		"darwin-amd64": dexLink + "dexc-darwin-amd64-" + dexVersion +
+			".tar.gz",
+		"linux-amd64": dexLink + "dexc-linux-amd64-" + dexVersion +
+			".tar.gz",
+		"windows-amd64": dexLink + "dexc-windows-amd64-" + dexVersion +
+			".zip",
 	}
 )
 
@@ -169,6 +264,39 @@ func findOS(which, manifest string) (string, string, error) {
 	return digest, filename, nil
 }
 
+func btcFindOS(which, manifest string) (string, error) {
+	f, err := os.Open(manifest)
+	if err != nil {
+		return "", err
+	}
+	defer f.Close()
+
+	// <sha256> <filename>
+	br := bufio.NewReader(f)
+	i := 1
+	for {
+		line, err := br.ReadString('\n')
+		if err == io.EOF {
+			break
+		}
+		line = strings.TrimSpace(line)
+
+		if !strings.Contains(line, which) {
+			continue
+		}
+
+		a := strings.Fields(line)
+		if len(a) != 2 {
+			return "", fmt.Errorf("invalid manifest %v line %v",
+				manifest, i)
+		}
+
+		return a[0], nil
+	}
+
+	return "", fmt.Errorf("not found: %v", which)
+}
+
 // download downloads the manifest, the manifest signature and the selected
 // os-arch package to a temporary directory.  It returns the temporary
 // directory if there is no failure.
@@ -190,15 +318,16 @@ func (c *ctx) download() (string, error) {
 		return "", err
 	}
 
-	// download manifest signature
-	manifestAscURI := c.s.URI + "/" + c.s.Manifest + ".asc"
-	c.log("downloading manifest signatures: %v\n",
-		manifestAscURI)
-
-	manifestAsc := filepath.Join(td, filepath.Base(manifestAscURI))
-	err = downloadToFile(manifestAscURI, manifestAsc)
-	if err != nil {
-		return "", err
+	if !c.s.SkipAsc {
+		// download manifest signature
+		manifestAscURI := c.s.URI + "/" + c.s.Manifest + ".asc"
+		c.log("downloading manifest signatures: %v\n",
+			manifestAscURI)
+		manifestAsc := filepath.Join(td, filepath.Base(manifestAscURI))
+		err = downloadToFile(manifestAscURI, manifestAsc)
+		if err != nil {
+			return "", err
+		}
 	}
 
 	// determine if os-arch is supported
@@ -217,6 +346,37 @@ func (c *ctx) download() (string, error) {
 		return "", err
 	}
 
+	// Deal with bitcoin core
+	if c.s.Dcrdex && c.s.BitcoinURI != "" {
+		c.log("downloading bitcoin core: %v\n", c.s.BitcoinURI)
+		pkg := filepath.Join(td, filepath.Base(c.s.BitcoinURI))
+		err = downloadToFile(c.s.BitcoinURI, pkg)
+		if err != nil {
+			return "", err
+		}
+
+		// download bitcoin manifest
+		btcManifestURI := bitcoinLink + "SHA256SUMS.asc"
+		c.log("downloading bitcoin manifest: %v\n",
+			btcManifestURI)
+		btcManifestAsc := filepath.Join(td,
+			filepath.Base(btcManifestURI))
+		err = downloadToFile(btcManifestURI, btcManifestAsc)
+		if err != nil {
+			return "", err
+		}
+	}
+
+	// Deal with dcrdex
+	if c.s.Dcrdex && c.s.DexURI != "" {
+		c.log("downloading dcrdex: %v\n", c.s.DexURI)
+		pkg := filepath.Join(td, filepath.Base(c.s.DexURI))
+		err = downloadToFile(c.s.DexURI, pkg)
+		if err != nil {
+			return "", err
+		}
+	}
+
 	return td, nil
 }
 
@@ -229,16 +389,36 @@ func (c *ctx) verify() error {
 		return err
 	}
 
-	// verify manifest
-	c.log("verifying manifest: %v ", c.s.Manifest)
-
-	err = pgpVerify(manifest+".asc", manifest)
-	if err != nil {
-		c.logNoTime("FAIL\n")
-		return fmt.Errorf("manifest PGP signature incorrect: %v", err)
+	if !c.s.SkipAsc {
+		// verify manifest
+		c.log("verifying manifest: %v ", c.s.Manifest)
+		err = pgpVerify(manifest+".asc", manifest, pubkey)
+		if err != nil {
+			c.logNoTime("FAIL\n")
+			return fmt.Errorf("manifest PGP signature incorrect: "+
+				"%v", err)
+		}
+		c.logNoTime("OK\n")
 	}
 
-	c.logNoTime("OK\n")
+	if c.s.Dcrdex && !c.s.SkipAsc {
+		// verify bitcoin manifest
+		btcManifestAsc := filepath.Join(c.s.Path, "SHA256SUMS.asc")
+		c.log("verifying bitcoin manifest: %v ", "SHA256SUMS.asc")
+		// The signarure is embedded in the manifest.
+		err = pgpVerify(btcManifestAsc, btcManifestAsc, btcPubkey)
+		if err != nil {
+			// XXX cannot verify PGP signature because the manifest
+			// uses an unsuported curve
+
+			//c.logNoTime("FAIL\n")
+			c.logNoTime("bitcoin signature cannot be verified: %v\n",
+				fmt.Errorf("manifest PGP signature "+
+					"incorrect: %v", err))
+		} else {
+			c.logNoTime("OK\n")
+		}
+	}
 
 	// verify digest
 	c.log("verifying package: %v ", filename)
@@ -259,12 +439,71 @@ func (c *ctx) verify() error {
 
 	c.logNoTime("OK\n")
 
+	// Verify bitcoind sha
+	if c.s.Dcrdex {
+		btcFile := filepath.Base(c.s.BitcoinURI)
+		btcManifestAsc := filepath.Join(c.s.Path, "SHA256SUMS.asc")
+		btcDigest, err := btcFindOS(btcFile, btcManifestAsc)
+		if err != nil {
+			return err
+		}
+
+		btcPkg := filepath.Join(c.s.Path, btcFile)
+		c.log("verifying package: %v ", btcPkg)
+
+		d, err := sha256File(btcPkg)
+		if err != nil {
+			return err
+		}
+
+		// verify package digest
+		if hex.EncodeToString(d) != btcDigest {
+			c.logNoTime("FAILED\n")
+			c.log("%v %v\n", hex.EncodeToString(d), btcDigest)
+
+			return fmt.Errorf("corrupt digest %v", btcFile)
+		}
+	}
+
 	return nil
 }
 
 // copy installs all binaries into their final destination.
 func (c *ctx) copy(version string) error {
 	for _, v := range binaries {
+		if v.Dcrdex {
+			if !c.s.Dcrdex {
+				continue
+			}
+			if !v.Copy {
+				// Nothing to do
+				continue
+			}
+
+			// Install bitcoin/dex binary
+			var src string
+			if strings.Contains(v.Name, "dexc") {
+				src = filepath.Join(c.s.Destination,
+					"dexc-"+c.s.Tuple, v.Name)
+			} else {
+				src = filepath.Join(c.s.Destination,
+					bitcoinFilename, v.Name)
+			}
+			dst := filepath.Join(c.s.Destination,
+				filepath.Base(v.Name))
+			// Deal with windows.
+			if runtime.GOOS == "windows" {
+				src += ".exe"
+				dst += ".exe"
+			}
+			c.log("dex files installing %v -> %v\n", src, dst)
+			err := fileCopy(src, dst)
+			if err != nil {
+				return err
+			}
+
+			continue
+		}
 		src := filepath.Join(c.s.Destination,
 			"decred-"+c.s.Tuple+"-"+version,
 			v.Name)
@@ -273,6 +512,7 @@ func (c *ctx) copy(version string) error {
 		// yep, this is ferrealz
 		if runtime.GOOS == "windows" {
 			src += ".exe"
+			dst += ".exe"
 		}
 
 		c.log("installing %v -> %v\n", src, dst)
@@ -297,6 +537,11 @@ func (c *ctx) copy(version string) error {
 // validate verifies that all binaries can be executed.
 func (c *ctx) validate(version string) error {
 	for _, v := range binaries {
+		if v.Dcrdex {
+			// Skip non decred binary execution test
+			continue
+		}
+
 		// not in love with this, pull this out of tar instead
 		filename := filepath.Join(c.s.Destination,
 			"decred-"+c.s.Tuple+"-"+version,
@@ -352,33 +597,77 @@ func (c *ctx) recordCurrent() error {
 	return nil
 }
 
-func (c *ctx) createConfigNormal(b binary, f *os.File) (string, error) {
+func (c *ctx) createConfigNormal(b binary, br *bufio.Reader) (string, error) {
 	seen := false
 	rv := ""
-	usr := "; rpcuser="
-	pwd := "; rpcpass="
 	network := "; " + strings.ToLower(c.s.Net) + "="
-	if b.Name == "dcrwallet" {
-		usr = "; username="
-		pwd = "; password="
+
+	// This is a crime against humanity, but oh well.
+	type override struct {
+		name    string
+		content string
+	}
+	var (
+		overrides []override
+		start     int
+	)
+	switch b.Name {
+	case "dcrwallet":
+		overrides = []override{
+			{name: "; username=", content: c.user},
+			{name: "; password=", content: c.password},
+		}
+		start = 2
+
+	case "bitcoin":
+		overrides = []override{
+			{name: "#rpcuser=", content: c.user},
+			{name: "#rpcpassword=", content: c.password},
+			{name: "#server=", content: "1"},
+			{name: "#prune=", content: "550"},
+			{name: "#debug=", content: "rpc"},
+		}
+		start = 1
+
+	case "dexc":
+		overrides = []override{
+			{name: "; rpc=", content: "1"},
+			{name: "; rpcuser=", content: c.user},
+			{name: "; rpcpass=", content: c.password},
+		}
+		start = 2
+
+	case "dexctl":
+		overrides = []override{
+			{name: "; rpcuser=", content: c.user},
+			{name: "; rpcpass=", content: c.password},
+		}
+		start = 2
+
+	default:
+		overrides = []override{
+			{name: "; rpcuser=", content: c.user},
+			{name: "; rpcpass=", content: c.password},
+		}
+		start = 2
 	}
 
-	br := bufio.NewReader(f)
 	for {
 		line, err := br.ReadString('\n')
 		if err == io.EOF {
 			break
 		}
 
-		if strings.HasPrefix(line, usr) {
-			line = usr[2:] + c.user + "\n"
-		}
-		if strings.HasPrefix(line, pwd) {
-			line = pwd[2:] + c.password + "\n"
-		}
 		if strings.HasPrefix(line, network) {
 			line = network[2:] + "1\n"
 			seen = true
+		}
+
+		for k := range overrides {
+			if strings.HasPrefix(line, overrides[k].name) {
+				line = overrides[k].name[start:] +
+					overrides[k].content + "\n"
+			}
 		}
 
 		rv += line
@@ -395,6 +684,13 @@ func (c *ctx) createConfigNormal(b binary, f *os.File) (string, error) {
 }
 
 func (c *ctx) createConfig(b binary, version string) (string, error) {
+	if b.Dcrdex {
+		c.log("parsing: %v\n", b.Config)
+		return c.createConfigNormal(b,
+			bufio.NewReader(bytes.NewReader([]byte(b.Conf))))
+	}
+
+	// Regular decred files
 	sample := filepath.Join(c.s.Destination,
 		"decred-"+c.s.Tuple+"-"+version,
 		b.Example)
@@ -408,7 +704,7 @@ func (c *ctx) createConfig(b binary, version string) (string, error) {
 
 	c.log("parsing: %v\n", sample)
 
-	return c.createConfigNormal(b, f)
+	return c.createConfigNormal(b, bufio.NewReader(f))
 }
 
 func (c *ctx) writeConfig(b binary, cf string) error {
@@ -425,6 +721,36 @@ func (c *ctx) walletDBExists() bool {
 	return exist(filepath.Join(dir, netMain, walletDB)) ||
 		exist(filepath.Join(dir, netTest, walletDB)) ||
 		exist(filepath.Join(dir, netSim, walletDB))
+}
+
+func (c *ctx) clientFileExists(app, filename string) bool {
+	dir := dcrutil.AppDataDir(app, false)
+	return exist(filepath.Join(dir, filename))
+}
+
+func (c *ctx) generateClientCerts(version string) error {
+	// Create certificate for politeiavoter
+	gencertsExe := filepath.Join(c.s.Destination,
+		"decred-"+c.s.Tuple+"-"+version, "gencerts")
+	if runtime.GOOS == "windows" {
+		gencertsExe += ".exe"
+	}
+	piDir := dcrutil.AppDataDir("politeiavoter", false)
+	piClientCert := filepath.Join(piDir, clientPem)
+	o, err := exec.Command(gencertsExe, piClientCert,
+		filepath.Join(piDir, clientKey)).CombinedOutput()
+	if err != nil {
+		return fmt.Errorf("error: %v\noutput:\n%v", err, string(o))
+	}
+
+	// Copy certificate to dcrwallet
+	err = fileCopy(piClientCert, filepath.Join(dcrutil.AppDataDir("dcrwallet",
+		false), walletClientsPem))
+	if err != nil {
+		return err
+	}
+
+	return nil
 }
 
 func (c *ctx) createWallet(version string) error {
@@ -472,6 +798,15 @@ func (c *ctx) main() error {
 		return fmt.Errorf("dcrlnd is still running")
 	}
 
+	if c.s.Dcrdex {
+		running, err = c.running("bitcoind")
+		if err != nil {
+			return err
+		} else if running {
+			return fmt.Errorf("bitcoind is still running")
+		}
+	}
+
 	if !c.s.SkipDownload {
 		c.s.Path, err = c.download()
 		if err != nil {
@@ -492,6 +827,19 @@ func (c *ctx) main() error {
 	version, err := c.extract()
 	if err != nil {
 		return err
+	}
+
+	if c.s.Dcrdex {
+		// bitcoin
+		err = c.genericExtract(filepath.Base(c.s.BitcoinURI))
+		if err != nil {
+			return err
+		}
+		// dcrdex
+		err = c.genericExtract(filepath.Base(c.s.DexURI))
+		if err != nil {
+			return err
+		}
 	}
 
 	err = c.validate(version)
@@ -516,40 +864,59 @@ func (c *ctx) main() error {
 	}
 
 	for _, v := range binaries {
-		if v.Config != "" {
-			// check actual config file
-			dir := dcrutil.AppDataDir(v.Name, false)
-			conf := filepath.Join(dir, v.Config)
-
-			if !exist(conf) {
-				config, err := c.createConfig(v, version)
-				if err != nil {
-					return err
-				}
-				dir := dcrutil.AppDataDir(v.Name, false)
-				c.log("creating directory: %v\n", dir)
-
-				err = os.MkdirAll(dir, 0700)
-				if err != nil {
-					return err
-				}
-
-				c.log("installing %s\n", conf)
-				err = c.writeConfig(v, config)
-				if err != nil {
-					return err
-				}
-			} else {
-				c.log("skipping %s -- already installed\n", conf)
-			}
+		if v.Config == "" {
+			continue
 		}
-		if c.walletDBExists() {
-			c.log("wallet.db exists, skipping wallet creation.\n")
-		} else {
-			err = c.createWallet(version)
-			if err != nil {
-				return err
-			}
+
+		// check actual config file
+		dir := dcrutil.AppDataDir(v.Name, false)
+		conf := filepath.Join(dir, v.Config)
+		if exist(conf) {
+			c.log("skipping %s -- already installed\n", conf)
+		}
+
+		// Install config file
+		config, err := c.createConfig(v, version)
+		if err != nil {
+			return err
+		}
+		c.log("creating directory: %v\n", dir)
+
+		err = os.MkdirAll(dir, 0700)
+		if err != nil {
+			return err
+		}
+
+		c.log("installing configuration file: %s\n", conf)
+		err = c.writeConfig(v, config)
+		if err != nil {
+			return err
+		}
+	}
+
+	// Check client certs.
+	walletCert := c.clientFileExists("dcrwallet", walletClientsPem)
+	piCert := c.clientFileExists("politeiavoter", clientPem)
+	piKey := c.clientFileExists("politeiavoter", clientKey)
+	if walletCert && piCert && piKey {
+		c.log("client certs exist, skipping cert generation.\n")
+	} else if !walletCert && !piCert && !piKey {
+		err = c.generateClientCerts(version)
+		if err != nil {
+			return err
+		}
+	} else {
+		return fmt.Errorf("can't determine client certificate" +
+			" state, must perform manual upgrade")
+	}
+
+	// Check client db
+	if c.walletDBExists() {
+		c.log("wallet.db exists, skipping wallet creation.\n")
+	} else {
+		err = c.createWallet(version)
+		if err != nil {
+			return err
 		}
 	}
 
