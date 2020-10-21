@@ -16,8 +16,9 @@ import (
 
 // latestVersion and latestManifest must be updated every release.
 const (
-	latestManifest = "decred-v1.5.2-manifest.txt"
-	defaultURI     = "https://github.com/decred/decred-binaries/releases/download/v1.5.2"
+	latestVersion  = "v1.6.0-rc1"
+	latestManifest = "decred-" + latestVersion + "-manifest.txt"
+	defaultURI     = "https://github.com/decred/decred-binaries/releases/download/" + latestVersion
 
 	netMain  = "mainnet"
 	netTest  = "testnet3"
@@ -36,12 +37,20 @@ type Settings struct {
 	URI          string // URI to manifest and sets
 	DownloadOnly bool   // download files only
 	SkipDownload bool   // requires path to files
+	SkipAsc      bool   // disables downloading and verifying the pgp signatures
+	Dcrdex       bool   // install dcrdex
+	BitcoinURI   string // bitcoin core uri
+	DexURI       string // dcrdex uri
 	Quiet        bool   // quiet
 	Verbose      bool   // loudness
 	Version      bool   // show version.
 }
 
 func parseSettings() (*Settings, error) {
+	defaultTuple := runtime.GOOS + "-" + runtime.GOARCH
+	defaultBitcoinURI := bitcoinDownloads[defaultTuple]
+	defaultDexURI := dexDownloads[defaultTuple]
+
 	s := Settings{}
 	u, err := user.Current()
 	if err != nil {
@@ -52,12 +61,18 @@ func parseSettings() (*Settings, error) {
 	net := flag.String("net", netMain, "decred net "+netMain+", "+netTest+
 		" or "+netSim)
 	path := flag.String("path", "", "download path")
-	tuple := flag.String("tuple", runtime.GOOS+"-"+runtime.GOARCH,
+	tuple := flag.String("tuple", defaultTuple,
 		"OS-Arch tuple, e.g. windows-amd64")
 	uri := flag.String("uri", defaultURI, "URI to manifest and sets")
 	download := flag.Bool("downloadonly", false, "download binaries "+
 		"but don't install")
 	skip := flag.Bool("skip", false, "skip download, requires path")
+	skipAsc := flag.Bool("skipasc", false, "skip download and verification"+
+		" of pgp signatures, requires path")
+	dcrdex := flag.Bool("dcrdex", false, "install dcrdex")
+	bitcoinURI := flag.String("bitcoinuri", defaultBitcoinURI,
+		"bitcoin download path")
+	dexURI := flag.String("dexuri", defaultDexURI, "dcrdex download path")
 	ver := flag.Bool("version", false, "display version")
 	// for backwards compat
 	quiet := flag.Bool("quiet", false, "quiet (default false)")
@@ -101,11 +116,30 @@ func parseSettings() (*Settings, error) {
 		s.Verbose = false
 	}
 
+	// Check to see if dcrdex is supported on this platform.
+	if *dcrdex {
+		if *dexURI != "" {
+			s.DexURI = *dexURI
+		} else {
+			return nil, fmt.Errorf("dcrdex cannot be installed "+
+				"because it does not support %v", *tuple)
+		}
+		if *bitcoinURI != "" {
+			s.BitcoinURI = *bitcoinURI
+		} else {
+			return nil, fmt.Errorf("dcrdex cannot be installed "+
+				"because bitcoin core does not support %v",
+				*tuple)
+		}
+	}
+
 	s.Manifest = *manifest
 	s.Path = *path
 	s.Tuple = *tuple
 	s.URI = *uri
 	s.SkipDownload = *skip
+	s.Dcrdex = *dcrdex
+	s.SkipAsc = *skipAsc
 	s.DownloadOnly = *download
 
 	return &s, nil
