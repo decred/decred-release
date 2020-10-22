@@ -12,6 +12,7 @@ LDFLAGS="-buildid= -X main.appBuild=release"
 PWD=$(pwd)
 PACKAGE=dcrinstall
 MAINDIR=$PWD/release/$PACKAGE-$TAG
+[ -d ${MAINDIR} ] && rm -rf ${MAINDIR}
 mkdir -p $MAINDIR
 
 SYS="darwin-amd64 freebsd-amd64 linux-386 linux-amd64 linux-arm linux-arm64 openbsd-amd64 windows-386 windows-amd64"
