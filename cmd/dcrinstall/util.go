@@ -1,4 +1,4 @@
-// Copyright (c) 2016 The Decred developers
+// Copyright (c) 2016-2020 The Decred developers
 // Use of this source code is governed by an ISC
 // license that can be found in the LICENSE file.
 
@@ -7,10 +7,10 @@ package main
 import (
 	"archive/tar"
 	"archive/zip"
-	"bufio"
 	"bytes"
 	"compress/gzip"
 	"crypto/sha256"
+	"errors"
 	"fmt"
 	"io"
 	"io/ioutil"
@@ -62,29 +62,6 @@ func extractSemVer(s string) (*semVerInfo, error) {
 	}, nil
 }
 
-func answer(def string) string {
-	r := bufio.NewReader(os.Stdin)
-	a, _ := r.ReadString('\n')
-	a = strings.TrimSpace(a)
-	if len(a) == 0 {
-		return def
-	}
-	return a
-}
-
-func yes() bool {
-	r := bufio.NewReader(os.Stdin)
-	a, _ := r.ReadString('\n')
-	a = strings.ToUpper(strings.TrimSpace(a))
-	if len(a) == 0 {
-		return false
-	}
-	if a[0] == 'Y' {
-		return true
-	}
-	return false
-}
-
 func exist(path string) bool {
 	_, err := os.Stat(path)
 
@@ -119,7 +96,7 @@ func pgpVerify(signature, manifest, key string) error {
 	return err
 }
 
-//sha256File returns the sha256 digest of the provided file.
+// sha256File returns the sha256 digest of the provided file.
 func sha256File(filename string) ([]byte, error) {
 	f, err := os.Open(filename)
 	if err != nil {
@@ -130,7 +107,7 @@ func sha256File(filename string) ([]byte, error) {
 	hasher := sha256.New()
 	_, err = io.Copy(hasher, f)
 	if err != nil {
-		return nil, fmt.Errorf("sha256: %v", err)
+		return nil, fmt.Errorf("sha256: %w", err)
 	}
 
 	return hasher.Sum(nil), nil
@@ -223,7 +200,7 @@ func (c *ctx) gunzip(filename string) error {
 	for {
 		hdr, err := tr.Next()
 		if err != nil {
-			if err == io.EOF {
+			if errors.Is(err, io.EOF) {
 				break // end of archive
 			}
 			return err
@@ -279,7 +256,6 @@ func (c *ctx) _unzip(src string, dest string) ([]string, error) {
 	defer r.Close()
 
 	for _, f := range r.File {
-
 		// Store filename/path for returning and using later on
 		fpath := filepath.Join(dest, f.Name)
 

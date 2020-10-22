@@ -8,6 +8,7 @@ package main
 
 import (
 	"bytes"
+	"errors"
 	"io"
 	"os/exec"
 	"regexp"
@@ -36,7 +37,7 @@ func (c *ctx) isRunning(name string) (bool, error) {
 	br := bytes.NewBuffer(o)
 	for {
 		line, err := br.ReadString('\n')
-		if err == io.EOF {
+		if errors.Is(err, io.EOF) {
 			break
 		}
 		line = strings.TrimSpace(line)

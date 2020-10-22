@@ -7,6 +7,7 @@
 package main
 
 import (
+	"errors"
 	"fmt"
 	"os"
 	"path/filepath"
@@ -23,12 +24,12 @@ func (c *ctx) isRunning(name string) (bool, error) {
 		}
 
 		// try to see if file was locked
-		x, ok := err.(*os.PathError)
-		if !ok {
+		var x *os.PathError
+		if !errors.As(err, &x) {
 			return false, fmt.Errorf("invalid type")
 		}
-		e, ok := x.Err.(syscall.Errno)
-		if !ok {
+		var e syscall.Errno
+		if !errors.As(x.Err, &e) {
 			return false, fmt.Errorf("invalid error type")
 		}
 		if e == 0x20 {

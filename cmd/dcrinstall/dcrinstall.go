@@ -10,6 +10,7 @@ import (
 	"crypto/rand"
 	"encoding/base64"
 	"encoding/hex"
+	"errors"
 	"fmt"
 	"io"
 	"io/ioutil"
@@ -216,7 +217,7 @@ func (c *ctx) obtainUserName() error {
 
 func (c *ctx) obtainPassword() error {
 	b := make([]byte, 24)
-	_, err := io.ReadFull(rand.Reader, b[:])
+	_, err := io.ReadFull(rand.Reader, b)
 	if err != nil {
 		return err
 	}
@@ -242,7 +243,7 @@ func findOS(which, manifest string) (string, string, error) {
 	i := 1
 	for {
 		line, err := br.ReadString('\n')
-		if err == io.EOF {
+		if errors.Is(err, io.EOF) {
 			break
 		}
 		line = strings.TrimSpace(line)
@@ -282,7 +283,7 @@ func btcFindOS(which, manifest string) (string, error) {
 	i := 1
 	for {
 		line, err := br.ReadString('\n')
-		if err == io.EOF {
+		if errors.Is(err, io.EOF) {
 			break
 		}
 		line = strings.TrimSpace(line)
@@ -417,7 +418,7 @@ func (c *ctx) verify() error {
 			// XXX cannot verify PGP signature because the manifest
 			// uses an unsuported curve
 
-			//c.logNoTime("FAIL\n")
+			// c.logNoTime("FAIL\n")
 			c.logNoTime("bitcoin signature cannot be verified: %v\n",
 				fmt.Errorf("manifest PGP signature "+
 					"incorrect: %v", err))
@@ -576,7 +577,6 @@ func (c *ctx) validate(version string) error {
 		}
 
 		c.logNoTime("OK\n")
-
 	}
 	return nil
 }
@@ -610,7 +610,6 @@ func (c *ctx) recordCurrent() error {
 		}
 
 		c.logNoTime("%v\n", strings.TrimSpace(string(version)))
-
 	}
 
 	return nil
@@ -673,7 +672,7 @@ func (c *ctx) createConfigNormal(b binary, br *bufio.Reader) (string, error) {
 
 	for {
 		line, err := br.ReadString('\n')
-		if err == io.EOF {
+		if errors.Is(err, io.EOF) {
 			break
 		}
 
@@ -759,7 +758,7 @@ func (c *ctx) generateClientCerts(version string) error {
 	o, err := exec.Command(gencertsExe, piClientCert,
 		filepath.Join(piDir, clientKey)).CombinedOutput()
 	if err != nil {
-		return fmt.Errorf("error: %v\noutput:\n%v", err, string(o))
+		return fmt.Errorf("error: %w\noutput:\n%v", err, string(o))
 	}
 
 	// Copy certificate to dcrwallet
@@ -917,14 +916,15 @@ func (c *ctx) main() error {
 	walletCert := c.clientFileExists("dcrwallet", walletClientsPem)
 	piCert := c.clientFileExists("politeiavoter", clientPem)
 	piKey := c.clientFileExists("politeiavoter", clientKey)
-	if walletCert && piCert && piKey {
+	switch {
+	case walletCert && piCert && piKey:
 		c.log("client certs exist, skipping cert generation.\n")
-	} else if !walletCert && !piCert && !piKey {
+	case !walletCert && !piCert && !piKey:
 		err = c.generateClientCerts(version)
 		if err != nil {
 			return err
 		}
-	} else {
+	default:
 		return fmt.Errorf("can't determine client certificate" +
 			" state, must perform manual upgrade")
 	}
