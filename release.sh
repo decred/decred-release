@@ -4,18 +4,29 @@
 # Use of this source code is governed by the ISC
 # license.
 
-set -ex
+set -e
 
+usage() {
+    echo "usage: release.sh version" 1>&2
+    exit 2
+}
+
+[ $# -eq 1 ] || usage
 TAG=$1
+
+set -x
+
+GOVERSION=$(go version)
 LDFLAGS="-buildid= -X main.appBuild=release"
+SYS="darwin-amd64 freebsd-amd64 linux-386 linux-amd64 linux-arm linux-arm64 openbsd-amd64 windows-386 windows-amd64"
 
 PWD=$(pwd)
 PACKAGE=dcrinstall
 MAINDIR=$PWD/release/$PACKAGE-$TAG
+MANIFEST=dcrinstall-${TAG}-manifest.txt
+
 [ -d ${MAINDIR} ] && rm -rf ${MAINDIR}
 mkdir -p $MAINDIR
-
-SYS="darwin-amd64 freebsd-amd64 linux-386 linux-amd64 linux-arm linux-arm64 openbsd-amd64 windows-386 windows-amd64"
 
 for i in $SYS; do
     OS=$(echo $i | cut -f1 -d-)
@@ -33,4 +44,10 @@ for i in $SYS; do
         go build -trimpath -tags 'safe,netgo' -o $OUT -ldflags="${LDFLAGS}" ./cmd/dcrinstall
 done
 
-(cd $MAINDIR && openssl sha256 -r * > dcrinstall-$TAG-manifest.txt)
+(
+    cd ${MAINDIR}
+    openssl sha256 -r * > ${MANIFEST}
+    set +x
+    MANIFESTHASH=$(openssl sha256 ${MANIFEST})
+    echo "${MANIFESTHASH} (${GOVERSION})"
+)
