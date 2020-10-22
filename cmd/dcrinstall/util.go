@@ -1,4 +1,4 @@
-// Copyright (c) 2016 The Decred developers
+// Copyright (c) 2016-2020 The Decred developers
 // Use of this source code is governed by an ISC
 // license that can be found in the LICENSE file.
 
@@ -11,6 +11,7 @@ import (
 	"bytes"
 	"compress/gzip"
 	"crypto/sha256"
+	"errors"
 	"fmt"
 	"io"
 	"io/ioutil"
@@ -130,7 +131,7 @@ func sha256File(filename string) ([]byte, error) {
 	hasher := sha256.New()
 	_, err = io.Copy(hasher, f)
 	if err != nil {
-		return nil, fmt.Errorf("sha256: %v", err)
+		return nil, fmt.Errorf("sha256: %w", err)
 	}
 
 	return hasher.Sum(nil), nil
@@ -223,7 +224,7 @@ func (c *ctx) gunzip(filename string) error {
 	for {
 		hdr, err := tr.Next()
 		if err != nil {
-			if err == io.EOF {
+			if errors.Is(err, io.EOF) {
 				break // end of archive
 			}
 			return err
@@ -279,7 +280,6 @@ func (c *ctx) _unzip(src string, dest string) ([]string, error) {
 	defer r.Close()
 
 	for _, f := range r.File {
-
 		// Store filename/path for returning and using later on
 		fpath := filepath.Join(dest, f.Name)
 

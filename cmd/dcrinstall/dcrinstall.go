@@ -10,6 +10,7 @@ import (
 	"crypto/rand"
 	"encoding/base64"
 	"encoding/hex"
+	"errors"
 	"fmt"
 	"io"
 	"io/ioutil"
@@ -236,7 +237,7 @@ func findOS(which, manifest string) (string, string, error) {
 	i := 1
 	for {
 		line, err := br.ReadString('\n')
-		if err == io.EOF {
+		if errors.Is(err, io.EOF) {
 			break
 		}
 		line = strings.TrimSpace(line)
@@ -276,7 +277,7 @@ func btcFindOS(which, manifest string) (string, error) {
 	i := 1
 	for {
 		line, err := br.ReadString('\n')
-		if err == io.EOF {
+		if errors.Is(err, io.EOF) {
 			break
 		}
 		line = strings.TrimSpace(line)
@@ -557,7 +558,6 @@ func (c *ctx) validate(version string) error {
 		}
 
 		c.logNoTime("OK\n")
-
 	}
 	return nil
 }
@@ -591,7 +591,6 @@ func (c *ctx) recordCurrent() error {
 		}
 
 		c.logNoTime("%v\n", strings.TrimSpace(string(version)))
-
 	}
 
 	return nil
@@ -654,7 +653,7 @@ func (c *ctx) createConfigNormal(b binary, br *bufio.Reader) (string, error) {
 
 	for {
 		line, err := br.ReadString('\n')
-		if err == io.EOF {
+		if errors.Is(err, io.EOF) {
 			break
 		}
 
@@ -740,7 +739,7 @@ func (c *ctx) generateClientCerts(version string) error {
 	o, err := exec.Command(gencertsExe, piClientCert,
 		filepath.Join(piDir, clientKey)).CombinedOutput()
 	if err != nil {
-		return fmt.Errorf("error: %v\noutput:\n%v", err, string(o))
+		return fmt.Errorf("error: %w\noutput:\n%v", err, string(o))
 	}
 
 	// Copy certificate to dcrwallet
