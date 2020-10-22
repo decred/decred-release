@@ -7,7 +7,6 @@ package main
 import (
 	"archive/tar"
 	"archive/zip"
-	"bufio"
 	"bytes"
 	"compress/gzip"
 	"crypto/sha256"
@@ -63,29 +62,6 @@ func extractSemVer(s string) (*semVerInfo, error) {
 	}, nil
 }
 
-func answer(def string) string {
-	r := bufio.NewReader(os.Stdin)
-	a, _ := r.ReadString('\n')
-	a = strings.TrimSpace(a)
-	if len(a) == 0 {
-		return def
-	}
-	return a
-}
-
-func yes() bool {
-	r := bufio.NewReader(os.Stdin)
-	a, _ := r.ReadString('\n')
-	a = strings.ToUpper(strings.TrimSpace(a))
-	if len(a) == 0 {
-		return false
-	}
-	if a[0] == 'Y' {
-		return true
-	}
-	return false
-}
-
 func exist(path string) bool {
 	_, err := os.Stat(path)
 
@@ -120,7 +96,7 @@ func pgpVerify(signature, manifest, key string) error {
 	return err
 }
 
-//sha256File returns the sha256 digest of the provided file.
+// sha256File returns the sha256 digest of the provided file.
 func sha256File(filename string) ([]byte, error) {
 	f, err := os.Open(filename)
 	if err != nil {

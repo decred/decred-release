@@ -211,7 +211,7 @@ func (c *ctx) obtainUserName() error {
 
 func (c *ctx) obtainPassword() error {
 	b := make([]byte, 24)
-	_, err := io.ReadFull(rand.Reader, b[:])
+	_, err := io.ReadFull(rand.Reader, b)
 	if err != nil {
 		return err
 	}
@@ -412,7 +412,7 @@ func (c *ctx) verify() error {
 			// XXX cannot verify PGP signature because the manifest
 			// uses an unsuported curve
 
-			//c.logNoTime("FAIL\n")
+			// c.logNoTime("FAIL\n")
 			c.logNoTime("bitcoin signature cannot be verified: %v\n",
 				fmt.Errorf("manifest PGP signature "+
 					"incorrect: %v", err))
@@ -897,14 +897,15 @@ func (c *ctx) main() error {
 	walletCert := c.clientFileExists("dcrwallet", walletClientsPem)
 	piCert := c.clientFileExists("politeiavoter", clientPem)
 	piKey := c.clientFileExists("politeiavoter", clientKey)
-	if walletCert && piCert && piKey {
+	switch {
+	case walletCert && piCert && piKey:
 		c.log("client certs exist, skipping cert generation.\n")
-	} else if !walletCert && !piCert && !piKey {
+	case !walletCert && !piCert && !piKey:
 		err = c.generateClientCerts(version)
 		if err != nil {
 			return err
 		}
-	} else {
+	default:
 		return fmt.Errorf("can't determine client certificate" +
 			" state, must perform manual upgrade")
 	}
