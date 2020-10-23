@@ -9,19 +9,21 @@ package main
 import (
 	"bytes"
 	"errors"
+	"fmt"
 	"io"
 	"os/exec"
 	"regexp"
 	"runtime"
-	"strings"
 )
 
-func (c *ctx) isRunning(name string) (bool, error) {
+// isRunning returns true if the provided name appears in ps.
+func isRunning(name string) (bool, error) {
 	var args []string
 
+	// Darwin allows both forms
 	switch runtime.GOOS {
 	case "linux":
-		args = []string{"-A", "aww"}
+		args = []string{"-Aaww"}
 	default:
 		// BSD*
 		args = []string{"Aaww"}
@@ -32,7 +34,11 @@ func (c *ctx) isRunning(name string) (bool, error) {
 		return false, err
 	}
 
-	re := regexp.MustCompile("_=[[:print:]]*" + name)
+	res := fmt.Sprintf(`(?:^|\W)%s(?:$|\W)`, name)
+	re, err := regexp.Compile(res)
+	if err != nil {
+		return false, err
+	}
 
 	br := bytes.NewBuffer(o)
 	for {
@@ -40,14 +46,10 @@ func (c *ctx) isRunning(name string) (bool, error) {
 		if errors.Is(err, io.EOF) {
 			break
 		}
-		line = strings.TrimSpace(line)
 
-		s := re.FindString(line)
-		if s == "" {
-			continue
+		if re.MatchString(line) {
+			return true, nil
 		}
-
-		return true, nil
 	}
 
 	return false, nil

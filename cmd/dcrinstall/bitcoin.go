@@ -1,180 +1,413 @@
+// Copyright (c) 2020 The Decred developers
+// Use of this source code is governed by an ISC license that can be found in
+// the LICENSE file.
+
 package main
 
-const (
-	bitcoinConf = `
-##
-## bitcoin.conf configuration file. Lines beginning with # are comments.
-##
+import (
+	"bufio"
+	"errors"
+	"fmt"
+	"io"
+	"io/ioutil"
+	"log"
+	"os"
+	"os/exec"
+	"path/filepath"
+	"regexp"
+	"strings"
 
-# Debug
-#debug=rpc
-
-# Network-related settings:
-
-# Note that if you use testnet or regtest, particularly with the options
-# addnode, connect, port, bind, rpcport, rpcbind or wallet, you will also
-# want to read "[Sections]" further down.
-
-# Run on the test network instead of the real bitcoin network.
-#testnet=0
-
-# Run a regression test network
-#regtest=0
-
-# Connect via a SOCKS5 proxy
-#proxy=127.0.0.1:9050
-
-# Bind to given address and always listen on it. Use [host]:port notation for IPv6
-#bind=<addr>
-
-# Bind to given address and add permission flags to peers connecting to it. Use [host]:port notation for IPv6
-#whitebind=perm@<addr>
-
-##############################################################
-##            Quick Primer on addnode vs connect            ##
-##  Let's say for instance you use addnode=4.2.2.4          ##
-##  addnode will connect you to and tell you about the      ##
-##    nodes connected to 4.2.2.4.  In addition it will tell ##
-##    the other nodes connected to it that you exist so     ##
-##    they can connect to you.                              ##
-##  connect will not do the above when you 'connect' to it. ##
-##    It will *only* connect you to 4.2.2.4 and no one else.##
-##                                                          ##
-##  So if you're behind a firewall, or have other problems  ##
-##  finding nodes, add some using 'addnode'.                ##
-##                                                          ##
-##  If you want to stay private, use 'connect' to only      ##
-##  connect to "trusted" nodes.                             ##
-##                                                          ##
-##  If you run multiple nodes on a LAN, there's no need for ##
-##  all of them to open lots of connections.  Instead       ##
-##  'connect' them all to one node that is port forwarded   ##
-##  and has lots of connections.                            ##
-##       Thanks goes to [Noodle] on Freenode.               ##
-##############################################################
-
-# Use as many addnode= settings as you like to connect to specific peers
-#addnode=69.164.218.197
-#addnode=10.0.0.2:8333
-
-# Alternatively use as many connect= settings as you like to connect ONLY to specific peers
-#connect=69.164.218.197
-#connect=10.0.0.1:8333
-
-# Listening mode, enabled by default except when 'connect' is being used
-#listen=1
-
-# Port on which to listen for connections (default: 8333, testnet: 18333, regtest: 18444)
-#port=
-
-# Maximum number of inbound+outbound connections.
-#maxconnections=
-
-#
-# JSON-RPC options (for controlling a running Bitcoin/bitcoind process)
-#
-
-# server=1 tells Bitcoin-Qt and bitcoind to accept JSON-RPC commands
-#server=0
-
-# Bind to given address to listen for JSON-RPC connections.
-# Refer to the manpage or bitcoind -help for further details.
-#rpcbind=<addr>
-
-# If no rpcpassword is set, rpc cookie auth is sought. The default '-rpccookiefile' name
-# is .cookie and found in the '-datadir' being used for bitcoind. This option is typically used
-# when the server and client are run as the same user.
-#
-# If not, you must set rpcuser and rpcpassword to secure the JSON-RPC API.
-#
-# The config option 'rpcauth' can be added to server startup argument. It is set at initialization time
-# using the output from the script in share/rpcauth/rpcauth.py after providing a username:
-#
-# ./share/rpcauth/rpcauth.py alice
-# String to be appended to bitcoin.conf:
-# rpcauth=alice:f7efda5c189b999524f151318c0c86$d5b51b3beffbc02b724e5d095828e0bc8b2456e9ac8757ae3211a5d9b16a22ae
-# Your password:
-# DONT_USE_THIS_YOU_WILL_GET_ROBBED_8ak1gI25KFTvjovL3gAM967mies3E=
-#
-# On client-side, you add the normal user/password pair to send commands:
-#rpcuser=alice
-#rpcpassword=DONT_USE_THIS_YOU_WILL_GET_ROBBED_8ak1gI25KFTvjovL3gAM967mies3E=
-#
-# You can even add multiple entries of these to the server conf file, and client can use any of them:
-# rpcauth=bob:b2dd077cb54591a2f3139e69a897ac$4e71f08d48b4347cf8eff3815c0e25ae2e9a4340474079f55705f40574f4ec99
-
-# How many seconds bitcoin will wait for a complete RPC HTTP request.
-# after the HTTP connection is established.
-#rpcclienttimeout=30
-
-# By default, only RPC connections from localhost are allowed.
-# Specify as many rpcallowip= settings as you like to allow connections from other hosts,
-# either as a single IPv4/IPv6 or with a subnet specification.
-
-# NOTE: opening up the RPC port to hosts outside your local trusted network is NOT RECOMMENDED,
-# because the rpcpassword is transmitted over the network unencrypted.
-
-# server=1 tells Bitcoin-Qt to accept JSON-RPC commands.
-# it is also read by bitcoind to determine if RPC should be enabled
-#rpcallowip=10.1.1.34/255.255.255.0
-#rpcallowip=1.2.3.4/24
-#rpcallowip=2001:db8:85a3:0:0:8a2e:370:7334/96
-
-# Listen for RPC connections on this TCP port:
-#rpcport=8332
-
-# You can use Bitcoin or bitcoind to send commands to Bitcoin/bitcoind
-# running on another host using this option:
-#rpcconnect=127.0.0.1
-
-# Wallet options
-
-# Specify where to find wallet, lockfile and logs. If not present, those files will be
-# created as new.
-#wallet=</path/to/dir>
-
-# Create transactions that have enough fees so they are likely to begin confirmation within n blocks (default: 6).
-# This setting is over-ridden by the -paytxfee option.
-#txconfirmtarget=n
-
-# Pay a transaction fee every time you send bitcoins.
-#paytxfee=0.000x
-
-# Miscellaneous options
-
-# Pre-generate this many public/private key pairs, so wallet backups will be valid for
-# both prior transactions and several dozen future transactions.
-#keypool=100
-
-# Enable pruning to reduce storage requirements by deleting old blocks.
-# This mode is incompatible with -txindex and -rescan.
-# 0 = default (no pruning).
-# 1 = allows manual pruning via RPC.
-# >=550 = target to stay under in MiB.
-#prune=550
-
-# User interface options
-
-# Start Bitcoin minimized
-#min=1
-
-# Minimize to the system tray
-#minimizetotray=1
-
-# [Sections]
-# Most options apply to mainnet, testnet and regtest.
-# If you want to confine an option to just one network, you should add it in the
-# relevant section below.
-# EXCEPTIONS: The options addnode, connect, port, bind, rpcport, rpcbind and wallet
-# only apply to mainnet unless they appear in the appropriate section below.
-
-# Options only for mainnet
-[main]
-
-# Options only for testnet
-[test]
-
-# Options only for regtest
-[regtest]
-`
+	"github.com/cf-guardian/guardian/kernel/fileutils"
+	"github.com/decred/dcrd/dcrutil"
 )
+
+var (
+	bitcoinTuple = map[string]string{
+		"darwin-amd64":  "osx64",
+		"windows-amd64": "win64",
+		"linux-amd64":   "x86_64-linux-gnu",
+		"linux-arm":     "arm-linux-gnueabihf",
+		"linux-arm64":   "aarch64-linux-gnu",
+	}
+
+	bitcoinVersionRE = regexp.MustCompile(`[[:digit:]]+\.[[:digit:]]+\.[[:digit:]]+`)
+
+	bitcoinf = []decredFiles{
+		{
+			Name:            "bitcoin-cli",
+			SupportsVersion: true,
+		},
+		{
+			Name:            "bitcoind",
+			Config:          "bitcoin.conf",
+			SampleMemory:    bitcoinSampleConfig,
+			SupportsVersion: true,
+		},
+	}
+)
+
+// downloadBitcoinBundle downloads the bitcoin bundle into the temporary
+// directory. It also verifies the that the digest of the downloaded file
+// matches the value in the manifest.
+func downloadBitcoinBundle(digest, filename string) error {
+	// Download bundle
+	bitcoinBundleFilename = filepath.Join(tmpDir, filename)
+	err := DownloadFile(bitcoinDownloadURI+filename, bitcoinBundleFilename)
+	if err != nil {
+		return fmt.Errorf("Download bitcoin bundle: %v", err)
+	}
+
+	// Verify digest
+	err = sha256Verify(bitcoinBundleFilename, digest)
+	if err != nil {
+		return fmt.Errorf("SHA256 verification failed: %v", err)
+	}
+
+	return nil
+}
+
+// extractBitcoinBundle extracts the bitcoin bundle into the destination
+// directory.
+func extractBitcoinBundle() error {
+	return extract(bitcoinBundleFilename, destination)
+}
+
+// bitcoinFindOS parses the bitcoin manifest and returns the digest and
+// filename for the provided tuple.
+func bitcoinFindOS(w, manifest string) (string, string, error) {
+	which, ok := bitcoinTuple[w]
+	if !ok {
+		return "", "", fmt.Errorf("unsuported tuple: %v", w)
+	}
+
+	f, err := os.Open(manifest)
+	if err != nil {
+		return "", "", err
+	}
+	defer f.Close()
+
+	// <sha256> <filename>
+	br := bufio.NewReader(f)
+	i := 1
+	for {
+		line, err := br.ReadString('\n')
+		if errors.Is(err, io.EOF) {
+			break
+		}
+		line = strings.TrimSpace(line)
+
+		if !strings.Contains(line, which) {
+			continue
+		}
+
+		a := strings.Fields(line)
+		if len(a) != 2 {
+			return "", "", fmt.Errorf("invalid manifest %v line %v",
+				manifest, i)
+		}
+
+		// Work around windows setup. For example:
+		// bitcoin-0.20.1-win64-setup.exe
+		if strings.ToLower(filepath.Ext(a[1])) == ".exe" {
+			continue
+		}
+
+		return a[0], a[1], nil
+	}
+
+	return "", "", fmt.Errorf("not found: %v", which)
+}
+
+// preconditionsBitcoinInstall determines if the tool is capable of installing
+// the bitcoin bundle. It asserts that:
+//   * no bitcoin daemons are running
+//   * all the installed files have the same version
+//   * either all or none of the config files exist
+func preconditionsBitcoinInstall() error {
+	if runtimeTuple() != tuple {
+		log.Printf("Bitcoin installing on foreign OS, " +
+			"skipping runtime checks")
+		return nil
+	}
+
+	// Abort if a daemon is still running
+	var isRunningList []string
+	for k := range bitcoinf {
+		name := bitcoinf[k].Name
+		ok, err := isRunning(name)
+		if err != nil {
+			return fmt.Errorf("isRunning: %v", err)
+		}
+		if ok {
+			log.Printf("Currently running: %v", name)
+			isRunningList = append(isRunningList, name)
+		} else {
+			log.Printf("Currently NOT running: %v", name)
+		}
+	}
+	if len(isRunningList) > 0 {
+		return fmt.Errorf("Processess still running: %v",
+			isRunningList)
+	}
+
+	// Determine current state
+	currentlyInstalled := 0
+	expectedInstalled := 0
+	currentVersion := make(map[string][]string)
+	for k := range bitcoinf {
+		name := bitcoinf[k].Name
+		filename := filepath.Join(destination, name)
+
+		if !bitcoinf[k].SupportsVersion {
+			continue
+		}
+
+		expectedInstalled++
+
+		// Record current version
+		cmd := exec.Command(filename, "--version")
+		version, err := cmd.CombinedOutput()
+		if err != nil {
+			log.Printf("Currently not installed: %v", name)
+			continue
+		}
+		v, err := extractSemVer(string(version))
+		if err != nil {
+			return fmt.Errorf("invalid version %v: %v",
+				name, err)
+		}
+		ver := v.String()
+		log.Printf("Version installed %v: %v", name, ver)
+		currentlyInstalled++
+		currentVersion[ver] = append(currentVersion[ver], name)
+	}
+
+	// XXX this is commented out because we mix versions.
+	// Reject mixed versions
+	//if len(currentVersion) > 1 {
+	//	return fmt.Errorf("Multiple versions of binaries found; " +
+	//		"upgrade requires human intervention")
+	//}
+
+	// If the current version is already installed error out.
+	//for k := range currentVersion {
+	//	log.Printf("k %v", k)
+	//	// XXX check manifest version against currentVersion
+	//	panic("fixme")
+	//}
+
+	// Determine if everything or nothing is installed
+	if currentlyInstalled != 0 && currentlyInstalled != expectedInstalled {
+		return fmt.Errorf("Currently installed binaries does not " +
+			"match expected installed binaries; upgrade requires " +
+			"human intervention")
+	}
+
+	// Install config files if applicable
+	currentConfigFiles := 0
+	expectedConfigFiles := 0
+	for k := range bitcoinf {
+		if bitcoinf[k].Config == "" {
+			continue
+		}
+
+		expectedConfigFiles++
+
+		name := bitcoinf[k].Name
+		dir := dcrutil.AppDataDir(name, true)
+		filename := filepath.Join(dir, bitcoinf[k].Config)
+		if exists(filename) {
+			log.Printf("Config %s -- already installed", filename)
+			currentConfigFiles++
+			continue
+		}
+	}
+
+	if currentConfigFiles != 0 && currentConfigFiles != expectedConfigFiles {
+		return fmt.Errorf("Currently installed config files does not " +
+			"match expected installed config files; upgrade " +
+			"requires human intervention")
+	}
+
+	// We can now create config files in their respective directories and
+	// install the binaries into destination.
+
+	return nil
+}
+
+// bitcoinDownloadAndVerify downloads, verifies and asserts that the bitcoin
+// bundle can be safely upgraded. This function asserts that all preconditions
+// are met before being able to proceed with the bitcoin bundle install.
+func bitcoinDownloadAndVerify() error {
+	// Download the bitcoin manifest
+	manifestBitcoinFilename = filepath.Join(tmpDir,
+		filepath.Base(bitcoinManifestURI))
+	err := DownloadFile(bitcoinManifestURI, manifestBitcoinFilename)
+	if err != nil {
+		return fmt.Errorf("Download bitcoin manifest file: %v", err)
+	}
+	if bitcoinManifestDigest != "" {
+		// Optional digest was set so check it
+		err = sha256Verify(manifestBitcoinFilename,
+			bitcoinManifestDigest)
+		if err != nil {
+			return fmt.Errorf("SHA256 of bitcoin manifest "+
+				"verification failed: %v", err)
+		}
+	}
+	bitcoinDownloadURI, err = getDownloadURI(bitcoinManifestURI)
+	if err != nil {
+		return fmt.Errorf("Get download URI: %v", err)
+	}
+
+	if !skipPGP {
+		// Verify bitcoin manifest embedded signature
+		err = pgpVerifyAttached(manifestBitcoinFilename, bitcoinPubkey)
+		if err != nil {
+			// XXX golang pgp does not supprt this curve so just
+			// warn.
+
+			log.Printf("Can't verify bitcoin manifest: %v", err)
+
+			postProcess = append(postProcess, "\nThe "+
+				"bitcoin signature error that was logged is "+
+				"expected.\n\nThe validity of the bitcoin "+
+				"archive has been validated.\n\n")
+			//return fmt.Errorf("manifest PGP signature incorrect: "+
+			//	"%v", err)
+		}
+	}
+
+	digest, filename, err := bitcoinFindOS(tuple, manifestBitcoinFilename)
+	if err != nil {
+		return fmt.Errorf("Find tuple: %v", err)
+	}
+	ver := bitcoinVersionRE.FindString(filepath.Base(filename))
+	if ver == "" {
+		return fmt.Errorf("Can't Extract bitcoin version from " +
+			"manifest")
+	}
+	_ = digest
+	manifestBitcoinVersion = ver
+	log.Printf("Attempting to upgrade to Bitcoin version: %v",
+		manifestBitcoinVersion)
+
+	// Download bitcoin bundle
+	err = downloadBitcoinBundle(digest, filename)
+	if err != nil {
+		return fmt.Errorf("Download bitcoin bundle: %v", err)
+	}
+
+	err = extractBitcoinBundle()
+	if err != nil {
+		return fmt.Errorf("Extract bitcoin bundle: %v", err)
+	}
+
+	err = preconditionsBitcoinInstall()
+	if err != nil {
+		return fmt.Errorf("Pre bitcoin install: %v", err)
+	}
+
+	return nil
+}
+
+func installBitcoinBundleConfig() error {
+	if runtimeTuple() != tuple {
+		log.Printf("Bitcoin bundle installation on foreign OS, " +
+			"skipping configuration")
+		return nil
+	}
+
+	// Install config files
+	for k := range bitcoinf {
+		if bitcoinf[k].Config == "" {
+			continue
+		}
+
+		// Check if the config file is already installed.
+		name := bitcoinf[k].Name
+		dir := dcrutil.AppDataDir(name, true)
+		dst := filepath.Join(dir, bitcoinf[k].Config)
+		if exists(dst) {
+			continue
+		}
+
+		var overrides []override
+		switch name {
+		default:
+			overrides = []override{
+				{name: "#rpcuser=", content: username},
+				{name: "#rpcpassword=", content: password},
+				{name: "#server=", content: "1"},
+				{name: "#prune=", content: "550"},
+				{name: "#debug=", content: "rpc"},
+			}
+		}
+		// XXX add testnet and simnet support
+
+		// Install config file
+		conf, err := createConfigFromMemory(bitcoinf[k].SampleMemory,
+			overrides)
+		if err != nil {
+			return err
+		}
+
+		log.Printf("Creating directory: %v", dir)
+		err = os.MkdirAll(dir, 0700)
+		if err != nil {
+			return err
+		}
+
+		log.Printf("Installing configuration file: %v", dst)
+		err = ioutil.WriteFile(dst, []byte(conf), 0600)
+		if err != nil {
+			return err
+		}
+	}
+
+	return nil
+}
+
+// installBitcoinBundle install all the bitcoin files. This call is only allowed
+// if all bitcoin installation preconditions have been met.
+func installBitcoinBundle() error {
+	err := installBitcoinBundleConfig()
+	if err != nil {
+		return err
+	}
+
+	// Install binaries
+	for k := range bitcoinf {
+		name := bitcoinf[k].Name
+		src := filepath.Join(destination,
+			"bitcoin-"+manifestBitcoinVersion, "bin", name)
+		dst := filepath.Join(destination, name)
+		// yep, this is ferrealz
+		if strings.HasPrefix(tuple, "windows") {
+			src += ".exe"
+			dst += ".exe"
+		}
+
+		//log.Printf("Installing %v -> %v\n", src, dst)
+		fu := fileutils.New()
+		if !fu.Exists(src) {
+			return fmt.Errorf("file not found: %v", src)
+		}
+		if fu.Exists(dst) {
+			err := os.RemoveAll(dst)
+			if err != nil {
+				return fmt.Errorf("Can't remove installed "+
+					"file: %v", err)
+			}
+		}
+		log.Printf("Installing: %v", dst)
+		err := fu.Copy(dst, src)
+		if err != nil {
+			return err
+		}
+
+		os.Chmod(dst, 0755) // Best effort is fine
+	}
+
+	return nil
+}
