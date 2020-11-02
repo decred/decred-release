@@ -3,6 +3,11 @@
 set -e
 set -o pipefail
 
+usage() {
+	echo "usage: $0 output manifest1 [manifest2...]" 2>&1
+	exit 2
+}
+
 # download a file over HTTPS and dump to standard output
 # arg1: the url
 dl_stdout() {
@@ -31,19 +36,36 @@ dl_hash() {
 	dl_stdout ${_url} | sha256_sum
 }
 
-[ $# -eq 1 -o $# -eq 2 ] || {
-	echo "usage: $0 output [urlfile]" 2>&1
-	exit 2
+find_url() {
+	NAME="$1" perl -lane 'print if /${ENV{NAME}}$/' <${URLFILE}
 }
-MANIFEST=$1
-URLFILE=${2:-dcrinstall_manifest_urls.txt}
 
-[ -e ${MANIFEST} ] && rm ${MANIFEST}
-while read _url; do
-	_hash=$(dl_hash ${_url})
-	echo "${_hash}  ${_url}" >> ${MANIFEST}
-done <${URLFILE}
+[ $# -gt 1 ] || usage
+OUTPUT=$1
+URLFILE=dcrinstall_manifest_urls.txt
+shift
+FILES="$@"
+
+# sort filenames
+export FILES
+FILES=$(perl -e 'print join("\n", sort(split(/\s+/, $ENV{FILES})))')
+
+[ -e ${OUTPUT} ] && rm ${OUTPUT}
+for _file in ${FILES}; do
+	_what=$(basename ${_file})
+	_url=$(find_url ${_what})
+	[ -z "${_url}" ] && {
+		echo "${_what} not found in url file" 2>&1
+		exit 1
+	}
+	_hash=$(sha256_sum <${_file})
+	[ ${_hash} = $(dl_hash ${_url}) ] || {
+		echo "download of ${_what} does not match local file" 2>&1
+		exit 1
+	}
+	echo "${_hash}  ${_url}" >> ${OUTPUT}
+done
 
 echo "Manifest:"
-cat ${MANIFEST}
-echo "Manifest hash: $(sha256_sum<${MANIFEST})"
+cat ${OUTPUT}
+echo "Manifest hash: $(sha256_sum<${OUTPUT})"
