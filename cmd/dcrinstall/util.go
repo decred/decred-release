@@ -471,3 +471,14 @@ func getDownloadURI(uri string) (string, error) {
 func runtimeTuple() string {
 	return runtime.GOOS + "-" + runtime.GOARCH
 }
+func printConfigError(installedConfigs, notInstalledConfigs []string) string {
+	rv := "Installed configuration files:\n"
+	for _, v := range installedConfigs {
+		rv += "\t" + v + "\n"
+	}
+	rv += "\nNOT installed configuration files:\n"
+	for _, v := range notInstalledConfigs {
+		rv += "\t" + v + "\n"
+	}
+	return rv
+}

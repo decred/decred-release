@@ -206,6 +206,7 @@ func preconditionsBitcoinInstall() error {
 	// Install config files if applicable
 	currentConfigFiles := 0
 	expectedConfigFiles := 0
+	var installedConfigs, notInstalledConfigs []string
 	for k := range bitcoinf {
 		if bitcoinf[k].Config == "" {
 			continue
@@ -219,14 +220,19 @@ func preconditionsBitcoinInstall() error {
 		if exists(filename) {
 			log.Printf("Config %s -- already installed", filename)
 			currentConfigFiles++
+			installedConfigs = append(installedConfigs, filename)
 			continue
 		}
+		log.Printf("Config %s -- NOT installed", filename)
+		notInstalledConfigs = append(notInstalledConfigs, filename)
 	}
 
 	if currentConfigFiles != 0 && currentConfigFiles != expectedConfigFiles {
-		return fmt.Errorf("Currently installed config files does not " +
-			"match expected installed config files; upgrade " +
-			"requires human intervention")
+		return fmt.Errorf("dcrinstall requires all or none of the "+
+			"configuration files files to be installed. This is "+
+			"to prevent improper installations or upgrades. This "+
+			"upgrade/install requires human intervention.\n\n%v",
+			printConfigError(installedConfigs, notInstalledConfigs))
 	}
 
 	// We can now create config files in their respective directories and
