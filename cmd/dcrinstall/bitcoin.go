@@ -154,6 +154,7 @@ func preconditionsBitcoinInstall() error {
 	currentlyInstalled := 0
 	expectedInstalled := 0
 	currentVersion := make(map[string][]string)
+	var installedBins, notInstalledBins []string
 	for k := range bitcoinf {
 		name := bitcoinf[k].Name
 		filename := filepath.Join(destination, name)
@@ -169,6 +170,7 @@ func preconditionsBitcoinInstall() error {
 		version, err := cmd.CombinedOutput()
 		if err != nil {
 			log.Printf("Currently not installed: %v", name)
+			notInstalledBins = append(notInstalledBins, filename)
 			continue
 		}
 		v, err := extractSemVer(string(version))
@@ -180,27 +182,16 @@ func preconditionsBitcoinInstall() error {
 		log.Printf("Version installed %v: %v", name, ver)
 		currentlyInstalled++
 		currentVersion[ver] = append(currentVersion[ver], name)
+		installedBins = append(installedBins, filename)
 	}
-
-	// XXX this is commented out because we mix versions.
-	// Reject mixed versions
-	//if len(currentVersion) > 1 {
-	//	return fmt.Errorf("Multiple versions of binaries found; " +
-	//		"upgrade requires human intervention")
-	//}
-
-	// If the current version is already installed error out.
-	//for k := range currentVersion {
-	//	log.Printf("k %v", k)
-	//	// XXX check manifest version against currentVersion
-	//	panic("fixme")
-	//}
 
 	// Determine if everything or nothing is installed
 	if currentlyInstalled != 0 && currentlyInstalled != expectedInstalled {
-		return fmt.Errorf("Currently installed binaries does not " +
-			"match expected installed binaries; upgrade requires " +
-			"human intervention")
+		return fmt.Errorf("dcrinstall requires all or none of the "+
+			"binary files to be installed. This is "+
+			"to prevent improper installations or upgrades. This "+
+			"upgrade/install requires human intervention.\n\n%v",
+			printConfigError(installedBins, notInstalledBins))
 	}
 
 	// Install config files if applicable
@@ -229,7 +220,7 @@ func preconditionsBitcoinInstall() error {
 
 	if currentConfigFiles != 0 && currentConfigFiles != expectedConfigFiles {
 		return fmt.Errorf("dcrinstall requires all or none of the "+
-			"configuration files files to be installed. This is "+
+			"configuration files to be installed. This is "+
 			"to prevent improper installations or upgrades. This "+
 			"upgrade/install requires human intervention.\n\n%v",
 			printConfigError(installedConfigs, notInstalledConfigs))
