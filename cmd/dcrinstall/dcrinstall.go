@@ -61,16 +61,13 @@ func dcrinstall() error {
 	log.Printf("Download directory: %v", tmpDir)
 
 	// Decred pre conditions
-	installDecred := true // XXX debug, remove later
-	if installDecred {
-		err = decredDownloadAndVerify()
-		if err != nil {
-			return fmt.Errorf("Decred download and verify: %v", err)
-		}
+	err = decredDownloadAndVerify()
+	if err != nil {
+		return fmt.Errorf("Decred download and verify: %v", err)
 	}
 
 	// Dcrdex pre conditions
-	if installDecred && dcrdex {
+	if dcrdex {
 		err = dcrdexDownloadAndVerify()
 		if err != nil {
 			return fmt.Errorf("Dcrdex download and verify: %v", err)
@@ -86,15 +83,13 @@ func dcrinstall() error {
 	}
 
 	// Install decred
-	if installDecred {
-		err = installDecredBundle()
-		if err != nil {
-			return fmt.Errorf("Decred install: %v", err)
-		}
+	err = installDecredBundle()
+	if err != nil {
+		return fmt.Errorf("Decred install: %v", err)
 	}
 
 	// Install dcrdex
-	if installDecred && dcrdex {
+	if dcrdex {
 		err = installDcrdexBundle()
 		if err != nil {
 			return fmt.Errorf("Dcrdex install: %v", err)
@@ -157,11 +152,11 @@ var (
 		defaultBitcoinManifestFilename
 
 	// dcrinstall itself
-	defaultDcrinstallManifestVersion  = "v1.6.0-rc2"
+	defaultDcrinstallManifestVersion  = "v1.6.0-rc1"
 	defaultDcrinstallManifestFilename = "dcrinstall-" +
 		defaultDcrinstallManifestVersion + "-manifest.txt"
 	defaultDcrinstallManifestURI = "https://github.com/decred/decred-release/releases/download/" +
-		defaultDcrinstallManifestVersion +
+		defaultDcrinstallManifestVersion + "/" +
 		defaultDcrinstallManifestFilename
 	//	https://github.com/decred/decred-release/releases/download/v1.6.0-rc1/dcrinstall-v1.6.0-manifest.txt
 
@@ -251,11 +246,6 @@ func downloadManifest() error {
 				latestManifestURI, i)
 		}
 
-		// Deal with dcrinstall versions
-		if defaultDcrinstallManifestURI == a[1] {
-			continue
-		}
-
 		*digest = a[0]
 		*uri = a[1]
 	}
@@ -264,7 +254,6 @@ func downloadManifest() error {
 		return fmt.Errorf("Invalid dcrinstall, contact maintainers")
 	}
 	// Deal with dcrinstall versions
-	// XXX hard code digest check too?
 	if defaultDcrinstallManifestURI != dcrinstallURI {
 		log.Printf("=== dcrinstall must be updated ===")
 		log.Println()
