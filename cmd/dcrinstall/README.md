@@ -12,6 +12,9 @@ and platform, installs them, sets up the config files, and creates a
 wallet for you.  In upgrade mode, dcrinstall replaces your binaries
 with the latest copies but makes no changes to your configs.
 
+Additionally, when the `--dcrdex` flag is set the tool will attempt to install
+the Decred DEX and bitcoin daemon.
+
 ## Upgrading an existing installation
 
 The following steps are required to upgrade a system with decred that
@@ -37,6 +40,9 @@ Configuration files:
 %LOCALAPPDATA%\Dcrctl\dcrctl.conf
 %LOCALAPPDATA%\Dcrd\dcrd.conf
 %LOCALAPPDATA%\Dcrwallet\dcrwallet.conf
+%LOCALAPPDATA%\Dexc\dexc.conf
+%LOCALAPPDATA%\Dexcctl\dexcctl.conf
+%ROAMINGAPPDATA%\Bitcoind\bitcoin.conf
 ```
 
 Binaries directory:
@@ -51,6 +57,9 @@ Configuration files:
 ~/Library/Application Support/Dcrctl/dcrctl.conf
 ~/Library/Application Support/Dcrd/dcrd.conf
 ~/Library/Application Support/Dcrwallet/dcrwallet.conf
+~/Library/Application Support/Dexc/dexc.conf
+~/Library/Application Support/Dexcctl/dexcctl.conf
+~/Library/Application Support/Bitcoind/bitcoin.conf
 ```
 
 Binaries directory:
@@ -65,6 +74,9 @@ Configuration files:
 ~/.dcrctl/dcrctl.conf
 ~/.dcrd/dcrd.conf
 ~/.dcrwallet/dcrwallet.conf
+~/.dexc/dexc.conf
+~/.dexcctl/dexcctl.conf
+~/.bitcoind/bitcoin.conf
 ```
 
 Binaries directory:
@@ -94,8 +106,13 @@ cd Downloads/
 chmod u+x dcrinstall
 ./dcrinstall
 ```
-
 and you installation will be upgraded to the latest released version.
+
+To install the optional DCRDEX software add the `--dcrdex` flag. For example:
+```
+cd %HOMEPATH%\Download
+dcrinstall.exe --dcrdex
+```
 
 ## Clean install
 
@@ -133,24 +150,6 @@ On OSX and UNIX the file is located at:
 
 ```
 ~/decred/dcrinstaller.log
-```
-
-## Testnet
-
-It is possible to use dcrinstall to setup decred for testnet.  This
-will ONLY work on a fresh install (as in you have no existing
-configuration files on the computer).  Just add the option -net
-Testnet to the command:
-
-
-```
-dcrinstall.exe -net testnet
-```
-
-or on OSX/UNIX:
-
-```
-./dcrinstall -net testnet
 ```
 
 ## Running decred programs

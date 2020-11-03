@@ -1,11 +1,11 @@
-// Copyright (c) 2016 The Decred developers
-// Use of this source code is governed by an ISC
-// license that can be found in the LICENSE file.
+// Copyright (c) 2016-2020 The Decred developers
+// Use of this source code is governed by an ISC license that can be found in
+// the LICENSE file.
 
 package main
 
 const (
-	pubkey = `
+	dcrinstallPubkey = `
 -----BEGIN PGP PUBLIC KEY BLOCK-----
 Version: GnuPG v1
 
@@ -105,7 +105,7 @@ O6GuapL0x1I9SeIk9WX9VRrpZmENhlri
 -----END PGP PUBLIC KEY BLOCK-----
 `
 
-	btcPubkey = `
+	bitcoinPubkey = `
 -----BEGIN PGP PUBLIC KEY BLOCK-----
 
 mQINBFWKlBcBEACgZJd/6LrSgNSVxiyq5N9h0E7zgSHG/ahuWAnWeFtxaxHeukH+
