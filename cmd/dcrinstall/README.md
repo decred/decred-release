@@ -33,6 +33,23 @@ mode.  Upgrade mode only overwrites the binaries in %HOMEPATH%\decred (or
 The dcrinstall tool records all actions in %HOMEPATH%\decred\dcrinstall.log
 (or ~/decred/dcrinstall.log on a UNIX type OS).
 
+## Using a proxy
+
+To provide additional privacy `dcrinstall` has proxy and tor support.
+Simply set the `HTTP_PROXY` environment variable to a suitable proxy.
+
+For example using tor over localhost:
+```
+export HTTP_PROXY='socks5://127.0.0.1:9050'
+```
+
+To use an http proxy that requires authentication:
+```
+export HTTP_PROXY='http://user:password@myproxyserver.com:3128'
+```
+
+Then run all `dcrinstall` as described in this document.
+
 ### Windows
 
 Configuration files:

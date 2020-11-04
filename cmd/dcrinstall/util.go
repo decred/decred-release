@@ -140,7 +140,10 @@ func DownloadFile(url string, filepath string) error {
 		}
 	} else {
 		// Get file over HTTP
-		resp, err := http.Get(url)
+		c := http.Client{
+			Transport: &http.Transport{Proxy: http.ProxyFromEnvironment},
+		}
+		resp, err := c.Get(url)
 		if err != nil {
 			return err
 		}
