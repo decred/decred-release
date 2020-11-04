@@ -307,6 +307,18 @@ func _main() error {
 	skipPGPF := flag.Bool("skippgp", false, "skip download and "+
 		"verification of pgp signatures")
 	quietF := flag.Bool("quiet", false, "quiet (default false)")
+	flag.Usage = func() {
+		fmt.Fprintf(flag.CommandLine.Output(),
+			"Usage of %s:\n", os.Args[0])
+		flag.PrintDefaults()
+		fmt.Println()
+		fmt.Println("Environment variables:")
+		fmt.Println("  HTTP_PROXY=<URL>")
+		fmt.Println("\tURL to proxy, example using tor: " +
+			"HTTP_PROXY='socks5://127.0.0.1:9050'")
+		fmt.Println("\texample using http: " +
+			"HTTP_PROXY='http://user:password@proxyserver:3128'")
+	}
 	flag.Parse()
 
 	// Prepare environment
