@@ -294,7 +294,8 @@ func bitcoinDownloadAndVerify() error {
 	filenameMunged := bitcoinArchiveRE.FindString(filename) + ".tar.gz"
 
 	// Don't download bundle if it has been extracted.
-	if !seenBefore(filenameMunged) {
+	if filenameMunged == ".tar.gz" ||
+		alwaysDownload || !seenBefore(filenameMunged) {
 		// Download bitcoin bundle
 		err = downloadBitcoinBundle(digest, filename)
 		if err != nil {

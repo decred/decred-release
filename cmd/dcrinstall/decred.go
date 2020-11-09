@@ -367,7 +367,7 @@ func decredDownloadAndVerify() error {
 		manifestDecredVersion)
 
 	// Don't download bundle if it has been extracted.
-	if !seenBefore(filename) {
+	if alwaysDownload || !seenBefore(filename) {
 		// Download decred bundle
 		err = downloadDecredBundle(digest, filename)
 		if err != nil {

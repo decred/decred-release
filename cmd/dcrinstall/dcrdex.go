@@ -231,7 +231,7 @@ func dcrdexDownloadAndVerify() error {
 		manifestDcrdexVersion)
 
 	// Don't download bundle if it has been extracted.
-	if !seenBefore(filename) {
+	if alwaysDownload || !seenBefore(filename) {
 		// Download dcrdex bundle
 		err = downloadDcrdexBundle(digest, filename)
 		if err != nil {
