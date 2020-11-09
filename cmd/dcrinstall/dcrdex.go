@@ -230,15 +230,20 @@ func dcrdexDownloadAndVerify() error {
 	log.Printf("Attempting to upgrade to Dcrdex version: %v",
 		manifestDcrdexVersion)
 
-	// Download dcrdex bundle
-	err = downloadDcrdexBundle(digest, filename)
-	if err != nil {
-		return fmt.Errorf("Download dcrdex bundle: %v", err)
-	}
+	// Don't download bundle if it has been extracted.
+	if forceDownload || !seenBefore(filename) {
+		// Download dcrdex bundle
+		err = downloadDcrdexBundle(digest, filename)
+		if err != nil {
+			return fmt.Errorf("Download dcrdex bundle: %v", err)
+		}
 
-	err = extractDcrdexBundle()
-	if err != nil {
-		return fmt.Errorf("Extract dcrdex bundle: %v", err)
+		err = extractDcrdexBundle()
+		if err != nil {
+			return fmt.Errorf("Extract dcrdex bundle: %v", err)
+		}
+	} else {
+		log.Printf("Using cached archive: %v", filename)
 	}
 
 	err = preconditionsDcrdexInstall()

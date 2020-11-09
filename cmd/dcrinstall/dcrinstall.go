@@ -172,6 +172,7 @@ var (
 	bitcoinManifestDigest string // Bitcoin manifest digest, if used
 	tuple                 string // Download tuple
 	network               string // Installing for network
+	forceDownload         bool   // Always download bundles
 	dcrdex                bool   // Install dcrdex
 	skipPGP               bool   // Don't download and verify PGP signatures
 	quiet                 bool   // Don't output anything but errors
@@ -303,6 +304,8 @@ func _main() error {
 		"bitcoin manifest URI override")
 	tupleF := flag.String("tuple", defaultTuple,
 		"OS-Arch tuple, e.g. windows-amd64")
+	forceDownloadF := flag.Bool("forcedownload", false,
+		"Force download bundles (default false)")
 	dcrdexF := flag.Bool("dcrdex", false, "Install Dcrdex")
 	skipPGPF := flag.Bool("skippgp", false, "skip download and "+
 		"verification of pgp signatures")
@@ -324,6 +327,7 @@ func _main() error {
 	// Prepare environment
 	destination = cleanAndExpandPath(*destF)
 	tuple = *tupleF
+	forceDownload = *forceDownloadF
 	dcrdex = *dcrdexF
 	skipPGP = *skipPGPF
 	quiet = *quietF

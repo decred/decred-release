@@ -31,6 +31,7 @@ var (
 	}
 
 	bitcoinVersionRE = regexp.MustCompile(`[[:digit:]]+\.[[:digit:]]+\.[[:digit:]]+`)
+	bitcoinArchiveRE = regexp.MustCompile(`bitcoin-[[:digit:]]+\.[[:digit:]]+\.[[:digit:]]+`)
 
 	bitcoinf = []decredFiles{
 		{
@@ -289,15 +290,24 @@ func bitcoinDownloadAndVerify() error {
 	log.Printf("Attempting to upgrade to Bitcoin version: %v",
 		manifestBitcoinVersion)
 
-	// Download bitcoin bundle
-	err = downloadBitcoinBundle(digest, filename)
-	if err != nil {
-		return fmt.Errorf("Download bitcoin bundle: %v", err)
-	}
+	// Work around bitcoin not having a default name.
+	filenameMunged := bitcoinArchiveRE.FindString(filename) + ".tar.gz"
 
-	err = extractBitcoinBundle()
-	if err != nil {
-		return fmt.Errorf("Extract bitcoin bundle: %v", err)
+	// Don't download bundle if it has been extracted.
+	if filenameMunged == ".tar.gz" ||
+		forceDownload || !seenBefore(filenameMunged) {
+		// Download bitcoin bundle
+		err = downloadBitcoinBundle(digest, filename)
+		if err != nil {
+			return fmt.Errorf("Download bitcoin bundle: %v", err)
+		}
+
+		err = extractBitcoinBundle()
+		if err != nil {
+			return fmt.Errorf("Extract bitcoin bundle: %v", err)
+		}
+	} else {
+		log.Printf("Using cached archive: %v", filename)
 	}
 
 	err = preconditionsBitcoinInstall()
