@@ -313,7 +313,6 @@ func decredDownloadAndVerify() error {
 	// Download the decred manifest
 	manifestDecredFilename = filepath.Join(tmpDir,
 		filepath.Base(decredManifestURI))
-
 	err := DownloadFile(decredManifestURI, manifestDecredFilename)
 	if err != nil {
 		return fmt.Errorf("Download manifest file: %v", err)
@@ -366,20 +365,15 @@ func decredDownloadAndVerify() error {
 	log.Printf("Attempting to upgrade to Decred version: %v",
 		manifestDecredVersion)
 
-	// Don't download bundle if it has been extracted.
-	if !seenBefore(filename) {
-		// Download decred bundle
-		err = downloadDecredBundle(digest, filename)
-		if err != nil {
-			return fmt.Errorf("Download decred bundle: %v", err)
-		}
+	// Download decred bundle
+	err = downloadDecredBundle(digest, filename)
+	if err != nil {
+		return fmt.Errorf("Download decred bundle: %v", err)
+	}
 
-		err = extractDecredBundle()
-		if err != nil {
-			return fmt.Errorf("Extract decred bundle: %v", err)
-		}
-	} else {
-		log.Printf("Using cached archive: %v", filename)
+	err = extractDecredBundle()
+	if err != nil {
+		return fmt.Errorf("Extract decred bundle: %v", err)
 	}
 
 	err = preconditionsDecredInstall()

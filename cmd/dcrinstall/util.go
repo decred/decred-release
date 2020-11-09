@@ -114,12 +114,12 @@ func (wc WriteCounter) PrintProgress() {
 
 // DownloadFile downloads the provided URL to the filepath. If the quiet flag
 // is not set it prints download progress.
-func DownloadFile(url string, path string) error {
-	log.Printf("Download file: %v -> %v", url, path)
+func DownloadFile(url string, filepath string) error {
+	log.Printf("Download file: %v -> %v", url, filepath)
 
 	// Create the file with .tmp extension, so that we won't overwrite a
 	// file until it's downloaded fully
-	out, err := os.Create(path + ".tmp")
+	out, err := os.Create(filepath + ".tmp")
 	if err != nil {
 		return err
 	}
@@ -173,7 +173,7 @@ func DownloadFile(url string, path string) error {
 	out.Close()
 
 	// Rename the tmp file back to the original file
-	err = os.Rename(path+".tmp", path)
+	err = os.Rename(filepath+".tmp", filepath)
 	if err != nil {
 		return err
 	}
@@ -474,9 +474,6 @@ func getDownloadURI(uri string) (string, error) {
 func runtimeTuple() string {
 	return runtime.GOOS + "-" + runtime.GOARCH
 }
-
-// printConfigError prints a list of installed and not installed configuratio
-// files.
 func printConfigError(installedConfigs, notInstalledConfigs []string) string {
 	rv := "Installed configuration files:\n"
 	for _, v := range installedConfigs {
@@ -487,18 +484,4 @@ func printConfigError(installedConfigs, notInstalledConfigs []string) string {
 		rv += "\t" + v + "\n"
 	}
 	return rv
-}
-
-// seenBefore looks to see if bundle has been extracted before.
-func seenBefore(bundle string) bool {
-	b := filepath.Base(bundle)
-	switch {
-	case strings.HasSuffix(bundle, ".zip"):
-		return exists((filepath.Join(destination,
-			strings.TrimRight(b, ".zip"))))
-	case strings.HasSuffix(bundle, ".tar.gz"):
-		return exists((filepath.Join(destination,
-			strings.TrimRight(b, ".tar.gz"))))
-	}
-	return false
 }
