@@ -295,7 +295,7 @@ func bitcoinDownloadAndVerify() error {
 
 	// Don't download bundle if it has been extracted.
 	if filenameMunged == ".tar.gz" ||
-		alwaysDownload || !seenBefore(filenameMunged) {
+		forceDownload || !seenBefore(filenameMunged) {
 		// Download bitcoin bundle
 		err = downloadBitcoinBundle(digest, filename)
 		if err != nil {
