@@ -1,23 +1,7 @@
------BEGIN PGP SIGNED MESSAGE-----
-Hash: SHA256
-
+$ ./compile_manifest.sh dcrinstall-v1.6.0-rc2-manifests.txt staging/* 
+Manifest:
 b5c04fe37b40119bdc2d329b9c8fb9c0b402a10388fd0837d1a30fb0cd99b344  https://bitcoincore.org/bin/bitcoin-core-0.20.1/SHA256SUMS.asc
 4e208d04c254a8a986cd3bf9b91411a6a09a732a8c8a1856a3523ff75a274a30  https://github.com/decred/decred-release/releases/download/v1.6.0-rc1/dcrinstall-v1.6.0-rc1-manifest.txt
 230bed6e6af1d3331c1b28b5a8282194ef829316c530dd1c8f1be66666564b82  https://github.com/decred/decred-binaries/releases/download/v1.6.0-rc2/decred-v1.6.0-rc2-manifest.txt
 e2f79db796e97d9bbe1b3dc92fc29b43dcb9eb6e745754a2dca223245259ff9d  https://github.com/decred/decred-binaries/releases/download/v1.6.0-rc2/dexc-v0.1.1-manifest.txt
------BEGIN PGP SIGNATURE-----
-
-iQIzBAEBCAAdFiEE9Ratt6BphSx8KKAtbYl+31GKAx0FAl+h5hUACgkQbYl+31GK
-Ax3jTw//e5o23OvSS3jJKpVfcSj8LX6EVS2kNzu53tnGVtSmF73b6u1E2K78/N5Y
-ewJVHevQhZwENNUIIlhSO1ppqbYOjWfXr140mqTc54lcStUFcGNh3CDArMfEOcCI
-FCCrNp2DXBNJ+8wEvFGZLu20hrQcGrvNAp2BlHHc+e0erFyG8IA/dHX5KttXXSd3
-dWm4KJm25mBGIixdQQY4JzeZfp8aMebF6FEJezupfG/QfZK0szv9BkySRxLK9N9X
-Jrty1YJ68PZJ75OV3w3cibFsg8gu2k6AX2yjzDiMRsD1V4TonmzX32F7EzdR8j4D
-PeilIdjaUbXScEaf676QsmOBzElYfghufO0DErX+s/15oVgTvEe7JYWLvGdfpHpT
-E1fMxRw4+6w45JS9m0lRJqeZaZ54R1k+wEzEaH9tfnprTCJDlHsFW2Pcr3MVEz46
-tSYaHP9paYX9mdZ/6O033wkuezw/RrIxxWVAVItzibppfb/L9anYBMZWKDDQr88L
-D1dgX4ez7o76nVpTTNYIPA/soZeNjWbomxvnvCrTgTJuzSKzygptTkDoiX7l80TF
-fVwdsfeXpwLvKtu9qiFgB2Gk+OJm3WEyAWJ0n4YaCSl/K2Ltwop8c1YZdzU91O4L
-znR0JGN4uPPO5LbWonfBqmYELC/nqz8y5uIRMVLDP28Z2p8EWZA=
-=gJgN
------END PGP SIGNATURE-----
+Manifest hash: 698dc6d2fbd10b73e418e81ec25d9ba50f51870e0fac70de52d537bc1a889080
