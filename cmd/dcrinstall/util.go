@@ -475,7 +475,7 @@ func runtimeTuple() string {
 	return runtime.GOOS + "-" + runtime.GOARCH
 }
 
-// printConfigError prints a list of installed and not installed configuratio
+// printConfigError prints a list of installed and not installed configuration
 // files.
 func printConfigError(installedConfigs, notInstalledConfigs []string) string {
 	rv := "Installed configuration files:\n"
