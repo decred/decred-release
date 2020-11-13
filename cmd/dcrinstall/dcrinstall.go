@@ -129,7 +129,7 @@ var (
 	defaultLatestManifestURI = "https://raw.githubusercontent.com/decred/decred-release/master/latest"
 
 	defaultTuple                  = runtime.GOOS + "-" + runtime.GOARCH
-	defaultDecredManifestVersion  = "v1.6.0-rc2"
+	defaultDecredManifestVersion  = "v1.6.0-rc3"
 	defaultDecredManifestFilename = "decred-" + defaultDecredManifestVersion +
 		"-manifest.txt"
 	defaultDecredManifestURI = "https://github.com/decred/decred-binaries" +
@@ -137,7 +137,7 @@ var (
 		defaultDecredManifestFilename
 
 	// dcrdex
-	defaultDcrdexManifestVersion  = "v0.1.0"
+	defaultDcrdexManifestVersion  = "v0.1.2"
 	defaultDcrdexManifestFilename = "dexc-" + defaultDcrdexManifestVersion +
 		"-manifest.txt"
 	defaultDcrdexManifestURI = "https://github.com/decred/decred-binaries" +
@@ -151,14 +151,15 @@ var (
 		"bitcoin-core-" + defaultBitcoinManifestVersion + "/" +
 		defaultBitcoinManifestFilename
 
-	// dcrinstall itself
-	defaultDcrinstallManifestVersion  = "v1.6.0-rc1"
-	defaultDcrinstallManifestFilename = "dcrinstall-" +
-		defaultDcrinstallManifestVersion + "-manifest.txt"
-	defaultDcrinstallManifestURI = "https://github.com/decred/decred-release/releases/download/" +
-		defaultDcrinstallManifestVersion + "/" +
-		defaultDcrinstallManifestFilename
-	//	https://github.com/decred/decred-release/releases/download/v1.6.0-rc1/dcrinstall-v1.6.0-manifest.txt
+	// dcrinstall itself.
+	// dcrinstallManifestVersion is set by linker flags by the release builder
+	// (e.g. -ldflags='-X main.dcrinstallManifestVersion=v1.6.0-rc3').  When
+	// this is not the empty string, dcrinstall will perform a self-check comparing
+	// this embedded version against the version found in the 'latest' file.
+	// Otherwise, no such check is performed.
+	dcrinstallManifestVersion  string
+	dcrinstallManifestFilename string
+	dcrinstallManifestURI      string
 
 	// Settings
 	tmpDir                string // Directory where files are downloaded to
@@ -183,6 +184,16 @@ var (
 	bitcoinRE    = regexp.MustCompile(`\/SHA256SUMS.asc`)
 	dcrinstallRE = regexp.MustCompile(`dcrinstall-v[[:digit:]]\.[[:digit:]]\.[[:digit:]][[:print:]]*-manifest\.txt`)
 )
+
+func init() {
+	if dcrinstallManifestVersion != "" {
+		dcrinstallManifestFilename = "dcrinstall-" +
+			dcrinstallManifestVersion + "-manifest.txt"
+		dcrinstallManifestURI = "https://github.com/decred/decred-release/releases/download/" +
+			dcrinstallManifestVersion + "/" +
+			dcrinstallManifestFilename
+	}
+}
 
 // downloadManifest downloads the latest manifest and verifies them.
 func downloadManifest() error {
@@ -255,7 +266,7 @@ func downloadManifest() error {
 		return fmt.Errorf("Invalid dcrinstall, contact maintainers")
 	}
 	// Deal with dcrinstall versions
-	if defaultDcrinstallManifestURI != dcrinstallURI {
+	if dcrinstallManifestVersion != "" && dcrinstallManifestURI != dcrinstallURI {
 		log.Printf("=== dcrinstall must be updated ===")
 		log.Println()
 		log.Printf("A new version of dcrinstall was detected. " +
