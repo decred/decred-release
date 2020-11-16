@@ -134,6 +134,9 @@ func preconditionsBitcoinInstall() error {
 	// Abort if a daemon is still running
 	var isRunningList []string
 	for k := range bitcoinf {
+		if bitcoinf[k].Directory {
+			continue
+		}
 		name := bitcoinf[k].Name
 		ok, err := isRunning(name)
 		if err != nil {
@@ -390,7 +393,8 @@ func installBitcoinBundle() error {
 			"bitcoin-"+manifestBitcoinVersion, "bin", name)
 		dst := filepath.Join(destination, name)
 		// yep, this is ferrealz
-		if strings.HasPrefix(tuple, "windows") {
+		if !bitcoinf[k].Directory &&
+			strings.HasPrefix(tuple, "windows") {
 			src += ".exe"
 			dst += ".exe"
 		}

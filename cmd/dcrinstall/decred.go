@@ -33,6 +33,7 @@ type decredFiles struct {
 	SampleFilename  string // Sample file config file
 	SampleMemory    string // Static sample config
 	SupportsVersion bool   // Whether or not it supports --version
+	Directory       bool   // Whether or not this filename is a directory
 }
 
 var (
@@ -210,6 +211,9 @@ func preconditionsDecredInstall() error {
 	// Abort if a daemon is still running
 	var isRunningList []string
 	for k := range df {
+		if df[k].Directory {
+			continue
+		}
 		ok, err := isRunning(df[k].Name)
 		if err != nil {
 			return fmt.Errorf("isRunning: %v", err)
@@ -519,7 +523,7 @@ func installDecredBundle() error {
 			"decred-"+tuple+"-"+manifestDecredVersion, df[k].Name)
 		dst := filepath.Join(destination, df[k].Name)
 		// yep, this is ferrealz
-		if strings.HasPrefix(tuple, "windows") {
+		if !df[k].Directory && strings.HasPrefix(tuple, "windows") {
 			src += ".exe"
 			dst += ".exe"
 		}
