@@ -16,6 +16,7 @@ import (
 	"log"
 	"os"
 	"os/user"
+	"path"
 	"path/filepath"
 	"regexp"
 	"runtime"
@@ -159,7 +160,6 @@ var (
 	// Otherwise, no such check is performed.
 	dcrinstallManifestVersion  string
 	dcrinstallManifestFilename string
-	dcrinstallManifestURI      string
 
 	// Settings
 	tmpDir                string // Directory where files are downloaded to
@@ -189,9 +189,6 @@ func init() {
 	if dcrinstallManifestVersion != "" {
 		dcrinstallManifestFilename = "dcrinstall-" +
 			dcrinstallManifestVersion + "-manifest.txt"
-		dcrinstallManifestURI = "https://github.com/decred/decred-release/releases/download/" +
-			dcrinstallManifestVersion + "/" +
-			dcrinstallManifestFilename
 	}
 }
 
@@ -266,7 +263,8 @@ func downloadManifest() error {
 		return fmt.Errorf("Invalid dcrinstall, contact maintainers")
 	}
 	// Deal with dcrinstall versions
-	if dcrinstallManifestVersion != "" && dcrinstallManifestURI != dcrinstallURI {
+	if dcrinstallManifestVersion != "" &&
+		dcrinstallManifestFilename != path.Base(dcrinstallURI) {
 		log.Printf("=== dcrinstall must be updated ===")
 		log.Println()
 		log.Printf("A new version of dcrinstall was detected. " +
