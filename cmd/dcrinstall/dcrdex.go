@@ -31,6 +31,10 @@ var (
 			SampleMemory:    dexcSampleConfig,
 			SupportsVersion: true,
 		},
+		{
+			Name:      "site",
+			Directory: true,
+		},
 	}
 )
 
@@ -75,6 +79,9 @@ func preconditionsDcrdexInstall() error {
 	// Abort if a daemon is still running
 	var isRunningList []string
 	for k := range dexf {
+		if dexf[k].Directory {
+			continue
+		}
 		ok, err := isRunning(dexf[k].Name)
 		if err != nil {
 			return fmt.Errorf("isRunning: %v", err)
@@ -322,7 +329,7 @@ func installDcrdexBundle() error {
 			"dexc-"+tuple+"-"+manifestDcrdexVersion, dexf[k].Name)
 		dst := filepath.Join(destination, dexf[k].Name)
 		// yep, this is ferrealz
-		if strings.HasPrefix(tuple, "windows") {
+		if !dexf[k].Directory && strings.HasPrefix(tuple, "windows") {
 			src += ".exe"
 			dst += ".exe"
 		}
