@@ -21,11 +21,6 @@ import (
 	"github.com/decred/dcrd/dcrutil"
 )
 
-type bitcoinFiles struct {
-	decredFiles
-	ConfigFolder string
-}
-
 var (
 	bitcoinTuple = map[string]string{
 		"darwin-amd64":  "osx64",
@@ -38,21 +33,16 @@ var (
 	bitcoinVersionRE = regexp.MustCompile(`[[:digit:]]+\.[[:digit:]]+\.[[:digit:]]+`)
 	bitcoinArchiveRE = regexp.MustCompile(`bitcoin-[[:digit:]]+\.[[:digit:]]+\.[[:digit:]]+`)
 
-	bitcoinf = []bitcoinFiles{
+	bitcoinf = []decredFiles{
 		{
-			decredFiles: decredFiles{
-				Name:            "bitcoin-cli",
-				SupportsVersion: true,
-			},
+			Name:            "bitcoin-cli",
+			SupportsVersion: true,
 		},
 		{
-			decredFiles: decredFiles{
-				Name:            "bitcoind",
-				Config:          "bitcoin.conf",
-				SampleMemory:    bitcoinSampleConfig,
-				SupportsVersion: true,
-			},
-			ConfigFolder: "bitcoin",
+			Name:            "bitcoind",
+			Config:          "bitcoin.conf",
+			SampleMemory:    bitcoinSampleConfig,
+			SupportsVersion: true,
 		},
 	}
 )
@@ -219,7 +209,7 @@ func preconditionsBitcoinInstall() error {
 
 		expectedConfigFiles++
 
-		name := bitcoinf[k].ConfigFolder
+		name := bitcoinf[k].Name
 		dir := dcrutil.AppDataDir(name, true)
 		filename := filepath.Join(dir, bitcoinf[k].Config)
 		if exists(filename) {
@@ -344,7 +334,7 @@ func installBitcoinBundleConfig() error {
 		}
 
 		// Check if the config file is already installed.
-		name := bitcoinf[k].ConfigFolder
+		name := bitcoinf[k].Name
 		dir := dcrutil.AppDataDir(name, true)
 		dst := filepath.Join(dir, bitcoinf[k].Config)
 		if exists(dst) {
