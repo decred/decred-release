@@ -152,7 +152,9 @@ func preconditionsDcrdexInstall() error {
 
 		expectedConfigFiles++
 
-		dir := dcrutil.AppDataDir(dexf[k].Name, false)
+		ext := filepath.Ext(dexf[k].Config)
+		name := strings.TrimSuffix(dexf[k].Config, ext)
+		dir := dcrutil.AppDataDir(name, false)
 		filename := filepath.Join(dir, dexf[k].Config)
 		if exists(filename) {
 			log.Printf("Config %s -- already installed", filename)
@@ -275,7 +277,9 @@ func installDcrdexBundleConfig() error {
 		}
 
 		// Check if the config file is already installed.
-		dir := dcrutil.AppDataDir(dexf[k].Name, false)
+		ext := filepath.Ext(dexf[k].Config)
+		name := strings.TrimSuffix(dexf[k].Config, ext)
+		dir := dcrutil.AppDataDir(name, false)
 		dst := filepath.Join(dir, dexf[k].Config)
 		if exists(dst) {
 			continue
