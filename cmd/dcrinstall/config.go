@@ -13,7 +13,7 @@ import (
 	"strings"
 )
 
-// override describes an entry (name) in a config file that has to be overriden
+// override describes an entry (name) in a config file that has to be overridden
 // by "content".
 type override struct {
 	name    string

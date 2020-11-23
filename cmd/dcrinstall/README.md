@@ -115,7 +115,7 @@ dcrinstall.exe
 ```
 
 For OSX and UNIX you will also need to make the file executable before
-runnning it:
+running it:
 
 ```
 cd Downloads/
@@ -162,13 +162,13 @@ which you may examine if you need more information.  On Windows the
 file is located at:
 
 ```
-%HOMEPATH%\decred\dcrinstaller.log
+%HOMEPATH%\decred\dcrinstall.log
 ```
 
 On OSX and UNIX the file is located at:
 
 ```
-~/decred/dcrinstaller.log
+~/decred/dcrinstall.log
 ```
 
 ## Running decred programs
@@ -187,7 +187,7 @@ cd decred/
 ```
 
 Alternatively you can add the directory to your path.  For windows see
-http://www.computerhope.com/issues/ch000549.htm  For OSX and UNIX
+<http://www.computerhope.com/issues/ch000549.htm>.  For OSX and UNIX
 refer to the documentation for your shell.
 
 ## Build from source
@@ -210,7 +210,7 @@ The file
 [cmd/dcrinstall/pubkey.go](https://github.com/decred/decred-release/blob/master/cmd/dcrinstall/pubkey.go)
 contains the decred public key which is used to check the signed
 manifest in the release.  You can compare the contents of this file to
-what you get from a keyserver to confirm that dcrinstaller is using
+what you get from a keyserver to confirm that dcrinstall is using
 the proper key.
 
 ## Notes

@@ -275,8 +275,7 @@ func bitcoinDownloadAndVerify() error {
 		// Verify bitcoin manifest embedded signature
 		err = pgpVerifyAttached(manifestBitcoinFilename, bitcoinPubkey)
 		if err != nil {
-			// XXX golang pgp does not supprt this curve so just
-			// warn.
+			// XXX golang pgp does not support this curve so just warn.
 
 			log.Printf("Can't verify bitcoin manifest: %v", err)
 
