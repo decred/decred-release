@@ -1,5 +1,4 @@
-dcrinstall
-==========
+# dcrinstall
 
 ## Overview
 
@@ -59,7 +58,7 @@ Configuration files:
 %LOCALAPPDATA%\Dcrwallet\dcrwallet.conf
 %LOCALAPPDATA%\Dexc\dexc.conf
 %LOCALAPPDATA%\Dexcctl\dexcctl.conf
-%ROAMINGAPPDATA%\Bitcoind\bitcoin.conf
+%ROAMINGAPPDATA%\Bitcoin\bitcoin.conf
 ```
 
 Binaries directory:
@@ -76,7 +75,7 @@ Configuration files:
 ~/Library/Application Support/Dcrwallet/dcrwallet.conf
 ~/Library/Application Support/Dexc/dexc.conf
 ~/Library/Application Support/Dexcctl/dexcctl.conf
-~/Library/Application Support/Bitcoind/bitcoin.conf
+~/Library/Application Support/Bitcoin/bitcoin.conf
 ```
 
 Binaries directory:
@@ -93,7 +92,7 @@ Configuration files:
 ~/.dcrwallet/dcrwallet.conf
 ~/.dexc/dexc.conf
 ~/.dexcctl/dexcctl.conf
-~/.bitcoind/bitcoin.conf
+~/.bitcoin/bitcoin.conf
 ```
 
 Binaries directory:
@@ -123,9 +122,11 @@ cd Downloads/
 chmod u+x dcrinstall
 ./dcrinstall
 ```
+
 and you installation will be upgraded to the latest released version.
 
 To install the optional DCRDEX software add the `--dcrdex` flag. For example:
+
 ```
 cd %HOMEPATH%\Download
 dcrinstall.exe --dcrdex
@@ -138,6 +139,7 @@ files) you can just run dcrinstall and it will setup and configure all
 the binaries:
 
 For Windows open a cmd.exe window and:
+
 ```
 cd %HOMEPATH%\Download
 dcrinstall.exe
@@ -224,4 +226,3 @@ OpenBSD, Fedora, Ubuntu, and Raspbian.
 
 dcrinstall is licensed under the [copyfree](http://copyfree.org) ISC
 License.
-

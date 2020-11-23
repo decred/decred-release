@@ -21,6 +21,11 @@ import (
 	"github.com/decred/dcrd/dcrutil"
 )
 
+type bitcoinFiles struct {
+	decredFiles
+	ConfigFolder string
+}
+
 var (
 	bitcoinTuple = map[string]string{
 		"darwin-amd64":  "osx64",
@@ -33,16 +38,21 @@ var (
 	bitcoinVersionRE = regexp.MustCompile(`[[:digit:]]+\.[[:digit:]]+\.[[:digit:]]+`)
 	bitcoinArchiveRE = regexp.MustCompile(`bitcoin-[[:digit:]]+\.[[:digit:]]+\.[[:digit:]]+`)
 
-	bitcoinf = []decredFiles{
+	bitcoinf = []bitcoinFiles{
 		{
-			Name:            "bitcoin-cli",
-			SupportsVersion: true,
+			decredFiles: decredFiles{
+				Name:            "bitcoin-cli",
+				SupportsVersion: true,
+			},
 		},
 		{
-			Name:            "bitcoind",
-			Config:          "bitcoin.conf",
-			SampleMemory:    bitcoinSampleConfig,
-			SupportsVersion: true,
+			decredFiles: decredFiles{
+				Name:            "bitcoind",
+				Config:          "bitcoin.conf",
+				SampleMemory:    bitcoinSampleConfig,
+				SupportsVersion: true,
+			},
+			ConfigFolder: "bitcoin",
 		},
 	}
 )
@@ -78,7 +88,7 @@ func extractBitcoinBundle() error {
 func bitcoinFindOS(w, manifest string) (string, string, error) {
 	which, ok := bitcoinTuple[w]
 	if !ok {
-		return "", "", fmt.Errorf("unsuported tuple: %v", w)
+		return "", "", fmt.Errorf("unsupported tuple: %v", w)
 	}
 
 	f, err := os.Open(manifest)
@@ -209,7 +219,7 @@ func preconditionsBitcoinInstall() error {
 
 		expectedConfigFiles++
 
-		name := bitcoinf[k].Name
+		name := bitcoinf[k].ConfigFolder
 		dir := dcrutil.AppDataDir(name, true)
 		filename := filepath.Join(dir, bitcoinf[k].Config)
 		if exists(filename) {
@@ -335,7 +345,7 @@ func installBitcoinBundleConfig() error {
 		}
 
 		// Check if the config file is already installed.
-		name := bitcoinf[k].Name
+		name := bitcoinf[k].ConfigFolder
 		dir := dcrutil.AppDataDir(name, true)
 		dst := filepath.Join(dir, bitcoinf[k].Config)
 		if exists(dst) {
