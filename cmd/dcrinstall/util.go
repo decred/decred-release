@@ -495,10 +495,10 @@ func seenBefore(bundle string) bool {
 	switch {
 	case strings.HasSuffix(bundle, ".zip"):
 		return exists((filepath.Join(destination,
-			strings.TrimRight(b, ".zip"))))
+			strings.TrimSuffix(b, ".zip"))))
 	case strings.HasSuffix(bundle, ".tar.gz"):
 		return exists((filepath.Join(destination,
-			strings.TrimRight(b, ".tar.gz"))))
+			strings.TrimSuffix(b, ".tar.gz"))))
 	}
 	return false
 }

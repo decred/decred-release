@@ -49,7 +49,7 @@ var (
 	postProcess []string // Things to tell the user after installation
 )
 
-// dcrinstall performs the install/ugrade for everything.
+// dcrinstall performs the install/upgrade for everything.
 func dcrinstall() error {
 	log.Printf("=== dcrinstall start ===")
 
@@ -285,7 +285,6 @@ func downloadManifest() error {
 
 func _main() error {
 	// Username
-	var err error
 	u, err := user.Current()
 	if err != nil {
 		return err

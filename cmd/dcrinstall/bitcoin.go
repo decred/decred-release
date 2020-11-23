@@ -78,7 +78,7 @@ func extractBitcoinBundle() error {
 func bitcoinFindOS(w, manifest string) (string, string, error) {
 	which, ok := bitcoinTuple[w]
 	if !ok {
-		return "", "", fmt.Errorf("unsuported tuple: %v", w)
+		return "", "", fmt.Errorf("unsupported tuple: %v", w)
 	}
 
 	f, err := os.Open(manifest)
@@ -265,8 +265,7 @@ func bitcoinDownloadAndVerify() error {
 		// Verify bitcoin manifest embedded signature
 		err = pgpVerifyAttached(manifestBitcoinFilename, bitcoinPubkey)
 		if err != nil {
-			// XXX golang pgp does not supprt this curve so just
-			// warn.
+			// XXX golang pgp does not support this curve so just warn.
 
 			log.Printf("Can't verify bitcoin manifest: %v", err)
 
