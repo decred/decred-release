@@ -209,7 +209,8 @@ func preconditionsBitcoinInstall() error {
 
 		expectedConfigFiles++
 
-		name := bitcoinf[k].Name
+		ext := filepath.Ext(bitcoinf[k].Config)
+		name := strings.TrimSuffix(bitcoinf[k].Config, ext)
 		dir := dcrutil.AppDataDir(name, true)
 		filename := filepath.Join(dir, bitcoinf[k].Config)
 		if exists(filename) {
@@ -335,7 +336,8 @@ func installBitcoinBundleConfig() error {
 		}
 
 		// Check if the config file is already installed.
-		name := bitcoinf[k].Name
+		ext := filepath.Ext(bitcoinf[k].Config)
+		name := strings.TrimSuffix(bitcoinf[k].Config, ext)
 		dir := dcrutil.AppDataDir(name, true)
 		dst := filepath.Join(dir, bitcoinf[k].Config)
 		if exists(dst) {

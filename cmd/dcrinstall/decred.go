@@ -27,9 +27,13 @@ const (
 
 // decredFiles provides all needed bits to perform the install the decred
 // bundle.
+//
+// Note: The Config filename determines the target directory name. This is a
+// necessary override where some daemons names end in d but the target
+// directory and config file do not have the trailing d in the name.
 type decredFiles struct {
 	Name            string // Binary filename
-	Config          string // Actual config file
+	Config          string // Actual config file.
 	SampleFilename  string // Sample file config file
 	SampleMemory    string // Static sample config
 	SupportsVersion bool   // Whether or not it supports --version
@@ -284,7 +288,9 @@ func preconditionsDecredInstall() error {
 
 		expectedConfigFiles++
 
-		dir := dcrutil.AppDataDir(df[k].Name, false)
+		ext := filepath.Ext(df[k].Config)
+		name := strings.TrimSuffix(df[k].Config, ext)
+		dir := dcrutil.AppDataDir(name, false)
 		filename := filepath.Join(dir, df[k].Config)
 		if exists(filename) {
 			log.Printf("Config %s -- already installed", filename)
@@ -408,7 +414,9 @@ func installDecredBundleConfig() error {
 		}
 
 		// Check if the config file is already installed.
-		dir := dcrutil.AppDataDir(df[k].Name, false)
+		ext := filepath.Ext(df[k].Config)
+		name := strings.TrimSuffix(df[k].Config, ext)
+		dir := dcrutil.AppDataDir(name, false)
 		dst := filepath.Join(dir, df[k].Config)
 		if exists(dst) {
 			continue
