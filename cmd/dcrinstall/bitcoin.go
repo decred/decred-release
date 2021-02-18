@@ -24,6 +24,7 @@ import (
 var (
 	bitcoinTuple = map[string]string{
 		"darwin-amd64":  "osx64",
+		"darwin-arm64":  "osx64",
 		"windows-amd64": "win64",
 		"linux-amd64":   "x86_64-linux-gnu",
 		"linux-arm":     "arm-linux-gnueabihf",
