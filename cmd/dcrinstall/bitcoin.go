@@ -275,8 +275,8 @@ func bitcoinDownloadAndVerify() error {
 				"bitcoin signature error that was logged is "+
 				"expected.\n\nThe validity of the bitcoin "+
 				"archive has been validated.\n\n")
-			//return fmt.Errorf("manifest PGP signature incorrect: "+
-			//	"%v", err)
+			return fmt.Errorf("manifest PGP signature incorrect: "+
+				"%v", err)
 		}
 	}
 
