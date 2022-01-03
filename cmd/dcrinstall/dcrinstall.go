@@ -130,7 +130,7 @@ var (
 	defaultLatestManifestURI = "https://raw.githubusercontent.com/decred/decred-release/master/latest"
 
 	defaultTuple                  = runtime.GOOS + "-" + runtime.GOARCH
-	defaultDecredManifestVersion  = "v1.6.0-rc3"
+	defaultDecredManifestVersion  = "v1.7.0-rc1"
 	defaultDecredManifestFilename = "decred-" + defaultDecredManifestVersion +
 		"-manifest.txt"
 	defaultDecredManifestURI = "https://github.com/decred/decred-binaries" +
@@ -138,7 +138,7 @@ var (
 		defaultDecredManifestFilename
 
 	// dcrdex
-	defaultDcrdexManifestVersion  = "v0.1.2"
+	defaultDcrdexManifestVersion  = "v0.4.0-rc1"
 	defaultDcrdexManifestFilename = "dexc-" + defaultDcrdexManifestVersion +
 		"-manifest.txt"
 	defaultDcrdexManifestURI = "https://github.com/decred/decred-binaries" +
@@ -146,7 +146,7 @@ var (
 		defaultDcrdexManifestFilename // Yes defaultDecredManifestVersion
 
 	// bitcoin
-	defaultBitcoinManifestVersion  = "0.20.1"
+	defaultBitcoinManifestVersion  = "0.21.2"
 	defaultBitcoinManifestFilename = "SHA256SUMS.asc"
 	defaultBitcoinManifestURI      = "https://bitcoincore.org/bin/" +
 		"bitcoin-core-" + defaultBitcoinManifestVersion + "/" +
