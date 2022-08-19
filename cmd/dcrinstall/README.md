@@ -12,9 +12,6 @@ and platform, installs them, sets up the config files, and creates a
 wallet for you.  In upgrade mode, dcrinstall replaces your binaries
 with the latest copies but makes no changes to your configs.
 
-Additionally, when the `--dcrdex` flag is set the tool will attempt to install
-the Decred DEX and bitcoin daemon.
-
 ## Upgrading an existing installation
 
 The following steps are required to upgrade a system with decred that
@@ -59,7 +56,6 @@ Configuration files:
 %LOCALAPPDATA%\Dcrwallet\dcrwallet.conf
 %LOCALAPPDATA%\Dexc\dexc.conf
 %LOCALAPPDATA%\Dexcctl\dexcctl.conf
-%ROAMINGAPPDATA%\Bitcoin\bitcoin.conf
 ```
 
 Binaries directory:
@@ -76,7 +72,6 @@ Configuration files:
 ~/Library/Application Support/Dcrwallet/dcrwallet.conf
 ~/Library/Application Support/Dexc/dexc.conf
 ~/Library/Application Support/Dexcctl/dexcctl.conf
-~/Library/Application Support/Bitcoin/bitcoin.conf
 ```
 
 Binaries directory:
@@ -93,7 +88,6 @@ Configuration files:
 ~/.dcrwallet/dcrwallet.conf
 ~/.dexc/dexc.conf
 ~/.dexcctl/dexcctl.conf
-~/.bitcoin/bitcoin.conf
 ```
 
 Binaries directory:
@@ -125,13 +119,6 @@ chmod u+x dcrinstall
 ```
 
 and you installation will be upgraded to the latest released version.
-
-To install the optional DCRDEX software add the `--dcrdex` flag. For example:
-
-```
-cd %HOMEPATH%\Download
-dcrinstall.exe --dcrdex
-```
 
 ## Clean install
 
@@ -172,7 +159,7 @@ On OSX and UNIX the file is located at:
 ~/decred/dcrinstall.log
 ```
 
-## Running decred programs
+## Running Decred programs
 
 On Windows open cmd.exe
 

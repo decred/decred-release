@@ -1,4 +1,4 @@
-// Copyright (c) 2020 The Decred developers
+// Copyright (c) 2022 The Decred developers
 // Use of this source code is governed by an ISC license that can be found in
 // the LICENSE file.
 
@@ -6,15 +6,13 @@ package main
 
 import (
 	"fmt"
-	"io/ioutil"
 	"log"
 	"os"
 	"os/exec"
 	"path/filepath"
 	"strings"
 
-	"github.com/cf-guardian/guardian/kernel/fileutils"
-	"github.com/decred/dcrd/dcrutil"
+	"github.com/decred/dcrd/dcrutil/v4"
 )
 
 var (
@@ -30,10 +28,6 @@ var (
 			Config:          "dexc.conf",
 			SampleMemory:    dexcSampleConfig,
 			SupportsVersion: true,
-		},
-		{
-			Name:      "site",
-			Directory: true,
 		},
 	}
 )
@@ -66,12 +60,12 @@ func downloadDcrdexBundle(digest, filename string) error {
 
 // preconditionsDcrdexInstall determines if the tool is capable of installing
 // the dcrdex bundle. It asserts that:
-//   * no dcrdex daemons are running
-//   * all the installed files have the same version
-//   * either all or none of the config files exist
+//   - no dcrdex daemons are running
+//   - all the installed files have the same version
+//   - either all or none of the config files exist
 func preconditionsDcrdexInstall() error {
 	if runtimeTuple() != tuple {
-		log.Printf("Dcrdex bundle installation on foreign OS, " +
+		log.Printf("DCRDEX bundle installation on foreign OS, " +
 			"skipping runtime checks")
 		return nil
 	}
@@ -93,9 +87,8 @@ func preconditionsDcrdexInstall() error {
 			log.Printf("Currently NOT running: %v", dexf[k].Name)
 		}
 	}
-	if len(isRunningList) > 0 {
-		return fmt.Errorf("Processess still running: %v",
-			isRunningList)
+	if !allowRunning && len(isRunningList) > 0 {
+		return fmt.Errorf("Processes still running: %v", isRunningList)
 	}
 
 	// Determine current state
@@ -289,7 +282,7 @@ func installDcrdexBundleConfig() error {
 		switch dexf[k].Name {
 		default:
 			overrides = []override{
-				{name: "; rpc=", content: "1"},
+				{name: "; rpc=", content: "0"},
 				{name: "; rpcuser=", content: username},
 				{name: "; rpcpass=", content: password},
 			}
@@ -310,7 +303,7 @@ func installDcrdexBundleConfig() error {
 		}
 
 		log.Printf("Installing configuration file: %v", dst)
-		err = ioutil.WriteFile(dst, []byte(conf), 0600)
+		err = os.WriteFile(dst, []byte(conf), 0600)
 		if err != nil {
 			return err
 		}
@@ -339,11 +332,10 @@ func installDcrdexBundle() error {
 		}
 
 		//log.Printf("Installing %v -> %v\n", src, dst)
-		fu := fileutils.New()
-		if !fu.Exists(src) {
+		if !fileExists(src) {
 			return fmt.Errorf("file not found: %v", src)
 		}
-		if fu.Exists(dst) {
+		if fileExists(dst) {
 			err := os.RemoveAll(dst)
 			if err != nil {
 				return fmt.Errorf("Can't remove installed "+
@@ -351,7 +343,7 @@ func installDcrdexBundle() error {
 			}
 		}
 		log.Printf("Installing: %v", dst)
-		err := fu.Copy(dst, src)
+		err := copyFile(dst, src)
 		if err != nil {
 			return err
 		}
@@ -360,9 +352,7 @@ func installDcrdexBundle() error {
 	}
 
 	postProcess = append(postProcess, "\nDCRDEX:\n\n"+
-		"* Start wallets (dcrd/dcrwallet and bitcoind) before starting dexc.\n"+
-		"* Allow both wallets to synchronize completely.\n\n"+
-		"please read the release notes at https://github.com/decred/dcrdex/releases for IMPORTANT NOTICES\n\n")
+		"Please read the release notes at https://github.com/decred/dcrdex/releases for IMPORTANT NOTICES\n\n")
 
 	return nil
 }

@@ -1,4 +1,4 @@
-// Copyright (c) 2016-2020 The Decred developers
+// Copyright (c) 2016-2022 The Decred developers
 // Use of this source code is governed by an ISC license that can be found in
 // the LICENSE file.
 
@@ -12,7 +12,6 @@ import (
 	"flag"
 	"fmt"
 	"io"
-	"io/ioutil"
 	"log"
 	"os"
 	"os/user"
@@ -40,12 +39,6 @@ var (
 	dcrdexBundleFilename            string // Dcrdex bundle that is downloaded
 	dcrdexDownloadURI               string // Dcrdex bundle download URI
 
-	// Generated bitcoin stuff
-	manifestBitcoinVersion  string // Bitcoin manifest version
-	manifestBitcoinFilename string // Bitcoin manifest filename
-	bitcoinBundleFilename   string // Bitcoin bundle that is downloaded
-	bitcoinDownloadURI      string // Bitcoin bundle download URI
-
 	postProcess []string // Things to tell the user after installation
 )
 
@@ -55,7 +48,7 @@ func dcrinstall() error {
 
 	// create temporary directory
 	var err error
-	tmpDir, err = ioutil.TempDir("", "dcrinstall")
+	tmpDir, err = os.MkdirTemp("", "dcrinstall")
 	if err != nil {
 		return fmt.Errorf("Create temporary file: %v", err)
 	}
@@ -68,19 +61,9 @@ func dcrinstall() error {
 	}
 
 	// Dcrdex pre conditions
-	if dcrdex {
-		err = dcrdexDownloadAndVerify()
-		if err != nil {
-			return fmt.Errorf("Dcrdex download and verify: %v", err)
-		}
-	}
-
-	// Bitcoin pre conditions
-	if dcrdex {
-		err = bitcoinDownloadAndVerify()
-		if err != nil {
-			return fmt.Errorf("Bitcoin download and verify: %v", err)
-		}
+	err = dcrdexDownloadAndVerify()
+	if err != nil {
+		return fmt.Errorf("DCRDEX download and verify: %v", err)
 	}
 
 	// Install decred
@@ -90,19 +73,9 @@ func dcrinstall() error {
 	}
 
 	// Install dcrdex
-	if dcrdex {
-		err = installDcrdexBundle()
-		if err != nil {
-			return fmt.Errorf("Dcrdex install: %v", err)
-		}
-	}
-
-	// Install bitcoin
-	if dcrdex {
-		err = installBitcoinBundle()
-		if err != nil {
-			return fmt.Errorf("Bitcoin install: %v", err)
-		}
+	err = installDcrdexBundle()
+	if err != nil {
+		return fmt.Errorf("DCRDEX install: %v", err)
 	}
 
 	log.Printf("=== dcrinstall complete ===")
@@ -138,19 +111,12 @@ var (
 		defaultDecredManifestFilename
 
 	// dcrdex
-	defaultDcrdexManifestVersion  = "v0.4.0-rc1"
+	defaultDcrdexManifestVersion  = "v0.5.0"
 	defaultDcrdexManifestFilename = "dexc-" + defaultDcrdexManifestVersion +
 		"-manifest.txt"
 	defaultDcrdexManifestURI = "https://github.com/decred/decred-binaries" +
 		"/releases/download/" + defaultDecredManifestVersion + "/" +
 		defaultDcrdexManifestFilename // Yes defaultDecredManifestVersion
-
-	// bitcoin
-	defaultBitcoinManifestVersion  = "0.21.2"
-	defaultBitcoinManifestFilename = "SHA256SUMS.asc"
-	defaultBitcoinManifestURI      = "https://bitcoincore.org/bin/" +
-		"bitcoin-core-" + defaultBitcoinManifestVersion + "/" +
-		defaultBitcoinManifestFilename
 
 	// dcrinstall itself.
 	// dcrinstallManifestVersion is set by linker flags by the release builder
@@ -162,26 +128,23 @@ var (
 	dcrinstallManifestFilename string
 
 	// Settings
-	tmpDir                string // Directory where files are downloaded to
-	destination           string // Base directory where all files land
-	latestManifestURI     string // Manifest of manifests filename
-	decredManifestURI     string // Decred manifest filename
-	decredManifestDigest  string // Decred manifest digest, if used
-	dcrdexManifestURI     string // Dcrdex manifest filename
-	dcrdexManifestDigest  string // Dcrdex manifest digest, if used
-	bitcoinManifestURI    string // Bitcoin manifest filename
-	bitcoinManifestDigest string // Bitcoin manifest digest, if used
-	tuple                 string // Download tuple
-	network               string // Installing for network
-	forceDownload         bool   // Always download bundles
-	dcrdex                bool   // Install dcrdex
-	skipPGP               bool   // Don't download and verify PGP signatures
-	quiet                 bool   // Don't output anything but errors
+	tmpDir               string // Directory where files are downloaded to
+	destination          string // Base directory where all files land
+	latestManifestURI    string // Manifest of manifests filename
+	decredManifestURI    string // Decred manifest filename
+	decredManifestDigest string // Decred manifest digest, if used
+	dcrdexManifestURI    string // DCRDEX manifest filename
+	dcrdexManifestDigest string // DCRDEX manifest digest, if used
+	tuple                string // Download tuple
+	network              string // Installing for network
+	allowRunning         bool   // Don't fail if it appears the processes are running.
+	forceDownload        bool   // Always download bundles
+	skipPGP              bool   // Don't download and verify PGP signatures
+	quiet                bool   // Don't output anything but errors
 
 	// Regexp
 	decredRE     = regexp.MustCompile(`decred-v[[:digit:]]\.[[:digit:]]\.[[:digit:]][[:print:]]*-manifest\.txt`)
 	dexcRE       = regexp.MustCompile(`dexc-v[[:digit:]]\.[[:digit:]]\.[[:digit:]][[:print:]]*-manifest\.txt`)
-	bitcoinRE    = regexp.MustCompile(`\/SHA256SUMS.asc`)
 	dcrinstallRE = regexp.MustCompile(`dcrinstall-v[[:digit:]]\.[[:digit:]]\.[[:digit:]][[:print:]]*-manifest\.txt`)
 )
 
@@ -194,7 +157,7 @@ func init() {
 
 // downloadManifest downloads the latest manifest and verifies them.
 func downloadManifest() error {
-	f, err := ioutil.TempFile("", "dcrinstall")
+	f, err := os.CreateTemp("", "dcrinstall")
 	if err != nil {
 		return err
 	}
@@ -239,9 +202,6 @@ func downloadManifest() error {
 		case dexcRE.MatchString(line):
 			uri = &dcrdexManifestURI
 			digest = &dcrdexManifestDigest
-		case bitcoinRE.MatchString(line):
-			uri = &bitcoinManifestURI
-			digest = &bitcoinManifestDigest
 		case dcrinstallRE.MatchString(line):
 			uri = &dcrinstallURI
 			digest = &dcrinstallDigest
@@ -271,8 +231,7 @@ func downloadManifest() error {
 			"Dcrinstall must upgraded before continuing")
 		log.Println()
 		log.Printf("The latest version can be found on 'decred.org'. " +
-			"This tool does not print the link for security " +
-			"reasons.")
+			"This tool does not print the link for security reasons.")
 		log.Println()
 		log.Printf("Please see 'https://github.com/decred/decred-release'" +
 			" for more information")
@@ -307,14 +266,15 @@ func _main() error {
 	decredManifestURIF := flag.String("decredmanifest", "",
 		"Decred manifest URI override")
 	dcrdexManifestURIF := flag.String("dcrdexmanifest", "",
-		"dcrdex manifest URI override")
-	bitcoinManifestURIF := flag.String("bitcoinmanifest", "",
-		"bitcoin manifest URI override")
+		"DCRDEX manifest URI override")
 	tupleF := flag.String("tuple", defaultTuple,
 		"OS-Arch tuple, e.g. windows-amd64")
+	allowRunningF := flag.Bool("allowrunning", false,
+		"Don't fail if it appears one of the binaries to install are already running (default false)")
 	forceDownloadF := flag.Bool("forcedownload", false,
 		"Force download bundles (default false)")
-	dcrdexF := flag.Bool("dcrdex", false, "Install Dcrdex")
+	flag.Bool("dcrdex", false, "(DEPRECATED) Install DCRDEX. "+
+		"NOTE: This switch will be removed in the future since DCRDEX is always installed.")
 	skipPGPF := flag.Bool("skippgp", false, "skip download and "+
 		"verification of pgp signatures")
 	quietF := flag.Bool("quiet", false, "quiet (default false)")
@@ -336,16 +296,15 @@ func _main() error {
 	destination = cleanAndExpandPath(*destF)
 	tuple = *tupleF
 	forceDownload = *forceDownloadF
-	dcrdex = *dcrdexF
 	skipPGP = *skipPGPF
 	quiet = *quietF
+	allowRunning = *allowRunningF
 
 	// Deal with manifest logic
 	if *latestManifestURIF == "" {
 		// Manifest was cleared so use defaults
 		decredManifestURI = defaultDecredManifestURI
 		dcrdexManifestURI = defaultDcrdexManifestURI
-		bitcoinManifestURI = defaultBitcoinManifestURI
 	} else {
 		// Download manifest but let cli options override
 		latestManifestURI = *latestManifestURIF
@@ -360,13 +319,9 @@ func _main() error {
 		if *dcrdexManifestURIF != "" {
 			dcrdexManifestURI = *dcrdexManifestURIF
 		}
-		if *bitcoinManifestURIF != "" {
-			bitcoinManifestURI = *bitcoinManifestURIF
-		}
 
 		log.Printf("Decred manifest URI: %v\n", decredManifestURI)
 		log.Printf("DCRDEX manifest URI: %v\n", dcrdexManifestURI)
-		log.Printf("Bitcoin manifest URI: %v\n", bitcoinManifestURI)
 	}
 
 	// XXX this needs to be come a flag and tested.

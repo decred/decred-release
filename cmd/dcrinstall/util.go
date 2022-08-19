@@ -1,4 +1,4 @@
-// Copyright (c) 2016-2020 The Decred developers
+// Copyright (c) 2016-2022 The Decred developers
 // Use of this source code is governed by an ISC license that can be found in
 // the LICENSE file.
 
@@ -15,7 +15,6 @@ import (
 	"errors"
 	"fmt"
 	"io"
-	"io/ioutil"
 	"log"
 	"net/http"
 	"os"
@@ -24,11 +23,34 @@ import (
 	"runtime"
 	"strings"
 
-	"github.com/decred/dcrd/dcrutil"
+	"github.com/decred/dcrd/dcrutil/v4"
 	humanize "github.com/dustin/go-humanize"
 	"golang.org/x/crypto/openpgp"
 	"golang.org/x/crypto/openpgp/clearsign"
 )
+
+func fileExists(name string) bool {
+	_, err := os.Stat(name)
+	return !os.IsNotExist(err)
+}
+
+func copyFile(dst, src string) error {
+	in, err := os.Open(src)
+	if err != nil {
+		return err
+	}
+	defer in.Close()
+
+	out, err := os.Create(dst)
+	if err != nil {
+		return err
+	}
+	defer out.Close()
+	defer out.Sync()
+
+	_, err = io.Copy(out, in)
+	return err
+}
 
 // cleanAndExpandPath expands environment variables and leading ~ in the
 // passed path, cleans the result, and returns it.
@@ -215,7 +237,7 @@ func pgpVerifyAttached(file, key string) error {
 	log.Printf("PGP attached verify: %v", file)
 
 	// open manifest signature
-	data, err := ioutil.ReadFile(file)
+	data, err := os.ReadFile(file)
 	if err != nil {
 		return err
 	}
@@ -378,7 +400,7 @@ func unzip(src string, dest string) ([]string, error) {
 
 // gunzip untars filename to destination.
 func gunzip(filename, destination string) error {
-	a, err := ioutil.ReadFile(filename)
+	a, err := os.ReadFile(filename)
 	if err != nil {
 		return err
 	}

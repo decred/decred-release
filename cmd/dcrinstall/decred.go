@@ -1,4 +1,4 @@
-// Copyright (c) 2016-2020 The Decred developers
+// Copyright (c) 2016-2022 The Decred developers
 // Use of this source code is governed by an ISC license that can be found in
 // the LICENSE file.
 
@@ -6,15 +6,13 @@ package main
 
 import (
 	"fmt"
-	"io/ioutil"
 	"log"
 	"os"
 	"os/exec"
 	"path/filepath"
 	"strings"
 
-	"github.com/cf-guardian/guardian/kernel/fileutils"
-	"github.com/decred/dcrd/dcrutil"
+	"github.com/decred/dcrd/dcrutil/v4"
 )
 
 const (
@@ -106,13 +104,12 @@ func generateClientCerts() error {
 	// Copy certificate to dcrwallet
 	dst := filepath.Join(dcrutil.AppDataDir("dcrwallet", false),
 		walletClientsPem)
-	fu := fileutils.New()
-	if fu.Exists(dst) {
+	if fileExists(dst) {
 		// Shouldn't happen
 		return fmt.Errorf("file already exists: %v", dst)
 	}
 	log.Printf("Installing: %v", dst)
-	err = fu.Copy(dst, piClientCert)
+	err = copyFile(dst, piClientCert)
 	if err != nil {
 		return err
 	}
@@ -202,9 +199,9 @@ func downloadDecredBundle(digest, filename string) error {
 
 // preconditionsDecredInstall determines if the tool is capable of installing
 // the decred bundle. It asserts that:
-//   * no decred daemons are running
-//   * all the installed files have the same version
-//   * either all or none of the config files exist
+//   - no decred daemons are running
+//   - all the installed files have the same version
+//   - either all or none of the config files exist
 func preconditionsDecredInstall() error {
 	if runtimeTuple() != tuple {
 		log.Printf("Decred bundle installation on foreign OS, " +
@@ -229,9 +226,8 @@ func preconditionsDecredInstall() error {
 			log.Printf("Currently NOT running: %v", df[k].Name)
 		}
 	}
-	if len(isRunningList) > 0 {
-		return fmt.Errorf("Processess still running: %v",
-			isRunningList)
+	if !allowRunning && len(isRunningList) > 0 {
+		return fmt.Errorf("Processes still running: %v", isRunningList)
 	}
 
 	// Determine current state
@@ -458,7 +454,7 @@ func installDecredBundleConfig() error {
 		}
 
 		log.Printf("Installing configuration file: %v", dst)
-		err = ioutil.WriteFile(dst, []byte(conf), 0600)
+		err = os.WriteFile(dst, []byte(conf), 0600)
 		if err != nil {
 			return err
 		}
@@ -537,11 +533,10 @@ func installDecredBundle() error {
 		}
 
 		//log.Printf("Installing %v -> %v\n", src, dst)
-		fu := fileutils.New()
-		if !fu.Exists(src) {
+		if !fileExists(src) {
 			return fmt.Errorf("file not found: %v", src)
 		}
-		if fu.Exists(dst) {
+		if fileExists(dst) {
 			err := os.RemoveAll(dst)
 			if err != nil {
 				return fmt.Errorf("Can't remove installed "+
@@ -549,7 +544,7 @@ func installDecredBundle() error {
 			}
 		}
 		log.Printf("Installing: %v", dst)
-		err := fu.Copy(dst, src)
+		err := copyFile(dst, src)
 		if err != nil {
 			return err
 		}
