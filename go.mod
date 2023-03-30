@@ -6,7 +6,7 @@ require (
 	github.com/decred/dcrd/dcrutil/v4 v4.0.0
 	github.com/dustin/go-humanize v1.0.0
 	golang.org/x/crypto v0.0.0-20220817201139-bc19a97f63c8
-	golang.org/x/sys v0.0.0-20220818161305-2296e01440c6
+	golang.org/x/sys v0.6.0
 )
 
 require (
