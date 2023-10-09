@@ -1,22 +1,22 @@
 -----BEGIN PGP SIGNED MESSAGE-----
 Hash: SHA256
 
-086418dd04708b669645c69596736a23275bec4168f5f46936b60e4e246fd51c  https://github.com/decred/decred-binaries/releases/download/v1.8.0/decred-v1.8.0-manifest.txt
-de6f46e5e52efe82b91eb56792b7d49eff3dce3ac4875000900e3fc24a94ca7b  https://github.com/decred/decred-binaries/releases/download/v1.8.0/dexc-v0.6.1-manifest.txt
-51c536b757d22355012d6d770739a5b6fe34b351bf62c9d93c6ee634887f1520  https://github.com/decred/decred-release/releases/download/v1.8.0/dcrinstall-v1.8.0-manifest.txt
+fceb5a824d497a6d759e1fdf104de6b6652d1f42db143c111aca4d76e1f0c470  https://github.com/decred/decred-binaries/releases/download/v1.8.1/decred-v1.8.1-manifest.txt
+02f0ad088ec0f66a47d900858cf140d7ed89ea8c73d8eba3bd80d79dff8a958e  https://github.com/decred/decred-binaries/releases/download/v1.8.1/dexc-v0.6.3-manifest.txt
+5975a89b68faee0b2be2a74977ceff914c33c7b89c97cadcb6b7c68b4005d2c6  https://github.com/decred/decred-release/releases/download/v1.8.1/dcrinstall-v1.8.1-manifest.txt
 -----BEGIN PGP SIGNATURE-----
 
-iQIzBAEBCAAdFiEE9Ratt6BphSx8KKAtbYl+31GKAx0FAmSIm2QACgkQbYl+31GK
-Ax0mYRAAh+cUQNBPywxOGxuQqlo5mZzLL3ttQ7dJOnMklI/CpnPuWW0zfEBdDcnC
-FL7FgDNurN2S1k/T89C56t1JttMECkXB4Ev50kddxUuX3PX6ovqwWITu6tC9Yl+R
-ecMHTVAO5r4FNo4KhrhwdNkwWchLmjTphP6pLQadwjKveDv1HtZyDaEOHzbkfVmm
-/XAhRM7x4bEHVc9RQXaxYBhXe5I4PUwWr95Bq9vs49iSeRT3YAVviqTavzRALc8d
-O3RFpGHZtQIEIuAoX1BWf+os+Iob58he7FjD7etsceMM0EW2IuOdYFJ1KWNM0InR
-EYjUZHEFfivohOz2lDt57nWI0GNzRsPqw/gi1o3wriRtMkTHTufWXmcftm0Bbpcr
-a0HP1rNdfAWXPBz2S7jAYCzuRX8XylpWpKsTl7RuaxRHC8wBKwbnp5pDaAFJMwoS
-FxNPSM+Yuh/Gifn/G7RUOO1ouPO2C9ojmPRoR+zVhCMMdwuTybrFVu/e1T2U16U/
-agn1gMUjBwyNzotdK5SKPpF8UcjEhD3mra8fUml3ORpk4SuuZVy3paRYnEfKO5pO
-Z+L7HdWeHh/GqCqrczN66gkZGRr3LTjV1W7nKujPizjz05pGO0I/rxwmZ4K9BaMs
-4gcvZaygug9fH48fMd+378bVMs+szzemDBvFhMirKQ30AVKyZl8=
-=BGhW
+iQIzBAEBCAAdFiEE9Ratt6BphSx8KKAtbYl+31GKAx0FAmUkJRAACgkQbYl+31GK
+Ax3UXA/+NFkyeQdmsleYWsDEVfFoW8/awRmsGyqtl6rRaqH+pSQK8Y5hk+Zq2xo7
+IRZuK5AtSrsygJ9l23tcAI+/3/FHL4W2L+spGDJqncPaAtQPQD2H6fmX5PyXp1aa
+LWar7ZcLPa1gYco/ZRohty5NlmLIeDkVPIqBETZy4BjskKhIduwUyYHudKAqGmx3
+yeE0ThpaE9nE0bSOH9eLT2pUEMiFX3FEMkc74QSoDUHQUhgqUFAE7OzCcMs+pw57
+Qv8Z5Zdu8y4IbtMMYLffaC87pwkcMhudxT2yx0AY9IttzaUFgnmTkU3W7FOYw9xK
+XLmUkGQ+jOcl733BdEM/9iS4GgIahmM/GDh/rYzWs6oxciTQ5vWyoJn24bUnW5i4
+zPqJnwHIubOLTC+cCEa5VSHJICwvfaHz5XdQ4Y7boOyIVHVXVjfc/4mgB5WUkDZO
+j9KuukkypYVIh+VfSx1hcIYWWPy1tOBTK3oEl3Lz/zqQI9i+/6vmPs+ygKhlqpyn
+t8anUaA+zfTeCbJd7X6B5wEaoyu6x9bAS64gwS31iIKy/wIIH7Zoe0YPjP73OUqK
+YbTNJr54GtIyevLYtD4tmK/UgyKczRXi7Gi7mU6smeOPGm2ulPrSRCE7+Q/VXQ3J
+uDY8ME+edh1xGn54SySKFH/B2BZg/XKscwmCe3YbPOgAC/omD28=
+=+UTi
 -----END PGP SIGNATURE-----
