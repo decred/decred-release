@@ -18,13 +18,13 @@ import (
 var (
 	dexf = []decredFiles{
 		{
-			Name:            "dexcctl",
+			Name:            "bwctl",
 			Config:          "dexcctl.conf",
 			SampleMemory:    dexcctlSampleConfig,
 			SupportsVersion: true,
 		},
 		{
-			Name:            "dexc",
+			Name:            "bisonw",
 			Config:          "dexc.conf",
 			SampleMemory:    dexcSampleConfig,
 			SupportsVersion: true,
@@ -323,7 +323,7 @@ func installDcrdexBundle() error {
 	// Install binaries
 	for k := range dexf {
 		src := filepath.Join(destination,
-			"dexc-"+tuple+"-"+manifestDcrdexVersion, dexf[k].Name)
+			"bisonwallet-"+tuple+"-"+manifestDcrdexVersion, dexf[k].Name)
 		dst := filepath.Join(destination, dexf[k].Name)
 		// yep, this is ferrealz
 		if !dexf[k].Directory && strings.HasPrefix(tuple, "windows") {

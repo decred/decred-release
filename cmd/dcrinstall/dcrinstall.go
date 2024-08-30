@@ -144,7 +144,7 @@ var (
 
 	// Regexp
 	decredRE     = regexp.MustCompile(`decred-v[[:digit:]]\.[[:digit:]]\.[[:digit:]][[:print:]]*-manifest\.txt`)
-	dexcRE       = regexp.MustCompile(`dexc-v[[:digit:]]\.[[:digit:]]\.[[:digit:]][[:print:]]*-manifest\.txt`)
+	dexcRE       = regexp.MustCompile(`bisonwallet-v[[:digit:]]\.[[:digit:]]\.[[:digit:]][[:print:]]*-manifest\.txt`)
 	dcrinstallRE = regexp.MustCompile(`dcrinstall-v[[:digit:]]\.[[:digit:]]\.[[:digit:]][[:print:]]*-manifest\.txt`)
 )
 
