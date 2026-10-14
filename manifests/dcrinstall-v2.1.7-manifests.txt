@@ -1,0 +1,3 @@
+0161ba39d802ab8f140d20d88ad6cad01463a23c74cbcabae4dc307e0fc38249  https://github.com/decred/decred-binaries/releases/download/v2.1.7/decred-v2.1.7-manifest.txt
+38d7149cb6ddbb77a0a096b5ea3b29d563ce3762fa3fd2fdd748cc9792268dc5  https://github.com/decred/decred-binaries/releases/download/v2.1.7/bisonwallet-v1.0.6-manifest.txt
+e0962387cad31e785918dfb26ca6305bca23c72bdf0b88969b4d43ec4f4cc7dc  https://github.com/decred/decred-release/releases/download/v2.1.7/dcrinstall-v2.1.7-manifest.txt

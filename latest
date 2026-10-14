@@ -1,22 +1,3 @@
------BEGIN PGP SIGNED MESSAGE-----
-Hash: SHA512
-
-2c061fe5e863d83265194ce17bd44b6a96ba60e7fe1e4daf2c3f7c7db3a6cb6a  https://github.com/decred/decred-binaries/releases/download/v2.1.6/decred-v2.1.6-manifest.txt
-a4ea3e4bf3327ab6bf98ccb61164f43818faa851d911a59c5b1e76e911e88816  https://github.com/decred/decred-binaries/releases/download/v2.1.6/bisonwallet-v1.0.6-manifest.txt
-a689ac949b097c4231a0cc723ec6e0d118817de5e45851f59e08995e375f9faf  https://github.com/decred/decred-release/releases/download/v2.1.6/dcrinstall-v2.1.6-manifest.txt
------BEGIN PGP SIGNATURE-----
-
-iQIzBAEBCgAdFiEE9Ratt6BphSx8KKAtbYl+31GKAx0FAmqEhpkACgkQbYl+31GK
-Ax3/pA/+OM8u6viBwTl7Ey/WoiNo/ktImD9siFJlPK3WprcWim1AU/nucQhX/M3o
-vrhZCrCbxO+KN08N5meeuKjFdhcFddGpU7ON/naLp+sftWyNNCPzurFW9ZWI0AQi
-myZFz+Ckn4/pzvFGnVwCc5Oj7YCmTIwXoMCFQzwIfrV6KoUvhfta+LDPQfmB5ZJH
-xQGGXCKz0d8mlc9Z4CkTBulVzyQWPhj2iMUqbZvdw12ckexovl+T/keQyzmw2r85
-GIouCWOae1kDvD6/JuCwGfP+0AiknLy6iCPfObkoWCGZj90MSlaCSxWLPenwVuZH
-YSFF4zsOcuPyF9vkCAIv4R2gazqgox9K1vBk/kuRF1jhRdAdx0NRiZsihgRyqN2T
-/ddL+YGBRdrxE8nG3GMqp44Y5WiEgKLpGi5CAFVrLY6TYPhuI5KtsG+kCO/F15KD
-Za83lX+sk1SMEY3t4KoCaxlU0JS25+lRsaJzj53rlxeyuSGs0NGyOMqb584f+VJo
-PjKyOJdxDjVHmnouu9HuhLwKhvugJc2dhS35B+OIXU6Gct1IUIRhIGCsYYjuxCzC
-2cxF0dPJbMLyhiP/QQS8JVVxVL4HKPNAfL8S70WkErI+XK/w1gxasOCKjmeMm2sg
-AI18eARnu/6EXg/bhz6r7gfEWzDrW4iONA9WeEB9ugr1r9pBPOM=
-=2ERr
------END PGP SIGNATURE-----
+0161ba39d802ab8f140d20d88ad6cad01463a23c74cbcabae4dc307e0fc38249  https://github.com/decred/decred-binaries/releases/download/v2.1.7/decred-v2.1.7-manifest.txt
+38d7149cb6ddbb77a0a096b5ea3b29d563ce3762fa3fd2fdd748cc9792268dc5  https://github.com/decred/decred-binaries/releases/download/v2.1.7/bisonwallet-v1.0.6-manifest.txt
+e0962387cad31e785918dfb26ca6305bca23c72bdf0b88969b4d43ec4f4cc7dc  https://github.com/decred/decred-release/releases/download/v2.1.7/dcrinstall-v2.1.7-manifest.txt
